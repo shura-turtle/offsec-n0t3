@@ -1,0 +1,7 @@
+baseURL = 'https://example.com/'
+title = 'My Documentation'
+theme = 'hugo-book'
+
+# Required for mermaid and katex shortcodes
+[markup.goldmark.renderer]
+  unsafe = true
