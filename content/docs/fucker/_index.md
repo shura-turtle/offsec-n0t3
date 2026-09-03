@@ -1,14 +1,14 @@
 ---
-title: "Example"
+title: "Fucker"
 weight: 1
-bookFlatSection: true
+# bookFlatSection: false
 # bookToc: true
 # bookHidden: false
-# bookCollapseSection: false
+bookCollapseSection: true
 # bookComments: false
 # bookSearchExclude: false
 # bookHref: ''
 # bookIcon: ''
 ---
 
-hello 
+hello who am i 
