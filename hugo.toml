@@ -1,4 +1,4 @@
-baseURL = 'https://shura-turtle:6969/'
+baseURL = 'https://shura-turtle.github.io/'
 title = 'offsec-n0t3'
 theme = 'hugo-book'
 
