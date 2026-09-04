@@ -1,14 +1,16 @@
 ---
-title: "Example"
+title: "Web"
 weight: 1
-bookFlatSection: true
+# bookFlatSection: false
 # bookToc: true
 # bookHidden: false
-# bookCollapseSection: false
+bookCollapseSection: true
 # bookComments: false
 # bookSearchExclude: false
 # bookHref: ''
 # bookIcon: ''
 ---
 
-hello 
+welcome to web exploitation :)
+
+picoCTF{}
