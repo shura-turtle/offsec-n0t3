@@ -40,3 +40,9 @@ curl --socks5-hostname 127.0.0.1:9050 https://ipwho.is/ -> check first
 
 curl --socks5 127.0.0.1:9050 [target_host]
 ```
+
+```yml
+rate_limit_bypass
+
+X-Forwarded-For: {ip}
+```
