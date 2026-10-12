@@ -13,4 +13,6 @@ weight: 1
 
 ```bash 
 grep -i -o '.\{0,50\}pico.\{0,50\}' heapdump-1788535061150.heapsnapshot
+
+find / -name "*.txt" -> find all files which start with .txt
 ```

