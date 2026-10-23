@@ -112,3 +112,8 @@ Prove: enter recovered value in the unpatched application
 | Stepping enters long library code | Use step over or a breakpoint after the call |
 
 References: [GUI manual](https://help.x64dbg.com/en/latest/gui/index.html), [bp command](https://help.x64dbg.com/en/latest/commands/breakpoint-control/SetBPX.html).
+
+## Related playbooks
+
+- [Native runtime debugging](../../reversing-expl/dynamic-debugging/)
+- [Native binary triage](../../reversing-expl/triage/)

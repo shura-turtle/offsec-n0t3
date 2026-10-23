@@ -125,3 +125,8 @@ output hash and validation: <values>
 ```
 
 References: [fls](https://www.sleuthkit.org/sleuthkit/man/fls.html), [icat](https://www.sleuthkit.org/sleuthkit/man/icat.html), [tsk_recover](https://www.sleuthkit.org/sleuthkit/man/tsk_recover.html), [mactime](https://www.sleuthkit.org/sleuthkit/man/mactime.html).
+
+## Related playbooks
+
+- [File signatures and bounded carving](../../steganograph-expl/archives-carving/)
+- [Artifact triage](../../steganograph-expl/triage/)

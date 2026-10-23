@@ -97,3 +97,7 @@ A valid QR can decode to a hint while the PNG itself contains another payload. R
 | No decode | Visibility, contrast, geometry, supported symbology or damage |
 
 Reference: [ZBar upstream project](https://github.com/mchehab/zbar).
+
+## Related playbooks
+
+- [Image/QR inspection](../../steganograph-expl/png-jpeg/)

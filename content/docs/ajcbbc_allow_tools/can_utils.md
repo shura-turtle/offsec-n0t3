@@ -128,3 +128,7 @@ canplayer -h
 Check interface existence/up state, tunnel routing, chosen ID filter and whether the remote actually emits traffic. A CAN interface can be up while a tunnel is disconnected.
 
 References: [can-utils](https://github.com/linux-can/can-utils), [candump options](https://github.com/linux-can/can-utils/blob/master/candump.c), [canplayer options](https://github.com/linux-can/can-utils/blob/master/canplayer.c).
+
+## Related playbooks
+
+- [CAN bus state and replay](../../network-expl/can-bus/)

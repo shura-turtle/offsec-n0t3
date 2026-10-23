@@ -119,3 +119,8 @@ Compare LNK targets, Jump List paths, MFT entries and Prefetch execution traces 
 Keep the exported timestamp field name, timezone, source artifact and record ID. Sort a copy in Timeline Explorer; do not overwrite original exports. State which artifact directly shows an action and which only provides supporting context.
 
 References: [tool catalog](https://ericzimmerman.github.io/), [PECmd](https://github.com/EricZimmerman/PECmd), [EvtxECmd](https://github.com/EricZimmerman/evtx), [MFTECmd](https://github.com/EricZimmerman/MFTECmd), [LECmd](https://github.com/EricZimmerman/LECmd), [JLECmd](https://github.com/EricZimmerman/JLECmd), [RECmd](https://github.com/EricZimmerman/RECmd).
+
+## Related playbooks
+
+- [Tool and artifact routing](../../tools-cheatsheet/approved-tools-map/)
+- [Preserve original artifact evidence](../../steganograph-expl/triage/)

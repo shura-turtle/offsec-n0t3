@@ -114,3 +114,8 @@ The doubled `%%` belongs to shell `printf`, which emits a literal `%`. Assembly 
 | Address-relative instruction differs | Relocation/link context |
 
 Reference: [LLVM llvm-mc manual](https://llvm.org/docs/CommandGuide/llvm-mc.html).
+
+## Related playbooks
+
+- [Architecture and static analysis](../../reversing-expl/static-analysis/)
+- [Byte transforms](../../reversing-expl/python-snippets/)

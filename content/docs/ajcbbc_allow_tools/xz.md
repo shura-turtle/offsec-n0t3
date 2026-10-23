@@ -103,3 +103,7 @@ Inspect names before extraction. For one chosen regular member, use `extractfile
 | Decompression works, file still unreadable | Another container/encoding layer |
 
 Reference: [XZ manual](https://tukaani.org/xz/man/xz.1.html).
+
+## Related playbooks
+
+- [Archives and embedded files](../../steganograph-expl/archives-carving/)

@@ -108,3 +108,8 @@ Use filenames plus timestamps to reconstruct a plausible sequence. A missing coo
 Use `-b` output with binary-preserving shell redirection in WSL. Do not paste thumbnail bytes through a text editor. Check that the output file is nonempty and starts with the expected signature before continuing.
 
 Reference: [ExifTool command documentation](https://github.com/exiftool/exiftool/blob/master/exiftool) and [official site](https://exiftool.org/).
+
+## Related playbooks
+
+- [Metadata and carrier triage](../../steganograph-expl/triage/)
+- [PNG/JPEG containers](../../steganograph-expl/png-jpeg/)

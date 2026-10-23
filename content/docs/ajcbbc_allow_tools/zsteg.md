@@ -133,3 +133,8 @@ This is one explicit layout, not a decoder for every stego scheme. Palette indic
 | No meaningful LSB result | Check metadata, appended data, visible channels and challenge hints |
 
 Reference: [zsteg usage and extraction examples](https://github.com/zed-0xff/zsteg).
+
+## Related playbooks
+
+- [Explicit image LSB extraction](../../steganograph-expl/images-lsb/)
+- [Image container analysis](../../steganograph-expl/png-jpeg/)

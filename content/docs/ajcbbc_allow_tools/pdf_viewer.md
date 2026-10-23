@@ -83,3 +83,7 @@ The PDF viewer itself has application-specific launch arguments. The commands ab
 | Which raw objects/revisions exist? | qpdf plus original-byte inspection |
 
 Reference: [Adobe Reader](https://get.adobe.com/reader/); attachment controls depend on the selected viewer.
+
+## Related playbooks
+
+- [PDF and document analysis](../../steganograph-expl/pdf-documents/)

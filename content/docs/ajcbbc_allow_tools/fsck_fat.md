@@ -99,3 +99,8 @@ The hash difference shows the copy changed; it does not establish which recovere
 If the objective is recovering a specific file and Sleuth Kit can already extract a valid copy, further repairs can add ambiguity. Save the recovered file, its source record and the read-only diagnosis. Repair is useful when it unlocks a necessary next step, not as a required action for every FAT image.
 
 Reference: [dosfstools fsck.fat manual](https://github.com/dosfstools/dosfstools/blob/master/manpages/fsck.fat.8.in).
+
+## Related playbooks
+
+- [Preserve and inspect artifacts](../../steganograph-expl/triage/)
+- [Bounded carving](../../steganograph-expl/archives-carving/)

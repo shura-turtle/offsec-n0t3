@@ -102,3 +102,8 @@ The launcher’s file path is a positional argument, and `&` is PowerShell’s c
 | Huge/binary artifact | Extract useful text with the appropriate parser first |
 
 Reference: [Notepad++ search manual source](https://github.com/notepad-plus-plus/npp-usermanual/blob/master/content/docs/searching.md).
+
+## Related playbooks
+
+- [Text and Unicode](../../steganograph-expl/text-unicode/)
+- [Source disclosure](../../web-expl/source-disclosure/)

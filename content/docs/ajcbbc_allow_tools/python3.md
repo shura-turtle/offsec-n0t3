@@ -1077,3 +1077,7 @@ TCP reads are not message boundaries. Buffer data until a delimiter or documente
 | EOF | Peer closed; preserve all bytes received before closure |
 
 References: [Python standard library](https://docs.python.org/3/library/index.html), [socket](https://docs.python.org/3/library/socket.html), [struct](https://docs.python.org/3/library/struct.html), [urllib.request](https://docs.python.org/3/library/urllib.request.html).
+
+## Related playbooks
+
+- [Offline Python snippet library](../../tools-cheatsheet/python-library/)

@@ -101,3 +101,9 @@ Choose a short list of evidence-based candidate values, mark only the intended p
 `java -jar FILE.jar` asks Java to launch the application packaged in that JAR. `-jar` is a Java switch, not a Burp scanning option. The `burpsuite` launcher may be a distribution wrapper; inspect its supplied help if needed. These notes use the GUI for testing.
 
 References: [PortSwigger getting started](https://portswigger.net/burp/documentation/desktop/getting-started), [Repeater documentation](https://portswigger.net/burp/documentation/desktop/tools/repeater).
+
+## Related playbooks
+
+- [Web payload index](../../web-expl/)
+- [Encoding and filters](../../web-expl/encoding-filters/)
+- [WebSockets](../../web-expl/websockets/)

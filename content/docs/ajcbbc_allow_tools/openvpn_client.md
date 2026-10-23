@@ -102,3 +102,8 @@ time of test: <timezone included>
 ```
 
 Reference: [OpenVPN Connect profile import](https://openvpn.net/connect-docs/import-profile.html).
+
+## Related playbooks
+
+- [Network starting workflow](../../network-expl/)
+- [Persistent TCP/UDP sessions](../../network-expl/tcp-udp/)

@@ -122,3 +122,7 @@ JSON structure varies with the qpdf JSON version. Inspect keys before writing a 
 PDFs can contain older objects and cross-reference revisions. A successful qpdf rewrite may retain only the resolved current structure. Preserve the original, inspect its raw bytes for prior evidence, and distinguish original offsets from rewritten offsets.
 
 Reference: [qpdf CLI manual](https://qpdf.readthedocs.io/en/stable/cli.html).
+
+## Related playbooks
+
+- [PDF and document analysis](../../steganograph-expl/pdf-documents/)

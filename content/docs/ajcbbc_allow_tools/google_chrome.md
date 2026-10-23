@@ -111,3 +111,9 @@ In **Network → WS**, select the connection and inspect messages. Record direct
 | Flag-looking string is rejected | Decoy, encoding layer, prefix or incomplete generation |
 
 References: [Network guide](https://developer.chrome.com/docs/devtools/network), [JavaScript breakpoints](https://developer.chrome.com/docs/devtools/javascript/breakpoints).
+
+## Related playbooks
+
+- [Web first 10 minutes](../../web-expl/methodology/)
+- [XSS context testing](../../web-expl/xss/)
+- [WebSockets](../../web-expl/websockets/)

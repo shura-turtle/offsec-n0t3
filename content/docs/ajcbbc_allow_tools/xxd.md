@@ -115,3 +115,8 @@ xxd -g 1 png_signature.bin
 This creates only an eight-byte signature, not a valid PNG. It is useful for comparing a suspected damaged header or testing your own parser’s signature check.
 
 Reference: [xxd manual](https://github.com/vim/vim/blob/master/runtime/doc/xxd.1).
+
+## Related playbooks
+
+- [Binary strings and encodings](../../reversing-expl/strings-encodings/)
+- [Bounded file carving](../../steganograph-expl/archives-carving/)

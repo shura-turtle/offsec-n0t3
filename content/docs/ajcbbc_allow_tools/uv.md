@@ -106,3 +106,7 @@ uv pip freeze --python .venv/bin/python > solver_requirements.txt
 Record the solver script, interpreter and required input artifacts together. A frozen requirements file documents your environment but does not bundle offline wheels or system libraries.
 
 Reference: [uv environment guide](https://docs.astral.sh/uv/pip/environments/), [CLI reference](https://docs.astral.sh/uv/reference/cli/).
+
+## Related playbooks
+
+- [Offline Python snippet library](../../tools-cheatsheet/python-library/)

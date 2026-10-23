@@ -104,3 +104,8 @@ Switch to IL view for the exact operations and branch targets. Trace locals and 
 In `.\dnSpy.exe 'C:\CTF\challenge.exe'`, the path is a positional file argument. `.\` refers to the current Windows directory. Breakpoints and stepping are debugger actions, not Linux-style `-r`/`-d` flags.
 
 Reference: [dnSpyEx project and debugger features](https://github.com/dnSpyEx/dnSpy).
+
+## Related playbooks
+
+- [.NET reversing](../../reversing-expl/dotnet/)
+- [Dynamic debugging](../../reversing-expl/dynamic-debugging/)

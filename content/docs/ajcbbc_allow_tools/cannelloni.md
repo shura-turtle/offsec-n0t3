@@ -113,3 +113,7 @@ Keep the capture running during one known interaction. Note its start time and t
 Record the command’s documented meaning, required mode/state, payload format and expected reply. Transport success means frames moved; challenge success must be established by its own state/output.
 
 Reference: [upstream usage and transports](https://github.com/mguentner/cannelloni). The tournament list points to a fork; use the installed build’s help if options differ.
+
+## Related playbooks
+
+- [CAN tunnel workflow](../../network-expl/can-bus/)

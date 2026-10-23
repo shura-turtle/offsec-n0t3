@@ -146,3 +146,8 @@ Here `p`, `q`, `n`, `e` and `c` are the actual recovered/supplied integers. Veri
 The approved tool may have attacks requiring SageMath or external factorization helpers. Its presence in a menu does not show the helper is installed. Record “dependency missing” separately from “attack ran and failed.” Online factor databases also depend on tournament network access.
 
 References: [RsaCtfTool current CLI and examples](https://github.com/RsaCtfTool/RsaCtfTool), [Python integer operations](https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex).
+
+## Related playbooks
+
+- [Crypto and obfuscation recognition](../../reversing-expl/crypto-obfuscation/)
+- [Python and crypto reference map](../../tools-cheatsheet/python-library/)

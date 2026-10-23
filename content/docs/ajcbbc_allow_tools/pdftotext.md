@@ -102,3 +102,7 @@ If a regex fails across pages, check form-feed bytes, nonbreaking spaces and unu
 | Password required | Use the challenge-provided password; inspect encryption with qpdf |
 
 Reference: [Poppler pdftotext manual source](https://github.com/tsdgeos/poppler_mirror/blob/master/utils/pdftotext.1).
+
+## Related playbooks
+
+- [PDF and document analysis](../../steganograph-expl/pdf-documents/)

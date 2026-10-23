@@ -114,3 +114,8 @@ validation: <parser result / checksum / recovered content>
 This makes nested firmware/archive challenges reproducible and avoids confusing offsets from different layers.
 
 Reference: [official Binwalk project](https://github.com/ReFirmLabs/binwalk).
+
+## Related playbooks
+
+- [Archive carving](../../steganograph-expl/archives-carving/)
+- [Steganography triage](../../steganograph-expl/triage/)

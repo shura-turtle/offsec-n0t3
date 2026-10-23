@@ -114,3 +114,7 @@ SSH has packet framing, authentication, sequence numbers and potentially rekeyin
 | Keys found but bytes remain wrong | Session/direction/cipher/framing/rekey context |
 
 References: [project setup](https://github.com/fox-it/OpenSSH-Session-Key-Recovery), [plugin options and output](https://github.com/fox-it/OpenSSH-Session-Key-Recovery/blob/main/volatility3/openssh_sessionkeys.py).
+
+## Related playbooks
+
+- [TLS/SSH evidence workflow](../../network-expl/tls-ssh/)

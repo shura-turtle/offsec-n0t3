@@ -130,3 +130,9 @@ remaining limitation: <missing packets / encryption / none known>
 ```
 
 References: [Wireshark User’s Guide](https://www.wireshark.org/docs/wsug_html_chunked/), [TCP analysis](https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html).
+
+## Related playbooks
+
+- [Packet triage](../../network-expl/packet-triage/)
+- [HTTP and stream recovery](../../network-expl/http-streams/)
+- [Wi-Fi captures](../../network-expl/wifi/)

@@ -142,3 +142,8 @@ Join process start/exit times, command lines, network observations and recovered
 | Extracted file incomplete | Missing resident pages/cache state |
 
 References: [Windows tutorial](https://volatility3.readthedocs.io/en/latest/getting-started-windows-tutorial.html), [Linux tutorial](https://volatility3.readthedocs.io/en/latest/getting-started-linux-tutorial.html), [dumpfiles](https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.dumpfiles.html), [memmap](https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.memmap.html), [registry printkey](https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.registry.printkey.html).
+
+## Related playbooks
+
+- [Runtime evidence and memory](../../reversing-expl/dynamic-debugging/)
+- [TLS/SSH secrets versus metadata](../../network-expl/tls-ssh/)

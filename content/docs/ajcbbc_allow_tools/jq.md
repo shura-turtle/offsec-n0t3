@@ -126,3 +126,9 @@ jq -Rs . multiline_text.txt > one_json_string.json
 | Many unexpected values | Recursive filter too broad; keep paths/context |
 
 Reference: [jq manual](https://jqlang.org/manual/).
+
+## Related playbooks
+
+- [GraphQL testing](../../web-expl/graphql/)
+- [NoSQL injection](../../web-expl/nosqli/)
+- [Source map disclosure](../../web-expl/source-disclosure/)

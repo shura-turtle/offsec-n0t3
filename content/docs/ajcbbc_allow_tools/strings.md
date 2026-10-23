@@ -99,3 +99,8 @@ Scan a selected process dump from Volatility before the entire memory image. Tha
 `12a0` is a byte offset inside the scanned file when using `-t x`. It is not automatically a virtual address or a line number. For ELF/PE files, section mapping is needed to locate the corresponding runtime address.
 
 Reference: [GNU strings manual](https://sourceware.org/binutils/docs/binutils/strings.html).
+
+## Related playbooks
+
+- [Steganography triage](../../steganograph-expl/triage/)
+- [Strings and encodings](../../reversing-expl/strings-encodings/)

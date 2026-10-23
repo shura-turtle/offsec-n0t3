@@ -9,6 +9,20 @@ Tournament tool notes: **what it is for → useful commands → CTF walkthrough 
 
 Each page now includes deeper CTF workflows and worked examples. CLI pages explain their options in tables; GUI pages explain the corresponding controls and how to move useful evidence into CLI tools.
 
+## Technique playbooks and visual guides
+
+Use these when you know the artifact or suspected vulnerability and need the next test:
+
+- [Web payloads and database fingerprints](../web-expl/)
+- [Network captures and stateful protocols](../network-expl/)
+- [Steganography, images, documents and audio](../steganograph-expl/)
+- [Reversing, Ghidra and debugger workflows](../reversing-expl/)
+- [Visual CyberChef recipes](../tools-cheatsheet/cyberchef-cheatsheet/)
+- [All 39 tools mapped to techniques](../tools-cheatsheet/approved-tools-map/)
+- [Prepared Python snippet library](../tools-cheatsheet/python-library/)
+
+Each individual tool page also links back to relevant playbooks.
+
 For encoding and cryptography code, use the [Python cookbook](python3/#cookbook-map): Base encodings, XOR, classical ciphers, hashes/KDFs, AES modes, ChaCha20/XChaCha20, authenticated encryption and RSA.
 
 ## Read a command before copying it

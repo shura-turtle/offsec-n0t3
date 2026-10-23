@@ -131,3 +131,9 @@ The follow report contains framing/labels around payloads; it is not a raw binar
 A field can be absent because the installed version differs, the traffic was not decoded, or that packet has no such field.
 
 Reference: [TShark manual](https://www.wireshark.org/docs/man-pages/tshark.html).
+
+## Related playbooks
+
+- [Packet triage](../../network-expl/packet-triage/)
+- [HTTP object/stream extraction](../../network-expl/http-streams/)
+- [DNS reconstruction](../../network-expl/dns/)

@@ -117,3 +117,8 @@ If output starts with `PK`, PNG magic or another file signature, download it as 
 Save the recipe and record which inputs are text versus raw bytes at each step.
 
 Reference: [official project and usage](https://github.com/gchq/CyberChef).
+
+## Related playbooks
+
+- [Visual CyberChef recipes](../../tools-cheatsheet/cyberchef-cheatsheet/)
+- [Reusable byte helpers](../../tools-cheatsheet/python-library/)

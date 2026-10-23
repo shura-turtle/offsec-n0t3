@@ -163,3 +163,8 @@ The digest and signing scheme must match. A failed verification can mean changed
 | Algorithm unavailable | OpenSSL 3 provider configuration and build support |
 
 References: [enc](https://docs.openssl.org/3.0/man1/openssl-enc/), [pkeyutl](https://docs.openssl.org/3.0/man1/openssl-pkeyutl/), [s_client](https://docs.openssl.org/3.0/man1/openssl-s_client/), [x509](https://docs.openssl.org/3.0/man1/openssl-x509/).
+
+## Related playbooks
+
+- [TLS/SSH capture analysis](../../network-expl/tls-ssh/)
+- [CyberChef key and IV formats](../../tools-cheatsheet/cyberchef-cheatsheet/)

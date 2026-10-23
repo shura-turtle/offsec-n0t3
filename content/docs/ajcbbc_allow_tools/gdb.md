@@ -175,3 +175,8 @@ gdb -q -batch \
 | Program waiting | Inspect expected stdin/protocol rather than assuming a crash |
 
 References: [stepping](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Continuing-and-Stepping.html), [memory search](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Searching-Memory.html), [dumping memory](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Dump_002fRestore-Files.html).
+
+## Related playbooks
+
+- [Runtime debugging](../../reversing-expl/dynamic-debugging/)
+- [Reversible checker models](../../reversing-expl/python-snippets/)

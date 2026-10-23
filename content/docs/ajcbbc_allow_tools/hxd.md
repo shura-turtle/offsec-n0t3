@@ -89,3 +89,8 @@ Open both files and use file comparison. Record changes by offset and length. Co
 HxD’s menus are not switches to append to a shell command. For repeatable scripting, use xxd/Python and record the exact offsets.
 
 Reference: [HxD features and usage](https://mh-nexus.de/en/hxd/).
+
+## Related playbooks
+
+- [PNG/JPEG structure](../../steganograph-expl/png-jpeg/)
+- [Byte and encoding analysis](../../reversing-expl/strings-encodings/)

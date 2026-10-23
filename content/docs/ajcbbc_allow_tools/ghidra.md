@@ -104,3 +104,9 @@ Open the graph for the validation function, mark the blocks leading to rejection
 `./ghidraRun` is the GUI launcher. `./` means execute a file in the current directory; it is not an analysis flag. Headless analysis has a separate launcher and project/script arguments. For an interactive tournament solve, the GUI flow above preserves labels, types and references in a saved project.
 
 Reference: [Ghidra beginner guide](https://ghidra.re/ghidra_docs/GhidraClass/Beginner/Introduction_to_Ghidra_Student_Guide.html).
+
+## Related playbooks
+
+- [Deep Ghidra cheatsheet](../../reversing-expl/ghidra-cheatsheet/)
+- [Built-ins and optional extensions](../../reversing-expl/ghidra-plugins/)
+- [Static analysis](../../reversing-expl/static-analysis/)

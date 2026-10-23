@@ -88,3 +88,8 @@ conclusion: <what this directly shows>
 ```
 
 Reference: [Autopsy user documentation](https://sleuthkit.org/autopsy/docs/user-docs/4.22.0/).
+
+## Related playbooks
+
+- [Artifact triage](../../steganograph-expl/triage/)
+- [Archive/carving workflow](../../steganograph-expl/archives-carving/)

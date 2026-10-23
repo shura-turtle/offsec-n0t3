@@ -117,3 +117,8 @@ Imports help choose investigation points. Their presence alone does not establis
 | Several arithmetic checks | Constraints shared across input positions |
 
 Reference: [GNU objdump manual](https://sourceware.org/binutils/docs/binutils/objdump.html).
+
+## Related playbooks
+
+- [Binary triage](../../reversing-expl/triage/)
+- [Static analysis](../../reversing-expl/static-analysis/)

@@ -124,3 +124,8 @@ Use the assigned host/port. A successful TCP connection confirms only that conne
 CAN modules, live packet capture, GUI display, disk-device access and VPN routes depend on the provided host setup. Diagnose the missing capability explicitly. Restarting the whole WSL distribution can interrupt all live challenge sessions; preserve state before any restart.
 
 References: [working across filesystems](https://learn.microsoft.com/en-us/windows/wsl/filesystems), [WSL configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config).
+
+## Related playbooks
+
+- [Tool-to-technique map](../../tools-cheatsheet/approved-tools-map/)
+- [Offline Python library](../../tools-cheatsheet/python-library/)

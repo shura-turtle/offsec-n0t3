@@ -111,3 +111,9 @@ A `files.log` entry records analyzer observations. Missing filename/length field
 Large byte counts, uncommon services and brief connections help prioritize. Combine direction, endpoints, time window and application evidence. Do not label a transfer as exfiltration from volume alone.
 
 References: [Zeek quick start](https://docs.zeek.org/en/current/quickstart.html), [log reference](https://docs.zeek.org/en/current/reference/logs/index.html).
+
+## Related playbooks
+
+- [Packet triage](../../network-expl/packet-triage/)
+- [Protocol analysis](../../network-expl/protocols/)
+- [DNS reconstruction](../../network-expl/dns/)
