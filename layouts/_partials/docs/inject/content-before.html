@@ -1,0 +1,5 @@
+<div id="field-content" tabindex="-1"></div>
+{{ if and (not .IsHome) (ne .RelPermalink ("docs/" | relURL)) }}
+<div class="page-topline" data-collection="{{ partial "collection-key" . }}"><nav aria-label="Breadcrumb"><a href="{{ "docs/" | relURL }}">NOTEBOOK</a>{{ with .Parent }}<span>/</span><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</nav><span>{{ .ReadingTime }} MIN READ</span></div>
+{{ if not (findRE `(?i)^\s*<h1[ >]` .Content) }}<h1 class="page-title">{{ .Title }}</h1>{{ end }}
+{{ end }}

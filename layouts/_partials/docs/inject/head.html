@@ -1,0 +1,4 @@
+<meta name="theme-color" content="#252637">
+{{ $script := resources.Get "fieldbook.js" | minify | fingerprint }}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+<link rel="icon" href="{{ "images/fieldmark.svg" | relURL }}" type="image/svg+xml">

@@ -2,5 +2,14 @@ baseURL = 'https://shura-turtle.github.io/'
 title = 'offsec-n0t3'
 theme = 'hugo-book'
 
+[params]
+  BookTheme = 'light'
+  BookSearch = true
+  BookComments = false
+
+[markup.highlight]
+  style = 'nord'
+  tabWidth = 2
+
 [markup.goldmark.renderer]
   unsafe = true

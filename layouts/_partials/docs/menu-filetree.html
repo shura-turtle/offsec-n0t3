@@ -1,0 +1,22 @@
+{{ with (partialCached "docs/menu-section" .Site) }}
+<ul class="field-tree">
+  {{ range (where .Pages "Params.bookHidden" "ne" true) }}
+  {{ if .IsSection }}
+  <li class="field-tree-section" data-collection="{{ partial "collection-key" . }}">
+    <details {{ if or (eq . $) (.IsAncestor $) }}open{{ end }}>
+      <summary><span>{{ .LinkTitle }}</span><span class="tree-count">{{ len .RegularPagesRecursive }}</span></summary>
+      <ul><li><a href="{{ .RelPermalink }}" class="section-overview {{ if eq . $ }}active{{ end }}">Overview ↗</a></li>
+      {{ template "field-children" (dict "Section" . "Current" $) }}</ul>
+    </details>
+  </li>
+  {{ else }}
+  <li><a href="{{ .RelPermalink }}" class="{{ if eq . $ }}active{{ end }}">{{ .LinkTitle }}</a></li>
+  {{ end }}
+  {{ end }}
+</ul>
+{{ end }}
+{{ define "field-children" }}
+{{ range (where .Section.Pages "Params.bookHidden" "ne" true) }}
+<li>{{ if .IsSection }}<details {{ if or (eq . $.Current) (.IsAncestor $.Current) }}open{{ end }}><summary>{{ .LinkTitle }}</summary><ul><li><a href="{{ .RelPermalink }}">Overview ↗</a></li>{{ template "field-children" (dict "Section" . "Current" $.Current) }}</ul></details>{{ else if .Content }}<a href="{{ .RelPermalink }}" class="{{ if eq . $.Current }}active{{ end }}" {{ if eq . $.Current }}aria-current="page"{{ end }}>{{ .LinkTitle }}</a>{{ end }}</li>
+{{ end }}
+{{ end }}

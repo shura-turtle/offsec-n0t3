@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 310" role="img" aria-labelledby="title desc">
+<title id="title">Choose a tool from evidence</title><desc id="desc">Original workflow diagram. Preserve input, identify the format, choose a tool, inspect output, and verify the result.</desc>
+<rect width="1040" height="310" rx="12" fill="#151c20"/>
+<g font-family="monospace" fill="#dbe7e4"><text x="32" y="42" font-size="15" fill="#88dcb2">FIELD ROUTE // EVIDENCE BEFORE TRANSFORM</text>
+<g fill="#20312e" stroke="#88dcb2"><rect x="30" y="80" width="175" height="110" rx="5"/><rect x="230" y="80" width="175" height="110" rx="5"/><rect x="430" y="80" width="175" height="110" rx="5"/><rect x="630" y="80" width="175" height="110" rx="5"/><rect x="830" y="80" width="180" height="110" rx="5"/></g>
+<g font-size="17" text-anchor="middle"><text x="117" y="118">PRESERVE</text><text x="317" y="118">IDENTIFY</text><text x="517" y="118">CHOOSE</text><text x="717" y="118">INSPECT</text><text x="920" y="118">VERIFY</text></g>
+<g font-size="12" text-anchor="middle" fill="#aebfba"><text x="117" y="148">copy + hash</text><text x="317" y="148">magic + structure</text><text x="517" y="148">one operation</text><text x="717" y="148">bytes + context</text><text x="920" y="148">proof + record</text></g>
+<g font-size="22" fill="#f4a397"><text x="209" y="140">›</text><text x="409" y="140">›</text><text x="609" y="140">›</text><text x="809" y="140">›</text></g>
+<text x="32" y="235" font-size="13">PCAP → Wireshark / TShark     IMAGE → ExifTool / zsteg     BINARY → Ghidra / debugger</text>
+<text x="32" y="266" font-size="13" fill="#aebfba">Encoded output → CyberChef / Python → validate full result → save exact recipe</text></g></svg>

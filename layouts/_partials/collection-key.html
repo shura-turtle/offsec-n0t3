@@ -1,0 +1,13 @@
+{{- $key := "notes" -}}
+{{- $path := .RelPermalink -}}
+{{- if strings.Contains $path "/web-expl/" -}}{{- $key = "web" -}}
+{{- else if strings.Contains $path "/network-expl/" -}}{{- $key = "network" -}}
+{{- else if strings.Contains $path "/steganograph-expl/" -}}{{- $key = "stego" -}}
+{{- else if strings.Contains $path "/reversing-expl/" -}}{{- $key = "reversing" -}}
+{{- else if strings.Contains $path "/windows_rev/" -}}{{- $key = "windows" -}}
+{{- else if strings.Contains $path "/tools-cheatsheet/" -}}{{- $key = "tools" -}}
+{{- else if strings.Contains $path "/ajcbbc_allow_tools/" -}}{{- $key = "approved" -}}
+{{- else if strings.Contains $path "/picoctf/" -}}{{- $key = "pico" -}}
+{{- else if strings.Contains $path "/scripts/" -}}{{- $key = "scripts" -}}
+{{- end -}}
+{{- return $key -}}

@@ -1,0 +1,8 @@
+{{ define "main" }}
+{{ if eq .RelPermalink ("docs/" | relURL) }}
+  {{ partial "field-dashboard" . }}
+{{ else }}
+  <article class="markdown book-article">{{ .Content }}</article>
+  {{ if .Pages }}<div class="section-directory"><div class="directory-label">EXPLORE THIS SECTION <span>{{ len .Pages }} ENTRIES</span></div><div class="note-grid">{{ range .Pages }}<a class="note-card" href="{{ .RelPermalink }}"><span class="note-icon" aria-hidden="true">{{ if .IsSection }}▦{{ else }}⌘{{ end }}</span><strong>{{ .LinkTitle }}</strong><span>{{ if .IsSection }}{{ len .RegularPagesRecursive }} notes{{ else }}{{ .ReadingTime }} min read{{ end }}</span><span class="note-arrow" aria-hidden="true">↗</span></a>{{ end }}</div></div>{{ end }}
+{{ end }}
+{{ end }}
