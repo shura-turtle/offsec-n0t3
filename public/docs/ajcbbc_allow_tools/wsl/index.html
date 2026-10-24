@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: running the tournament’s Linux CLI tools on Windows.
+Run in: PowerShell to manage WSL; Bash inside the installed distribution.
+Enter the supplied distribution wsl --status wsl --list --verbose wsl # Or choose a name shown above wsl -d UbuntuWindows ↔ Linux paths # WSL: replace Competitor with your Windows account cd /mnt/c/Users/Competitor/Downloads mkdir -p ~/ajcbbc/challenge01 cp challenge.bin ~/ajcbbc/challenge01/ cd ~/ajcbbc/challenge01 # Open the current WSL folder in Windows Explorer explorer.exe . # Convert path syntax wslpath -w &#34;$PWD&#34; wslpath -u &#39;C:\Users\Competitor\Downloads\challenge.bin&#39;Windows Explorer can access Linux files using \\wsl$\&lt;distribution&gt;\home\&lt;user&gt;.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/wsl/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Windows Subsystem for Linux (WSL)">
+  <meta property="og:description" content="Use for: running the tournament’s Linux CLI tools on Windows.
+Run in: PowerShell to manage WSL; Bash inside the installed distribution.
+Enter the supplied distribution wsl --status wsl --list --verbose wsl # Or choose a name shown above wsl -d UbuntuWindows ↔ Linux paths # WSL: replace Competitor with your Windows account cd /mnt/c/Users/Competitor/Downloads mkdir -p ~/ajcbbc/challenge01 cp challenge.bin ~/ajcbbc/challenge01/ cd ~/ajcbbc/challenge01 # Open the current WSL folder in Windows Explorer explorer.exe . # Convert path syntax wslpath -w &#34;$PWD&#34; wslpath -u &#39;C:\Users\Competitor\Downloads\challenge.bin&#39;Windows Explorer can access Linux files using \\wsl$\&lt;distribution&gt;\home\&lt;user&gt;.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Windows Subsystem for Linux (WSL)">
+  <meta itemprop="description" content="Use for: running the tournament’s Linux CLI tools on Windows.
+Run in: PowerShell to manage WSL; Bash inside the installed distribution.
+Enter the supplied distribution wsl --status wsl --list --verbose wsl # Or choose a name shown above wsl -d UbuntuWindows ↔ Linux paths # WSL: replace Competitor with your Windows account cd /mnt/c/Users/Competitor/Downloads mkdir -p ~/ajcbbc/challenge01 cp challenge.bin ~/ajcbbc/challenge01/ cd ~/ajcbbc/challenge01 # Open the current WSL folder in Windows Explorer explorer.exe . # Convert path syntax wslpath -w &#34;$PWD&#34; wslpath -u &#39;C:\Users\Competitor\Downloads\challenge.bin&#39;Windows Explorer can access Linux files using \\wsl$\&lt;distribution&gt;\home\&lt;user&gt;.">
+  <meta itemprop="wordCount" content="499">
+
+<title>Windows Subsystem for Linux (WSL) • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/wsl/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="active" aria-current="page">Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Windows Subsystem for Linux (WSL)</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#enter-the-supplied-distribution">Enter the supplied distribution</a></li>
+    <li><a href="#windows--linux-paths">Windows ↔ Linux paths</a></li>
+    <li><a href="#basic-workflow">Basic workflow</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#ctf-run-one-linux-command-from-powershell">CTF: run one Linux command from PowerShell</a></li>
+    <li><a href="#ctf-preserve-binary-outputs">CTF: preserve binary outputs</a></li>
+    <li><a href="#ctf-fix-copied-shell-scripts-with-crlf-line-endings">CTF: fix copied shell scripts with CRLF line endings</a></li>
+    <li><a href="#ctf-distinguish-route-problems-from-tool-problems">CTF: distinguish route problems from tool problems</a></li>
+    <li><a href="#environment-limits-that-matter-in-ctfs">Environment limits that matter in CTFs</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Windows Subsystem for Linux (WSL)</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> running the tournament’s Linux CLI tools on Windows.<br>
+<strong>Run in:</strong> PowerShell to manage WSL; Bash inside the installed distribution.</p>
+<h2 id="enter-the-supplied-distribution">Enter the supplied distribution<a class="anchor" href="#enter-the-supplied-distribution"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>wsl <span style="color:#eceff4">-</span>-status
+</span></span><span style="display:flex;"><span>wsl <span style="color:#eceff4">-</span>-list <span style="color:#eceff4">-</span>-verbose
+</span></span><span style="display:flex;"><span>wsl
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Or choose a name shown above</span>
+</span></span><span style="display:flex;"><span>wsl -d Ubuntu</span></span></code></pre></div><h2 id="windows--linux-paths">Windows ↔ Linux paths<a class="anchor" href="#windows--linux-paths"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># WSL: replace Competitor with your Windows account</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">cd</span> /mnt/c/Users/Competitor/Downloads
+</span></span><span style="display:flex;"><span>mkdir -p ~/ajcbbc/challenge01
+</span></span><span style="display:flex;"><span>cp challenge.bin ~/ajcbbc/challenge01/
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">cd</span> ~/ajcbbc/challenge01
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Open the current WSL folder in Windows Explorer</span>
+</span></span><span style="display:flex;"><span>explorer.exe .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Convert path syntax</span>
+</span></span><span style="display:flex;"><span>wslpath -w <span style="color:#a3be8c">&#34;</span>$PWD<span style="color:#a3be8c">&#34;</span>
+</span></span><span style="display:flex;"><span>wslpath -u <span style="color:#a3be8c">&#39;C:\Users\Competitor\Downloads\challenge.bin&#39;</span></span></span></code></pre></div><p>Windows Explorer can access Linux files using <code>\\wsl$\&lt;distribution&gt;\home\&lt;user&gt;</code>.</p>
+<h2 id="basic-workflow">Basic workflow<a class="anchor" href="#basic-workflow"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#81a1c1">pwd</span>
+</span></span><span style="display:flex;"><span>ls -lah
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">command</span> -v python3 gdb binwalk exiftool
+</span></span><span style="display:flex;"><span>sha256sum challenge.bin
+</span></span><span style="display:flex;"><span>mkdir -p out</span></span></code></pre></div><h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Bash commands belong in WSL; PowerShell uses different quoting and syntax.</li>
+<li>Linux paths and filenames are case sensitive.</li>
+<li>Keep large processing jobs in the Linux filesystem for better performance.</li>
+<li>GUI tools need a functioning display/WSLg setup.</li>
+<li>SocketCAN and <code>vcan</code> depend on the supplied WSL kernel; installed can-utils alone is insufficient.</li>
+<li>VPN connectivity from Windows does not guarantee identical routing in WSL.</li>
+</ul>
+<h2 id="flags-explained">Flags explained<a class="anchor" href="#flags-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Command / flag</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>wsl --status</code></td>
+          <td>Inspect default WSL settings/status</td>
+      </tr>
+      <tr>
+          <td><code>wsl --list --verbose</code></td>
+          <td>List installed distributions and their WSL versions</td>
+      </tr>
+      <tr>
+          <td><code>wsl -d NAME</code></td>
+          <td>Start the selected distribution</td>
+      </tr>
+      <tr>
+          <td><code>wsl --exec COMMAND</code></td>
+          <td>Run a Linux command directly</td>
+      </tr>
+      <tr>
+          <td><code>wslpath -w PATH</code></td>
+          <td>Convert Linux path to Windows form</td>
+      </tr>
+      <tr>
+          <td><code>wslpath -u PATH</code></td>
+          <td>Convert Windows path to Linux form</td>
+      </tr>
+  </tbody>
+</table>
+<p>In the earlier <code>ls -lah</code>, <code>-l</code> selects a long listing, <code>-a</code> includes dotfiles and <code>-h</code> formats sizes for humans. Those are Linux ls options, not WSL management options.</p>
+<h2 id="ctf-run-one-linux-command-from-powershell">CTF: run one Linux command from PowerShell<a class="anchor" href="#ctf-run-one-linux-command-from-powershell"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>wsl <span style="color:#eceff4">-</span>-exec python3 <span style="color:#eceff4">-</span>-version
+</span></span><span style="display:flex;"><span>wsl <span style="color:#eceff4">-</span>-exec python3 -c <span style="color:#a3be8c">&#39;import sys; print(sys.executable)&#39;</span></span></span></code></pre></div><p>Arguments are interpreted across Windows and Linux boundaries. For longer pipelines or complicated quoting, enter the WSL terminal and run the Bash command there.</p>
+<h2 id="ctf-preserve-binary-outputs">CTF: preserve binary outputs<a class="anchor" href="#ctf-preserve-binary-outputs"></a></h2>
+<p>Run binary-generating commands in WSL and redirect there. For example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>xxd -r -p hex.txt &gt; decoded.bin
+</span></span><span style="display:flex;"><span>sha256sum decoded.bin
+</span></span><span style="display:flex;"><span>explorer.exe .</span></span></code></pre></div><p>Then open the same file from Windows Explorer. This avoids routing binary bytes through a text-oriented Windows pipeline.</p>
+<h2 id="ctf-fix-copied-shell-scripts-with-crlf-line-endings">CTF: fix copied shell scripts with CRLF line endings<a class="anchor" href="#ctf-fix-copied-shell-scripts-with-crlf-line-endings"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Inspect whether lines end in CRLF</span>
+</span></span><span style="display:flex;"><span>xxd -l <span style="color:#b48ead">128</span> solve.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Convert a copy using Python; preserve the original</span>
+</span></span><span style="display:flex;"><span>python3 - <span style="color:#a3be8c">&lt;&lt;&#39;PY&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">from pathlib import Path
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">data = Path(&#39;solve.sh&#39;).read_bytes()
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">Path(&#39;solve_unix.sh&#39;).write_bytes(data.replace(b&#39;\r\n&#39;, b&#39;\n&#39;))
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">PY</span>
+</span></span><span style="display:flex;"><span>bash solve_unix.sh</span></span></code></pre></div><p>A <code>bad interpreter</code> message mentioning <code>^M</code> is a clue to CRLF, not necessarily a missing Bash installation.</p>
+<h2 id="ctf-distinguish-route-problems-from-tool-problems">CTF: distinguish route problems from tool problems<a class="anchor" href="#ctf-distinguish-route-problems-from-tool-problems"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ip route get 192.0.2.10
+</span></span><span style="display:flex;"><span>python3 - <span style="color:#a3be8c">&lt;&lt;&#39;PY&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">import socket
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">with socket.create_connection((&#39;192.0.2.10&#39;, 8080), timeout=5):
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">    print(&#39;TCP connection established&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">PY</span></span></span></code></pre></div><p>Use the assigned host/port. A successful TCP connection confirms only that connection, not HTTP correctness or exploit success. Compare with Windows <code>Test-NetConnection</code> when only WSL fails.</p>
+<h2 id="environment-limits-that-matter-in-ctfs">Environment limits that matter in CTFs<a class="anchor" href="#environment-limits-that-matter-in-ctfs"></a></h2>
+<p>CAN modules, live packet capture, GUI display, disk-device access and VPN routes depend on the provided host setup. Diagnose the missing capability explicitly. Restarting the whole WSL distribution can interrupt all live challenge sessions; preserve state before any restart.</p>
+<p>References: <a href="https://learn.microsoft.com/en-us/windows/wsl/filesystems">working across filesystems</a>, <a href="https://learn.microsoft.com/en-us/windows/wsl/wsl-config">WSL configuration</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../tools-cheatsheet/approved-tools-map/">Tool-to-technique map</a></li>
+<li><a href="../../tools-cheatsheet/python-library/">Offline Python library</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/google_chrome/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Google Chrome</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/python3/" class="flex align-center">
+        <span>Python 3</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#enter-the-supplied-distribution">Enter the supplied distribution</a></li>
+    <li><a href="#windows--linux-paths">Windows ↔ Linux paths</a></li>
+    <li><a href="#basic-workflow">Basic workflow</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#ctf-run-one-linux-command-from-powershell">CTF: run one Linux command from PowerShell</a></li>
+    <li><a href="#ctf-preserve-binary-outputs">CTF: preserve binary outputs</a></li>
+    <li><a href="#ctf-fix-copied-shell-scripts-with-crlf-line-endings">CTF: fix copied shell scripts with CRLF line endings</a></li>
+    <li><a href="#ctf-distinguish-route-problems-from-tool-problems">CTF: distinguish route problems from tool problems</a></li>
+    <li><a href="#environment-limits-that-matter-in-ctfs">Environment limits that matter in CTFs</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

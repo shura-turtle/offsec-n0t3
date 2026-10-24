@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Manual CTF playbooks: first probe, proof, fingerprint, payload, next step.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Web Exploitation">
+  <meta property="og:description" content="Manual CTF playbooks: first probe, proof, fingerprint, payload, next step.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
+
+
+  <meta itemprop="name" content="Web Exploitation">
+  <meta itemprop="description" content="Manual CTF playbooks: first probe, proof, fingerprint, payload, next step.">
+  <meta itemprop="wordCount" content="805">
+
+<title>Web Exploitation • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script><link rel="alternate" type="application/rss+xml" href="http://localhost:1313/docs/web-expl/index.xml" title="Web Exploitation" />
+
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-section book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview active">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Web Exploitation</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pick-your-starting-point">Pick your starting point</a></li>
+    <li><a href="#the-loop-for-every-technique">The loop for every technique</a></li>
+    <li><a href="#payload-notation">Payload notation</a></li>
+    <li><a href="#keep-a-tiny-evidence-record">Keep a tiny evidence record</a></li>
+    <li><a href="#tool-map-and-other-artifact-types">Tool map and other artifact types</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/">Fieldnotes</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+
+  <article class="markdown book-article"><h1 id="web-exploitation-field-notes">Web Exploitation Field Notes<a class="anchor" href="#web-exploitation-field-notes"></a></h1>
+<p><strong>Start with a signal. Confirm it. Identify the parser. Then choose the payload.</strong></p>
+<p>Manual reference for CTF challenges and labs. Payloads are ready to adapt in a browser, Burp Repeater, or a request editor. No generated solver is needed to follow the workflows. Availability of notes and tools during your event depends on its rules.</p>
+<h2 id="pick-your-starting-point">Pick your starting point<a class="anchor" href="#pick-your-starting-point"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>What you have / what you see</th>
+          <th>Open this</th>
+          <th>First question</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>A new URL or source archive</td>
+          <td><a href="methodology/">First 10 minutes</a></td>
+          <td>Where does each input go?</td>
+      </tr>
+      <tr>
+          <td>Exposed backups, Git files, debug traces</td>
+          <td><a href="source-disclosure/">Source / backup leaks</a></td>
+          <td>Can source reveal the actual sink and flag location?</td>
+      </tr>
+      <tr>
+          <td>Search, login, sorting, numeric ID</td>
+          <td><a href="sqli/">SQL injection</a></td>
+          <td>Can I change a query condition?</td>
+      </tr>
+      <tr>
+          <td>Confirmed SQLi, unknown database</td>
+          <td><a href="sqli/#3-identify-the-database">Database fingerprinting</a></td>
+          <td>Which engine actually executed the query?</td>
+      </tr>
+      <tr>
+          <td>MySQL / MariaDB</td>
+          <td><a href="sqli-mysql/">MySQL</a></td>
+          <td>Current schema → tables → columns → data</td>
+      </tr>
+      <tr>
+          <td>PostgreSQL</td>
+          <td><a href="sqli-postgresql/">PostgreSQL</a></td>
+          <td>Current schema → catalog → text casts</td>
+      </tr>
+      <tr>
+          <td>SQLite</td>
+          <td><a href="sqli-sqlite/">SQLite</a></td>
+          <td>Read sqlite_schema and CREATE TABLE definitions</td>
+      </tr>
+      <tr>
+          <td>Microsoft SQL Server</td>
+          <td><a href="sqli-mssql/">SQL Server</a></td>
+          <td>DB_NAME → sys.tables → sys.columns</td>
+      </tr>
+      <tr>
+          <td>Oracle</td>
+          <td><a href="sqli-oracle/">Oracle</a></td>
+          <td>DUAL → USER_TABLES → USER_TAB_COLUMNS</td>
+      </tr>
+      <tr>
+          <td>SQLi confirmed, no rows displayed</td>
+          <td><a href="sqli-blind/">Blind / error SQLi</a></td>
+          <td>What reliable true/false signal exists?</td>
+      </tr>
+      <tr>
+          <td>A greeting / preview evaluates expressions</td>
+          <td><a href="ssti/">SSTI</a></td>
+          <td>Server evaluation or browser rendering? Which engine?</td>
+      </tr>
+      <tr>
+          <td>JSON login, MongoDB operators</td>
+          <td><a href="nosqli/">NoSQL injection</a></td>
+          <td>Does the app accept an object where it expects a string?</td>
+      </tr>
+      <tr>
+          <td>Input becomes HTML or JavaScript</td>
+          <td><a href="xss/">XSS</a></td>
+          <td>Which exact browser context contains the input?</td>
+      </tr>
+      <tr>
+          <td>Ping, convert, archive, DNS tools</td>
+          <td><a href="command-injection/">Command injection</a></td>
+          <td>Shell string or direct argument list?</td>
+      </tr>
+      <tr>
+          <td>Filename, download, language/include</td>
+          <td><a href="lfi-traversal/">Traversal / LFI</a></td>
+          <td>Can I read a known file outside the intended directory?</td>
+      </tr>
+      <tr>
+          <td>URL fetcher, webhook, PDF generator</td>
+          <td><a href="ssrf/">SSRF</a></td>
+          <td>Which request does the server itself make?</td>
+      </tr>
+      <tr>
+          <td>XML, SOAP, SVG upload</td>
+          <td><a href="xxe/">XXE</a></td>
+          <td>Does the parser resolve entities?</td>
+      </tr>
+      <tr>
+          <td>Upload form / attachment API</td>
+          <td><a href="file-upload/">File upload</a></td>
+          <td>Accepted, stored, served, interpreted: which stages work?</td>
+      </tr>
+      <tr>
+          <td>Object IDs, roles, reset links</td>
+          <td><a href="auth-idor/">Auth / IDOR</a></td>
+          <td>Does the server enforce ownership and workflow state?</td>
+      </tr>
+      <tr>
+          <td>Three-part bearer token</td>
+          <td><a href="jwt/">JWT</a></td>
+          <td>What is verified, with which key and algorithm?</td>
+      </tr>
+      <tr>
+          <td>Serialized cookie / import</td>
+          <td><a href="deserialization/">Deserialization</a></td>
+          <td>Which format and which server-side classes?</td>
+      </tr>
+      <tr>
+          <td>Deep object merge / JS config</td>
+          <td><a href="prototype-pollution/">Prototype pollution</a></td>
+          <td>Can input alter inherited properties?</td>
+      </tr>
+      <tr>
+          <td>GraphQL endpoint</td>
+          <td><a href="graphql/">GraphQL</a></td>
+          <td>Schema, resolver authorization, hidden arguments</td>
+      </tr>
+      <tr>
+          <td>Cookie-authenticated state changes</td>
+          <td><a href="csrf-cors/">CSRF / CORS</a></td>
+          <td>Can another origin send or read this request?</td>
+      </tr>
+      <tr>
+          <td>OAuth login / account linking</td>
+          <td><a href="oauth/">OAuth</a></td>
+          <td>Are callback, identity, state, and session bound correctly?</td>
+      </tr>
+      <tr>
+          <td>Live socket messages</td>
+          <td><a href="websockets/">WebSockets</a></td>
+          <td>Which message changes state, and when is completion reported?</td>
+      </tr>
+      <tr>
+          <td>Coupon, payment, repeated claim</td>
+          <td><a href="business-logic/">Business logic / races</a></td>
+          <td>Which invariant should hold after two requests?</td>
+      </tr>
+      <tr>
+          <td>Proxy, cache, suspicious framing</td>
+          <td><a href="http-cache/">HTTP / cache issues</a></td>
+          <td>Do two HTTP components disagree?</td>
+      </tr>
+      <tr>
+          <td>PHP loose checks, arrays, hashes</td>
+          <td><a href="php-quirks/">PHP quirks</a></td>
+          <td>Which types and PHP version participate in the check?</td>
+      </tr>
+      <tr>
+          <td>Directory/XML query syntax</td>
+          <td><a href="ldap-xpath/">LDAP / XPath</a></td>
+          <td>What grammar and boolean oracle does the sink expose?</td>
+      </tr>
+      <tr>
+          <td>Redirect / return URL</td>
+          <td><a href="open-redirect/">Open redirect</a></td>
+          <td>What hostname does the consuming parser actually use?</td>
+      </tr>
+      <tr>
+          <td>Blocked words / changed payloads</td>
+          <td><a href="encoding-filters/">Encoding / filters</a></td>
+          <td>What bytes reach the final parser?</td>
+      </tr>
+      <tr>
+          <td>Need prepared Python helpers</td>
+          <td><a href="python-snippets/">Reusable snippets</a></td>
+          <td>Byte transforms, JWT, or a confirmed boolean oracle?</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="the-loop-for-every-technique">The loop for every technique<a class="anchor" href="#the-loop-for-every-technique"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Baseline request
+</span></span><span style="display:flex;"><span>  → one small probe
+</span></span><span style="display:flex;"><span>  → matching negative control
+</span></span><span style="display:flex;"><span>  → repeat the difference
+</span></span><span style="display:flex;"><span>  → fingerprint the parser / engine
+</span></span><span style="display:flex;"><span>  → select the matching payload
+</span></span><span style="display:flex;"><span>  → enumerate actual names / paths
+</span></span><span style="display:flex;"><span>  → read the challenge result</span></span></code></pre></div><p>An error is a clue; repeatable controlled behavior is evidence. A <code>200 OK</code>, accepted upload, or login redirect alone does not prove success.</p>
+<h2 id="payload-notation">Payload notation<a class="anchor" href="#payload-notation"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Notation</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>ctf.invalid</code></td>
+          <td>Placeholder challenge host; replace it</td>
+      </tr>
+      <tr>
+          <td><code>YOUR-LAB-HOST</code></td>
+          <td>Your permitted callback host, if callbacks are part of the challenge</td>
+      </tr>
+      <tr>
+          <td><code>users</code>, <code>flags</code>, <code>flag</code>, <code>/flag.txt</code></td>
+          <td>Example names; enumerate actual names first</td>
+      </tr>
+      <tr>
+          <td><code>-- -</code></td>
+          <td>SQL line comment with a trailing space after the two dashes</td>
+      </tr>
+      <tr>
+          <td><code>NULL,NULL,EXPR</code></td>
+          <td>Example three-column UNION; adapt count, types, and reflected position</td>
+      </tr>
+      <tr>
+          <td><code>1' ... -- -</code></td>
+          <td>Complete example input for a single-quoted query value</td>
+      </tr>
+      <tr>
+          <td><code>SELECT ...</code> in an engine page</td>
+          <td>Standalone query fragment; insert it into your confirmed injection</td>
+      </tr>
+      <tr>
+          <td><code>%XX</code></td>
+          <td>URL-encoded bytes; do not encode twice unless two decoding stages exist</td>
+      </tr>
+  </tbody>
+</table>
+<p>Many pages deliberately show <strong>raw payloads</strong>. In Burp&rsquo;s decoded parameter editor, enter the raw payload; in an actual URL/form body, encode transport-sensitive characters. JSON, URL forms, HTML, and shell quoting are different layers. See <a href="encoding-filters/">encoding</a>.</p>
+<h2 id="keep-a-tiny-evidence-record">Keep a tiny evidence record<a class="anchor" href="#keep-a-tiny-evidence-record"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Route / method:
+</span></span><span style="display:flex;"><span>Parameter and content type:
+</span></span><span style="display:flex;"><span>Baseline response:
+</span></span><span style="display:flex;"><span>True probe / false probe:
+</span></span><span style="display:flex;"><span>Observed difference:
+</span></span><span style="display:flex;"><span>Engine evidence:
+</span></span><span style="display:flex;"><span>Working payload:
+</span></span><span style="display:flex;"><span>Next step / result:</span></span></code></pre></div><p>The reference links at the end of each page are optional further reading. The workflow and payloads are included here for offline use. Examples are not a claim that every payload works on every version or has been tested against your event&rsquo;s environment.</p>
+<h2 id="tool-map-and-other-artifact-types">Tool map and other artifact types<a class="anchor" href="#tool-map-and-other-artifact-types"></a></h2>
+<p><a href="../ajcbbc_allow_tools/burp_suite_community/">Burp</a> → capture/replay exact requests. <a href="../ajcbbc_allow_tools/google_chrome/">Chrome</a> → inspect DOM, network and storage. <a href="../tools-cheatsheet/cyberchef-cheatsheet/">CyberChef recipes</a> → decode evidence. <a href="python-snippets/">Python snippets</a> → repeat confirmed operations.</p>
+<p><a href="../network-expl/">Network</a> · <a href="../steganograph-expl/">Steganography</a> · <a href="../reversing-expl/">Reversing</a> · <a href="../tools-cheatsheet/approved-tools-map/">All 39 tools</a>.</p>
+</article>
+  <div class="section-directory"><div class="directory-label">EXPLORE THIS SECTION <span>32 ENTRIES</span></div><div class="note-grid"><a class="note-card" href="/docs/web-expl/methodology/"><span class="note-icon" aria-hidden="true">⌘</span><strong>00 · First 10 Minutes</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli/"><span class="note-icon" aria-hidden="true">⌘</span><strong>01 · SQLi — Start Here</strong><span>5 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli-mysql/"><span class="note-icon" aria-hidden="true">⌘</span><strong>02 · SQLi — MySQL / MariaDB</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli-postgresql/"><span class="note-icon" aria-hidden="true">⌘</span><strong>03 · SQLi — PostgreSQL</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli-sqlite/"><span class="note-icon" aria-hidden="true">⌘</span><strong>04 · SQLi — SQLite</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli-mssql/"><span class="note-icon" aria-hidden="true">⌘</span><strong>05 · SQLi — SQL Server</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli-oracle/"><span class="note-icon" aria-hidden="true">⌘</span><strong>06 · SQLi — Oracle</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/sqli-blind/"><span class="note-icon" aria-hidden="true">⌘</span><strong>07 · SQLi — Blind / Error</strong><span>5 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/source-disclosure/"><span class="note-icon" aria-hidden="true">⌘</span><strong>08 · Source / Backup Leaks</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/ssti/"><span class="note-icon" aria-hidden="true">⌘</span><strong>SSTI · Identify the Engine First</strong><span>7 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/nosqli/"><span class="note-icon" aria-hidden="true">⌘</span><strong>NoSQL Injection · Operators &amp; Blind Reads</strong><span>5 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/xss/"><span class="note-icon" aria-hidden="true">⌘</span><strong>XSS · Context Before Payload</strong><span>5 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/auth-idor/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Auth &amp; IDOR · Compare Two Accounts</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/jwt/"><span class="note-icon" aria-hidden="true">⌘</span><strong>JWT · Claims, Algorithms &amp; Keys</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/oauth/"><span class="note-icon" aria-hidden="true">⌘</span><strong>OAuth / Account Linking</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/prototype-pollution/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Prototype Pollution · Source to Gadget</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/graphql/"><span class="note-icon" aria-hidden="true">⌘</span><strong>GraphQL · Schema to Resolver</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/csrf-cors/"><span class="note-icon" aria-hidden="true">⌘</span><strong>CSRF &amp; CORS · Send vs Read</strong><span>5 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/websockets/"><span class="note-icon" aria-hidden="true">⌘</span><strong>WebSockets / Live Sessions</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/command-injection/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Command Injection</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/lfi-traversal/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Traversal &amp; LFI</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/ssrf/"><span class="note-icon" aria-hidden="true">⌘</span><strong>SSRF</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/xxe/"><span class="note-icon" aria-hidden="true">⌘</span><strong>XXE &amp; XML Parsers</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/file-upload/"><span class="note-icon" aria-hidden="true">⌘</span><strong>File Upload</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/deserialization/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Deserialization</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/business-logic/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Business Logic &amp; Races</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/http-cache/"><span class="note-icon" aria-hidden="true">⌘</span><strong>HTTP, Cache &amp; Smuggling</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/php-quirks/"><span class="note-icon" aria-hidden="true">⌘</span><strong>PHP · Types / Hashes / Parsers</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/ldap-xpath/"><span class="note-icon" aria-hidden="true">⌘</span><strong>LDAP / XPath Injection</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/open-redirect/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Open Redirect / URL Parsing</strong><span>2 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/encoding-filters/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Encoding &amp; Filter Bypasses</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/web-expl/python-snippets/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Python · Reusable Web Helpers</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a></div></div>
+
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/methodology/" class="flex align-center">
+        <span>00 · First 10 Minutes</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pick-your-starting-point">Pick your starting point</a></li>
+    <li><a href="#the-loop-for-every-technique">The loop for every technique</a></li>
+    <li><a href="#payload-notation">Payload notation</a></li>
+    <li><a href="#keep-a-tiny-evidence-record">Keep a tiny evidence record</a></li>
+    <li><a href="#tool-map-and-other-artifact-types">Tool map and other artifact types</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

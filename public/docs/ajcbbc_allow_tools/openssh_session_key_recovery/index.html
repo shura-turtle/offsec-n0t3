@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: recovering SSH cipher keys and IVs from a Linux memory image.
+Run in: the supplied Volatility 3 installation in WSL. This entry is a plugin, not an independent CLI.
+Required inputs Linux memory containing the relevant OpenSSH process/session state. Matching Linux kernel symbols for Volatility. Plugin openssh_sessionkeys.py and its openssh32/openssh64 symbol files. A matching PCAP if the challenge also requires traffic decryption. Discover the installed plugin # From the supplied Volatility directory python3 vol.py -h | grep -i ssh python3 vol.py -f /path/to/linux.raw linux.pslistRecover keys from sshd # For a plugin integrated under the linux namespace python3 vol.py -f /path/to/linux.raw \ linux.openssh_sessionkeys.SSHKeys --name sshd --out /tmp/ssh_keys.jsonlUse the exact name listed in -h. An externally loaded plugin may appear as openssh_sessionkeys.SSHKeys instead.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/openssh_session_key_recovery/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="OpenSSH-Session-Key-Recovery">
+  <meta property="og:description" content="Use for: recovering SSH cipher keys and IVs from a Linux memory image.
+Run in: the supplied Volatility 3 installation in WSL. This entry is a plugin, not an independent CLI.
+Required inputs Linux memory containing the relevant OpenSSH process/session state. Matching Linux kernel symbols for Volatility. Plugin openssh_sessionkeys.py and its openssh32/openssh64 symbol files. A matching PCAP if the challenge also requires traffic decryption. Discover the installed plugin # From the supplied Volatility directory python3 vol.py -h | grep -i ssh python3 vol.py -f /path/to/linux.raw linux.pslistRecover keys from sshd # For a plugin integrated under the linux namespace python3 vol.py -f /path/to/linux.raw \ linux.openssh_sessionkeys.SSHKeys --name sshd --out /tmp/ssh_keys.jsonlUse the exact name listed in -h. An externally loaded plugin may appear as openssh_sessionkeys.SSHKeys instead.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="OpenSSH-Session-Key-Recovery">
+  <meta itemprop="description" content="Use for: recovering SSH cipher keys and IVs from a Linux memory image.
+Run in: the supplied Volatility 3 installation in WSL. This entry is a plugin, not an independent CLI.
+Required inputs Linux memory containing the relevant OpenSSH process/session state. Matching Linux kernel symbols for Volatility. Plugin openssh_sessionkeys.py and its openssh32/openssh64 symbol files. A matching PCAP if the challenge also requires traffic decryption. Discover the installed plugin # From the supplied Volatility directory python3 vol.py -h | grep -i ssh python3 vol.py -f /path/to/linux.raw linux.pslistRecover keys from sshd # For a plugin integrated under the linux namespace python3 vol.py -f /path/to/linux.raw \ linux.openssh_sessionkeys.SSHKeys --name sshd --out /tmp/ssh_keys.jsonlUse the exact name listed in -h. An externally loaded plugin may appear as openssh_sessionkeys.SSHKeys instead.">
+  <meta itemprop="wordCount" content="648">
+
+<title>OpenSSH-Session-Key-Recovery • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/openssh_session_key_recovery/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="active" aria-current="page">OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>OpenSSH-Session-Key-Recovery</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#required-inputs">Required inputs</a></li>
+    <li><a href="#discover-the-installed-plugin">Discover the installed plugin</a></li>
+    <li><a href="#recover-keys-from-sshd">Recover keys from sshd</a></li>
+    <li><a href="#external-pluginsymbol-directories">External plugin/symbol directories</a></li>
+    <li><a href="#interpret-the-result">Interpret the result</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#ctf-establish-that-the-prerequisites-are-satisfied">CTF: establish that the prerequisites are satisfied</a></li>
+    <li><a href="#ctf-inspect-a-selected-process">CTF: inspect a selected process</a></li>
+    <li><a href="#ctf-inspect-recovered-records-with-jq">CTF: inspect recovered records with jq</a></li>
+    <li><a href="#correlate-keys-with-the-captured-ssh-session">Correlate keys with the captured SSH session</a></li>
+    <li><a href="#why-a-recovered-key-may-not-directly-decode-the-pcap">Why a recovered key may not directly decode the PCAP</a></li>
+    <li><a href="#failure-categories">Failure categories</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>4 MIN READ</span></div>
+<h1 class="page-title">OpenSSH-Session-Key-Recovery</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> recovering SSH cipher keys and IVs from a Linux memory image.<br>
+<strong>Run in:</strong> the supplied Volatility 3 installation in WSL. This entry is a plugin, not an independent CLI.</p>
+<h2 id="required-inputs">Required inputs<a class="anchor" href="#required-inputs"></a></h2>
+<ul>
+<li>Linux memory containing the relevant OpenSSH process/session state.</li>
+<li>Matching Linux kernel symbols for Volatility.</li>
+<li>Plugin <code>openssh_sessionkeys.py</code> and its <code>openssh32</code>/<code>openssh64</code> symbol files.</li>
+<li>A matching PCAP if the challenge also requires traffic decryption.</li>
+</ul>
+<h2 id="discover-the-installed-plugin">Discover the installed plugin<a class="anchor" href="#discover-the-installed-plugin"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># From the supplied Volatility directory</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -h <span style="color:#eceff4">|</span> grep -i ssh
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw linux.pslist</span></span></code></pre></div><h2 id="recover-keys-from-sshd">Recover keys from sshd<a class="anchor" href="#recover-keys-from-sshd"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># For a plugin integrated under the linux namespace</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  linux.openssh_sessionkeys.SSHKeys --name sshd --out /tmp/ssh_keys.jsonl</span></span></code></pre></div><p>Use the exact name listed in <code>-h</code>. An externally loaded plugin may appear as <code>openssh_sessionkeys.SSHKeys</code> instead.</p>
+<h2 id="external-pluginsymbol-directories">External plugin/symbol directories<a class="anchor" href="#external-pluginsymbol-directories"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Discover names using the organizer&#39;s actual plugin and symbol paths</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -p /path/to/plugins -s /path/to/symbols -h
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Then use the reported name and the same -p/-s global options</span></span></span></code></pre></div><p><code>--pid 1234</code> can select a specific process instead of <code>--name sshd</code>. The upstream plugin writes one JSON object per line with <code>--out</code>.</p>
+<h2 id="interpret-the-result">Interpret the result<a class="anchor" href="#interpret-the-result"></a></h2>
+<p>Record the cipher name, key, IV, PID and session context. These are session encryption values, not the user’s login password. Recovering keys is only one stage; traffic decryption also needs correct direction, cipher/framing and capture context. Standard TLS key-log settings do not decrypt SSH.</p>
+<p>Compatibility depends on the supplied plugin, Volatility API and OpenSSH structures.</p>
+<h2 id="flags-explained">Flags explained<a class="anchor" href="#flags-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Flag</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-f IMAGE</code></td>
+          <td>Volatility input memory image</td>
+      </tr>
+      <tr>
+          <td><code>-p DIR</code></td>
+          <td>Additional Volatility plugin search path</td>
+      </tr>
+      <tr>
+          <td><code>-s DIR</code></td>
+          <td>Additional symbol search path</td>
+      </tr>
+      <tr>
+          <td><code>--name sshd</code></td>
+          <td>This plugin&rsquo;s process-name selector</td>
+      </tr>
+      <tr>
+          <td><code>--pid N</code></td>
+          <td>This plugin&rsquo;s PID selector</td>
+      </tr>
+      <tr>
+          <td><code>--out FILE</code></td>
+          <td>This plugin&rsquo;s JSON Lines output file</td>
+      </tr>
+      <tr>
+          <td><code>-h</code></td>
+          <td>Discover framework/plugin options</td>
+      </tr>
+  </tbody>
+</table>
+<p><code>--out</code> belongs to this plugin. Volatility’s global <code>-o DIR</code> selects a directory for plugins that use its file-output interface; it is not interchangeable with this plugin’s filename argument.</p>
+<h2 id="ctf-establish-that-the-prerequisites-are-satisfied">CTF: establish that the prerequisites are satisfied<a class="anchor" href="#ctf-establish-that-the-prerequisites-are-satisfied"></a></h2>
+<ol>
+<li>Identify the memory image and Linux kernel banner.</li>
+<li>Run <code>linux.pslist</code> successfully with matching kernel symbols.</li>
+<li>Find the relevant <code>sshd</code> process/PID.</li>
+<li>Confirm the SSH plugin appears in Volatility help.</li>
+<li>Confirm the required OpenSSH structure symbols are available.</li>
+<li>Run the plugin against a selected process and preserve complete output.</li>
+</ol>
+<p>Do not treat a plugin import failure as evidence that no session keys remain in memory.</p>
+<h2 id="ctf-inspect-a-selected-process">CTF: inspect a selected process<a class="anchor" href="#ctf-inspect-a-selected-process"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw linux.pslist
+</span></span><span style="display:flex;"><span>python3 vol.py linux.openssh_sessionkeys.SSHKeys -h
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  linux.openssh_sessionkeys.SSHKeys --pid <span style="color:#b48ead">1234</span> --out /tmp/pid1234_keys.jsonl</span></span></code></pre></div><p>Replace the name with the installed plugin identifier and PID with the image’s relevant process. Upstream filtering expects a PID/name selection to choose processes; use an explicit selector.</p>
+<h2 id="ctf-inspect-recovered-records-with-jq">CTF: inspect recovered records with jq<a class="anchor" href="#ctf-inspect-recovered-records-with-jq"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jq -c <span style="color:#a3be8c">&#39;{task_name, cipher_name, key, iv}&#39;</span> /tmp/pid1234_keys.jsonl
+</span></span><span style="display:flex;"><span>jq -r <span style="color:#a3be8c">&#39;[.cipher_name, .key, .iv] | @tsv&#39;</span> /tmp/pid1234_keys.jsonl</span></span></code></pre></div><p>The key and IV values are hex text representing bytes. Count decoded bytes with Python if needed; the correct size depends on the negotiated cipher.</p>
+<h2 id="correlate-keys-with-the-captured-ssh-session">Correlate keys with the captured SSH session<a class="anchor" href="#correlate-keys-with-the-captured-ssh-session"></a></h2>
+<p>Use the process/time context, endpoint pair and negotiated algorithm from the PCAP. A host can have multiple SSH sessions and keys for different directions or rekey intervals. A candidate structure is useful only when it matches the session being reconstructed.</p>
+<h2 id="why-a-recovered-key-may-not-directly-decode-the-pcap">Why a recovered key may not directly decode the PCAP<a class="anchor" href="#why-a-recovered-key-may-not-directly-decode-the-pcap"></a></h2>
+<p>SSH has packet framing, authentication, sequence numbers and potentially rekeying. Cipher suites have different key/nonce/state requirements. This repository’s recovery plugin is not a universal PCAP decryption command. Use an organizer-supplied compatible decryptor if provided, or implement the documented session format with the exact captured context.</p>
+<h2 id="failure-categories">Failure categories<a class="anchor" href="#failure-categories"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Failure</th>
+          <th>Meaning to investigate</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Plugin absent from help</td>
+          <td>Search path/import or compatibility</td>
+      </tr>
+      <tr>
+          <td>Kernel requirement unsatisfied</td>
+          <td>Memory/symbol layer setup</td>
+      </tr>
+      <tr>
+          <td>OpenSSH symbol lookup fails</td>
+          <td>Plugin-specific symbols/path</td>
+      </tr>
+      <tr>
+          <td>No selected tasks</td>
+          <td>Wrong PID/name or process no longer present</td>
+      </tr>
+      <tr>
+          <td>No keys in a valid selected task</td>
+          <td>Missing pages, freed state or unsupported structures</td>
+      </tr>
+      <tr>
+          <td>Keys found but bytes remain wrong</td>
+          <td>Session/direction/cipher/framing/rekey context</td>
+      </tr>
+  </tbody>
+</table>
+<p>References: <a href="https://github.com/fox-it/OpenSSH-Session-Key-Recovery">project setup</a>, <a href="https://github.com/fox-it/OpenSSH-Session-Key-Recovery/blob/main/volatility3/openssh_sessionkeys.py">plugin options and output</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../network-expl/tls-ssh/">TLS/SSH evidence workflow</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/volatility3/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Volatility 3</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/x64dbg/" class="flex align-center">
+        <span>x64dbg</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#required-inputs">Required inputs</a></li>
+    <li><a href="#discover-the-installed-plugin">Discover the installed plugin</a></li>
+    <li><a href="#recover-keys-from-sshd">Recover keys from sshd</a></li>
+    <li><a href="#external-pluginsymbol-directories">External plugin/symbol directories</a></li>
+    <li><a href="#interpret-the-result">Interpret the result</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#ctf-establish-that-the-prerequisites-are-satisfied">CTF: establish that the prerequisites are satisfied</a></li>
+    <li><a href="#ctf-inspect-a-selected-process">CTF: inspect a selected process</a></li>
+    <li><a href="#ctf-inspect-recovered-records-with-jq">CTF: inspect recovered records with jq</a></li>
+    <li><a href="#correlate-keys-with-the-captured-ssh-session">Correlate keys with the captured SSH session</a></li>
+    <li><a href="#why-a-recovered-key-may-not-directly-decode-the-pcap">Why a recovered key may not directly decode the PCAP</a></li>
+    <li><a href="#failure-categories">Failure categories</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

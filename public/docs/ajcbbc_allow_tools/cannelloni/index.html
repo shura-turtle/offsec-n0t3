@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: tunneling CAN frames over an IP network into a local SocketCAN interface.
+Run in: WSL with a working CAN/vcan interface. Use with can-utils.
+Check the supplied build cannelloni -h ip -details link show vcan0Connect to a challenge CAN endpoint # Example values only: replace IP and both ports with organizer values cannelloni -I vcan0 -R 192.0.2.10 -r 20000 -l 20001 Option Purpose -I vcan0 Local CAN interface -R ADDRESS Remote IP address -r PORT Remote destination port -l PORT Local listening port -d cut CAN, UDP and timer debugging The remote endpoint must send back to your chosen local port. Match the supplied transport and addressing.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/cannelloni/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="cannelloni">
+  <meta property="og:description" content="Use for: tunneling CAN frames over an IP network into a local SocketCAN interface.
+Run in: WSL with a working CAN/vcan interface. Use with can-utils.
+Check the supplied build cannelloni -h ip -details link show vcan0Connect to a challenge CAN endpoint # Example values only: replace IP and both ports with organizer values cannelloni -I vcan0 -R 192.0.2.10 -r 20000 -l 20001 Option Purpose -I vcan0 Local CAN interface -R ADDRESS Remote IP address -r PORT Remote destination port -l PORT Local listening port -d cut CAN, UDP and timer debugging The remote endpoint must send back to your chosen local port. Match the supplied transport and addressing.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="cannelloni">
+  <meta itemprop="description" content="Use for: tunneling CAN frames over an IP network into a local SocketCAN interface.
+Run in: WSL with a working CAN/vcan interface. Use with can-utils.
+Check the supplied build cannelloni -h ip -details link show vcan0Connect to a challenge CAN endpoint # Example values only: replace IP and both ports with organizer values cannelloni -I vcan0 -R 192.0.2.10 -r 20000 -l 20001 Option Purpose -I vcan0 Local CAN interface -R ADDRESS Remote IP address -r PORT Remote destination port -l PORT Local listening port -d cut CAN, UDP and timer debugging The remote endpoint must send back to your chosen local port. Match the supplied transport and addressing.">
+  <meta itemprop="wordCount" content="536">
+
+<title>cannelloni • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/cannelloni/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="active" aria-current="page">cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>cannelloni</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#check-the-supplied-build">Check the supplied build</a></li>
+    <li><a href="#connect-to-a-challenge-can-endpoint">Connect to a challenge CAN endpoint</a></li>
+    <li><a href="#observe-the-tunneled-traffic">Observe the tunneled traffic</a></li>
+    <li><a href="#tcp-mode-when-explicitly-supplied">TCP mode when explicitly supplied</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#additional-options-explained">Additional options explained</a></li>
+    <li><a href="#ctf-reason-about-two-endpoints">CTF: reason about two endpoints</a></li>
+    <li><a href="#ctf-bring-up-and-inspect-a-local-tunnel">CTF: bring up and inspect a local tunnel</a></li>
+    <li><a href="#capture-only-after-the-tunnel-is-ready">Capture only after the tunnel is ready</a></li>
+    <li><a href="#failure-decision-table">Failure decision table</a></li>
+    <li><a href="#preserve-the-protocol-sequence">Preserve the protocol sequence</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">cannelloni</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> tunneling CAN frames over an IP network into a local SocketCAN interface.<br>
+<strong>Run in:</strong> WSL with a working CAN/vcan interface. Use with <a href="../can_utils/">can-utils</a>.</p>
+<h2 id="check-the-supplied-build">Check the supplied build<a class="anchor" href="#check-the-supplied-build"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cannelloni -h
+</span></span><span style="display:flex;"><span>ip -details link show vcan0</span></span></code></pre></div><h2 id="connect-to-a-challenge-can-endpoint">Connect to a challenge CAN endpoint<a class="anchor" href="#connect-to-a-challenge-can-endpoint"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Example values only: replace IP and both ports with organizer values</span>
+</span></span><span style="display:flex;"><span>cannelloni -I vcan0 -R 192.0.2.10 -r <span style="color:#b48ead">20000</span> -l <span style="color:#b48ead">20001</span></span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>Option</th>
+          <th>Purpose</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-I vcan0</code></td>
+          <td>Local CAN interface</td>
+      </tr>
+      <tr>
+          <td><code>-R ADDRESS</code></td>
+          <td>Remote IP address</td>
+      </tr>
+      <tr>
+          <td><code>-r PORT</code></td>
+          <td>Remote destination port</td>
+      </tr>
+      <tr>
+          <td><code>-l PORT</code></td>
+          <td>Local listening port</td>
+      </tr>
+      <tr>
+          <td><code>-d cut</code></td>
+          <td>CAN, UDP and timer debugging</td>
+      </tr>
+  </tbody>
+</table>
+<p>The remote endpoint must send back to your chosen local port. Match the supplied transport and addressing.</p>
+<h2 id="observe-the-tunneled-traffic">Observe the tunneled traffic<a class="anchor" href="#observe-the-tunneled-traffic"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Second terminal; keep cannelloni running</span>
+</span></span><span style="display:flex;"><span>candump -tz vcan0
+</span></span><span style="display:flex;"><span>candump -L vcan0 &gt; challenge_can.log</span></span></code></pre></div><h2 id="tcp-mode-when-explicitly-supplied">TCP mode when explicitly supplied<a class="anchor" href="#tcp-mode-when-explicitly-supplied"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Build must support this option; use the challenge&#39;s remote port</span>
+</span></span><span style="display:flex;"><span>cannelloni -I vcan0 -C c -R 192.0.2.10 -r <span style="color:#b48ead">20000</span></span></span></code></pre></div><h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>UDP can lose or reorder frames.</li>
+<li>VPN routes, firewall rules and WSL networking can prevent return traffic.</li>
+<li>No frames? Check the CAN interface, protocol and ports before editing payloads.</li>
+<li>Cannelloni carries frames; it does not decode application command meanings.</li>
+</ul>
+<h2 id="additional-options-explained">Additional options explained<a class="anchor" href="#additional-options-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Option</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-I IFACE</code></td>
+          <td>Use this local SocketCAN interface</td>
+      </tr>
+      <tr>
+          <td><code>-R IP</code></td>
+          <td>Set the remote peer address</td>
+      </tr>
+      <tr>
+          <td><code>-r PORT</code></td>
+          <td>Send to the peer’s listening port</td>
+      </tr>
+      <tr>
+          <td><code>-l PORT</code></td>
+          <td>Bind the local receiving port</td>
+      </tr>
+      <tr>
+          <td><code>-C c</code> / <code>-C s</code></td>
+          <td>TCP client / server mode, if supported</td>
+      </tr>
+      <tr>
+          <td><code>-S c</code> / <code>-S s</code></td>
+          <td>SCTP client / server mode, if supported</td>
+      </tr>
+      <tr>
+          <td><code>-d cut</code></td>
+          <td>Debug categories: CAN, UDP and timers</td>
+      </tr>
+      <tr>
+          <td><code>-t N</code></td>
+          <td>Aggregation timeout in microseconds for supported transports</td>
+      </tr>
+  </tbody>
+</table>
+<p>Uppercase <code>-I</code> is the interface; lowercase <code>-l</code> is the local port. TCP/SCTP support and switches depend on the supplied build.</p>
+<h2 id="ctf-reason-about-two-endpoints">CTF: reason about two endpoints<a class="anchor" href="#ctf-reason-about-two-endpoints"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Your WSL side: local port 20001, remote port 20000
+</span></span><span style="display:flex;"><span>Challenge side: local port 20000, remote port 20001</span></span></code></pre></div><p>Each peer’s destination must match the other peer’s actual reachable listening port. NAT/VPN/WSL forwarding can change what the remote can reach; use the organizer’s addressing instructions.</p>
+<h2 id="ctf-bring-up-and-inspect-a-local-tunnel">CTF: bring up and inspect a local tunnel<a class="anchor" href="#ctf-bring-up-and-inspect-a-local-tunnel"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Terminal 1: keep running for the full challenge session</span>
+</span></span><span style="display:flex;"><span>cannelloni -I vcan0 -R 192.0.2.10 -r <span style="color:#b48ead">20000</span> -l <span style="color:#b48ead">20001</span> -d cut
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Terminal 2: observe CAN messages delivered through that tunnel</span>
+</span></span><span style="display:flex;"><span>candump -tz vcan0</span></span></code></pre></div><p>Do not stop the tunnel after the first frame or ACK. Stateful devices can emit success/status messages later.</p>
+<h2 id="capture-only-after-the-tunnel-is-ready">Capture only after the tunnel is ready<a class="anchor" href="#capture-only-after-the-tunnel-is-ready"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>candump -L vcan0 &gt; tunneled_capture.log</span></span></code></pre></div><p>Keep the capture running during one known interaction. Note its start time and the exact action, then examine changes in the relevant IDs.</p>
+<h2 id="failure-decision-table">Failure decision table<a class="anchor" href="#failure-decision-table"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Likely area to investigate</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>No vcan0</td>
+          <td>Kernel/interface setup</td>
+      </tr>
+      <tr>
+          <td>Peer connection cannot be established</td>
+          <td>VPN route, transport and endpoint</td>
+      </tr>
+      <tr>
+          <td>Outgoing traffic, no return frames</td>
+          <td>Return address/port, NAT or remote state</td>
+      </tr>
+      <tr>
+          <td>Local CAN frames but no objective change</td>
+          <td>Application semantics/setup/checksum</td>
+      </tr>
+      <tr>
+          <td>Intermittent missing responses</td>
+          <td>UDP loss, timing or rate mismatch</td>
+      </tr>
+      <tr>
+          <td>TCP option rejected</td>
+          <td>Different version/build capabilities</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="preserve-the-protocol-sequence">Preserve the protocol sequence<a class="anchor" href="#preserve-the-protocol-sequence"></a></h2>
+<p>Record the command’s documented meaning, required mode/state, payload format and expected reply. Transport success means frames moved; challenge success must be established by its own state/output.</p>
+<p>Reference: <a href="https://github.com/mguentner/cannelloni">upstream usage and transports</a>. The tournament list points to a fork; use the installed build’s help if options differ.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../network-expl/can-bus/">CAN tunnel workflow</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/can_utils/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>can-utils</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/zeek/" class="flex align-center">
+        <span>Zeek</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#check-the-supplied-build">Check the supplied build</a></li>
+    <li><a href="#connect-to-a-challenge-can-endpoint">Connect to a challenge CAN endpoint</a></li>
+    <li><a href="#observe-the-tunneled-traffic">Observe the tunneled traffic</a></li>
+    <li><a href="#tcp-mode-when-explicitly-supplied">TCP mode when explicitly supplied</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#additional-options-explained">Additional options explained</a></li>
+    <li><a href="#ctf-reason-about-two-endpoints">CTF: reason about two endpoints</a></li>
+    <li><a href="#ctf-bring-up-and-inspect-a-local-tunnel">CTF: bring up and inspect a local tunnel</a></li>
+    <li><a href="#capture-only-after-the-tunnel-is-ready">Capture only after the tunnel is ready</a></li>
+    <li><a href="#failure-decision-table">Failure decision table</a></li>
+    <li><a href="#preserve-the-protocol-sequence">Preserve the protocol sequence</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

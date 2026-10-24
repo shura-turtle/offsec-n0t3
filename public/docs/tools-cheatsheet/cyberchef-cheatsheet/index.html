@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CyberChef Visual Cheatsheet Input bytes → ordered recipe → inspect output → save exact bytes. Start with one transformation suggested by the data. Magic is a hypothesis generator, not proof of a correct decode.
+Existing CyberChef tool note · Official app · Official project / offline release.
+1. Know the four panels Actual browser screenshot captured during this update, using only synthetic demo input. UI layout may differ on the tournament’s installed build.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/tools-cheatsheet/cyberchef-cheatsheet/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="CyberChef · Visual Recipes">
+  <meta property="og:description" content="CyberChef Visual Cheatsheet Input bytes → ordered recipe → inspect output → save exact bytes. Start with one transformation suggested by the data. Magic is a hypothesis generator, not proof of a correct decode.
+Existing CyberChef tool note · Official app · Official project / offline release.
+1. Know the four panels Actual browser screenshot captured during this update, using only synthetic demo input. UI layout may differ on the tournament’s installed build.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="CyberChef · Visual Recipes">
+  <meta itemprop="description" content="CyberChef Visual Cheatsheet Input bytes → ordered recipe → inspect output → save exact bytes. Start with one transformation suggested by the data. Magic is a hypothesis generator, not proof of a correct decode.
+Existing CyberChef tool note · Official app · Official project / offline release.
+1. Know the four panels Actual browser screenshot captured during this update, using only synthetic demo input. UI layout may differ on the tournament’s installed build.">
+  <meta itemprop="wordCount" content="1137">
+
+<title>CyberChef · Visual Recipes • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/tools-cheatsheet/cyberchef-cheatsheet/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details open>
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="active" aria-current="page">CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>CyberChef · Visual Recipes</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-know-the-four-panels">1. Know the four panels</a></li>
+    <li><a href="#2-choose-the-first-operation">2. Choose the first operation</a></li>
+    <li><a href="#3-base64-hex-and-multiple-layers">3. Base64, hex, and multiple layers</a>
+      <ul>
+        <li><a href="#one-base64-layer">One Base64 layer</a></li>
+        <li><a href="#one-hex-layer">One hex layer</a></li>
+        <li><a href="#two-hex-layers">Two hex layers</a></li>
+        <li><a href="#reproducible-python-control">Reproducible Python control</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-xor-specify-bytes-not-appearances">4. XOR: specify bytes, not appearances</a></li>
+    <li><a href="#5-compression-identify-the-wrapper">5. Compression: identify the wrapper</a></li>
+    <li><a href="#6-aes-a-parameter-checklist">6. AES: a parameter checklist</a></li>
+    <li><a href="#7-jwt-inspection">7. JWT inspection</a></li>
+    <li><a href="#8-per-line-transforms-with-fork">8. Per-line transforms with Fork</a></li>
+    <li><a href="#9-regex-and-extraction">9. Regex and extraction</a></li>
+    <li><a href="#10-save-a-reproducible-recipe">10. Save a reproducible recipe</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="tools"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/tools-cheatsheet/">Tools · Visual Cheatsheets</a></nav><span>6 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="cyberchef-visual-cheatsheet">CyberChef Visual Cheatsheet<a class="anchor" href="#cyberchef-visual-cheatsheet"></a></h1>
+<p><strong>Input bytes → ordered recipe → inspect output → save exact bytes.</strong> Start with one transformation suggested by the data. Magic is a hypothesis generator, not proof of a correct decode.</p>
+<p><a href="../../ajcbbc_allow_tools/cyberchef/">Existing CyberChef tool note</a> · <a href="https://gchq.github.io/CyberChef/">Official app</a> · <a href="https://github.com/gchq/CyberChef">Official project / offline release</a>.</p>
+<h2 id="1-know-the-four-panels">1. Know the four panels<a class="anchor" href="#1-know-the-four-panels"></a></h2>
+<p><img src="/images/tools/cyberchef-base64.png" alt="Real CyberChef screenshot: From Base64 transforms ZmxhZ3tkZW1vfQ== into flag{demo}" /></p>
+<p><em>Actual browser screenshot captured during this update, using only synthetic demo input. UI layout may differ on the tournament&rsquo;s installed build.</em></p>
+<table>
+  <thead>
+      <tr>
+          <th>Area</th>
+          <th>What to do</th>
+          <th>What to watch</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Operations, left</td>
+          <td>Search operation name, drag it into Recipe</td>
+          <td>Similar names can mean different formats</td>
+      </tr>
+      <tr>
+          <td>Recipe, middle</td>
+          <td>Arrange operations top to bottom</td>
+          <td>Each operation consumes the previous output</td>
+      </tr>
+      <tr>
+          <td>Input, top right</td>
+          <td>Paste text or load a file</td>
+          <td>Raw file bytes differ from text spelling of hex</td>
+      </tr>
+      <tr>
+          <td>Output, bottom right</td>
+          <td>Inspect text/hex, download output</td>
+          <td>Copying binary as text may alter bytes</td>
+      </tr>
+  </tbody>
+</table>
+<p>Use <strong>Step</strong> to inspect one stage at a time. Disable/enable a recipe operation to locate where data stops making sense. Save the recipe before trying a different hypothesis.</p>
+<h2 id="2-choose-the-first-operation">2. Choose the first operation<a class="anchor" href="#2-choose-the-first-operation"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Input clue</th>
+          <th>First operation</th>
+          <th>Control / verification</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Even count of hex digits, optional separators</td>
+          <td>From Hex</td>
+          <td>Re-encode with To Hex; compare bytes</td>
+      </tr>
+      <tr>
+          <td>Base64 alphabet, possible <code>=</code> padding</td>
+          <td>From Base64</td>
+          <td>Valid bytes / expected file signature, not alphabet alone</td>
+      </tr>
+      <tr>
+          <td><code>-</code> / <code>_</code> in JWT sections</td>
+          <td>From Base64, URL-safe alphabet</td>
+          <td>Header/payload should parse as JSON</td>
+      </tr>
+      <tr>
+          <td><code>%xx</code></td>
+          <td>URL Decode</td>
+          <td>Identify percent encoding vs form <code>+</code> rules</td>
+      </tr>
+      <tr>
+          <td><code>&amp;#...;</code>, <code>&amp;lt;</code></td>
+          <td>From HTML Entity</td>
+          <td>Check resulting browser/text context</td>
+      </tr>
+      <tr>
+          <td><code>01000110...</code></td>
+          <td>From Binary</td>
+          <td>Confirm grouping and bit order</td>
+      </tr>
+      <tr>
+          <td>Decimal byte values</td>
+          <td>From Decimal</td>
+          <td>Confirm separator and 0–255 byte interpretation</td>
+      </tr>
+      <tr>
+          <td>Letter-only substitution clue</td>
+          <td>ROT13 / ROT47 as appropriate</td>
+          <td>Coherent full output, not one matching word</td>
+      </tr>
+      <tr>
+          <td>Repeating XOR clue</td>
+          <td>XOR / XOR Brute Force</td>
+          <td>Correct key encoding and known prefix</td>
+      </tr>
+      <tr>
+          <td>Decoded <code>1f 8b</code></td>
+          <td>Gunzip</td>
+          <td>Complete decompression with valid output</td>
+      </tr>
+      <tr>
+          <td>Decoded zlib wrapper</td>
+          <td>Zlib Inflate</td>
+          <td>Correct wrapper and full output</td>
+      </tr>
+      <tr>
+          <td>Raw DEFLATE bytes</td>
+          <td>Raw Inflate</td>
+          <td>No gzip/zlib header expected</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="3-base64-hex-and-multiple-layers">3. Base64, hex, and multiple layers<a class="anchor" href="#3-base64-hex-and-multiple-layers"></a></h2>
+<h3 id="one-base64-layer">One Base64 layer<a class="anchor" href="#one-base64-layer"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Input: ZmxhZ3tkZW1vfQ==
+</span></span><span style="display:flex;"><span>Recipe: From Base64
+</span></span><span style="display:flex;"><span>Output: flag{demo}</span></span></code></pre></div><h3 id="one-hex-layer">One hex layer<a class="anchor" href="#one-hex-layer"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Input: 666c61677b64656d6f7d
+</span></span><span style="display:flex;"><span>Recipe: From Hex
+</span></span><span style="display:flex;"><span>Output: flag{demo}</span></span></code></pre></div><h3 id="two-hex-layers">Two hex layers<a class="anchor" href="#two-hex-layers"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Input: 3636366336313637376236343635366436663764
+</span></span><span style="display:flex;"><span>Recipe:
+</span></span><span style="display:flex;"><span>  From Hex
+</span></span><span style="display:flex;"><span>  From Hex
+</span></span><span style="display:flex;"><span>Output: flag{demo}</span></span></code></pre></div><p>At the intermediate stage the output is the ASCII text <code>666c61677b64656d6f7d</code>. It is not already the decoded flag bytes. This distinction matters when chaining AES, XOR, and decompression.</p>
+<h3 id="reproducible-python-control">Reproducible Python control<a class="anchor" href="#reproducible-python-control"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">base64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> base64<span style="color:#81a1c1">.</span>b64decode<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;ZmxhZ3tkZW1vfQ==&#39;</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#39;flag</span><span style="color:#a3be8c">{demo}</span><span style="color:#a3be8c">&#39;</span>
+</span></span><span style="display:flex;"><span>layered <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">&#39;3636366336313637376236343635366436663764&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span>layered<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decode<span style="color:#eceff4">())</span> <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#39;flag</span><span style="color:#a3be8c">{demo}</span><span style="color:#a3be8c">&#39;</span></span></span></code></pre></div><h2 id="4-xor-specify-bytes-not-appearances">4. XOR: specify bytes, not appearances<a class="anchor" href="#4-xor-specify-bytes-not-appearances"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Input: 242e23253926272f2d3f
+</span></span><span style="display:flex;"><span>Recipe:
+</span></span><span style="display:flex;"><span>  From Hex
+</span></span><span style="display:flex;"><span>  XOR
+</span></span><span style="display:flex;"><span>    Key format: Hex
+</span></span><span style="display:flex;"><span>    Key: 42
+</span></span><span style="display:flex;"><span>Output: flag{demo}</span></span></code></pre></div><p><code>42</code> in Hex mode is one byte <code>0x42</code>. <code>42</code> in UTF-8 mode is two bytes <code>0x34 0x32</code>. A key of <code>ICE</code> in UTF-8 mode is the same bytes as <code>494345</code> in Hex mode.</p>
+<p>For repeating-key XOR:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>known plaintext prefix + ciphertext prefix
+</span></span><span style="display:flex;"><span>  → XOR the two byte sequences
+</span></span><span style="display:flex;"><span>  → candidate key bytes
+</span></span><span style="display:flex;"><span>  → test candidate repetition against whole ciphertext</span></span></code></pre></div><p>For single-byte XOR, <strong>XOR Brute Force</strong> enumerates a one-byte keyspace. It does not solve an arbitrary AES key or a long repeating XOR key. Score full structure and save the actual key, not just the most readable preview.</p>
+<h2 id="5-compression-identify-the-wrapper">5. Compression: identify the wrapper<a class="anchor" href="#5-compression-identify-the-wrapper"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Base64 text → From Base64 → inspect magic → Gunzip / Zlib Inflate / Raw Inflate
+</span></span><span style="display:flex;"><span>Hex text    → From Hex    → inspect magic → correct decompressor</span></span></code></pre></div><p>Do not feed ASCII hex into a decompressor. <code>1f 8b</code> is a gzip clue; zlib headers include common <code>78 01</code>, <code>78 9c</code>, <code>78 da</code> combinations but header validation is stronger than matching two bytes. A ZIP container needs archive extraction, not simply Gunzip.</p>
+<p>If decompression fails, verify whether the stream is truncated, begins at a nonzero offset, has a password/container layer, or is not compressed at all. Keep binary output as a download.</p>
+<h2 id="6-aes-a-parameter-checklist">6. AES: a parameter checklist<a class="anchor" href="#6-aes-a-parameter-checklist"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Parameter</th>
+          <th>What you need</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Key</td>
+          <td>Actual bytes or an explicitly specified KDF/password derivation</td>
+      </tr>
+      <tr>
+          <td>Mode</td>
+          <td>ECB, CBC, CTR, GCM, etc.; modes are not interchangeable</td>
+      </tr>
+      <tr>
+          <td>IV / nonce</td>
+          <td>Correct length and bytes for that mode</td>
+      </tr>
+      <tr>
+          <td>Ciphertext representation</td>
+          <td>Raw / Hex / Base64</td>
+      </tr>
+      <tr>
+          <td>Padding</td>
+          <td>PKCS#7, none, or another specified scheme</td>
+      </tr>
+      <tr>
+          <td>GCM tag / AAD</td>
+          <td>Required authenticated inputs where applicable</td>
+      </tr>
+      <tr>
+          <td>Output representation</td>
+          <td>Raw bytes first, then display as needed</td>
+      </tr>
+  </tbody>
+</table>
+<p>Example workflow when the challenge explicitly supplies a CBC key and IV:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>From Base64               # if ciphertext input is Base64 text
+</span></span><span style="display:flex;"><span>AES Decrypt
+</span></span><span style="display:flex;"><span>  Key: actual key, with correct Hex/UTF8 representation
+</span></span><span style="display:flex;"><span>  IV: actual IV, with correct representation
+</span></span><span style="display:flex;"><span>  Mode: CBC
+</span></span><span style="display:flex;"><span>  Input: Raw (because From Base64 already decoded it)
+</span></span><span style="display:flex;"><span>  Padding: the challenge&#39;s actual padding</span></span></code></pre></div><p>AES-128/192/256 keys have 16/24/32 bytes. A 32-character hex string encodes <strong>16 bytes</strong>. CBC has a 16-byte IV. A readable first block does not prove the whole decrypt is correct; check all plaintext, padding and any authentication tag.</p>
+<p>CyberChef versions expose crypto parameters differently. If the needed mode/tag/derivation is not supported in your build, use the event-permitted <a href="../../ajcbbc_allow_tools/python3/#cookbook-map">Python cookbook</a> and exact parameters rather than substituting a different mode.</p>
+<h2 id="7-jwt-inspection">7. JWT inspection<a class="anchor" href="#7-jwt-inspection"></a></h2>
+<ol>
+<li>Preserve the full token.</li>
+<li>Split its three JWS sections at <code>.</code>.</li>
+<li>Decode the first and second with Base64URL alphabet and compatible padding.</li>
+<li>Parse JSON and read <code>alg</code>, <code>kid</code>, <code>sub</code>, role, audience, issuer, and time claims.</li>
+<li>Do not modify/re-sign until the application&rsquo;s verification behavior is understood.</li>
+</ol>
+<p>A five-part encrypted token is a different structure. Decoding a token is not signature verification. Continue with <a href="../../web-expl/jwt/">JWT testing</a>.</p>
+<h2 id="8-per-line-transforms-with-fork">8. Per-line transforms with Fork<a class="anchor" href="#8-per-line-transforms-with-fork"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Input:
+</span></span><span style="display:flex;"><span>ZmxhZw==
+</span></span><span style="display:flex;"><span>e2RlbW99
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Recipe:
+</span></span><span style="display:flex;"><span>  Fork (split by newline)
+</span></span><span style="display:flex;"><span>    From Base64</span></span></code></pre></div><p>Expected decoded lines: <code>flag</code> and <code>{demo}</code>. Keep each original record boundary unless the challenge says to concatenate. Applying one decoder to a concatenation of separately padded Base64 strings can discard or misinterpret later records.</p>
+<h2 id="9-regex-and-extraction">9. Regex and extraction<a class="anchor" href="#9-regex-and-extraction"></a></h2>
+<p>Use <strong>Regular expression</strong> to extract an evidence-supported format, for example:</p>
+<pre tabindex="0"><code class="language-regex" data-lang="regex">flag\{[^}\r\n]+\}</code></pre><p>The event&rsquo;s actual flag prefix may differ. Regex over binary may hide NULs or line-ending details. For a PCAP stream, first reconstruct the correct stream and direction with <a href="../../ajcbbc_allow_tools/tshark/">TShark</a>, then transform the extracted application data.</p>
+<h2 id="10-save-a-reproducible-recipe">10. Save a reproducible recipe<a class="anchor" href="#10-save-a-reproducible-recipe"></a></h2>
+<ul>
+<li>Save/export the recipe and record input format, key format, mode, and intermediate result.</li>
+<li>A deep link may embed the entire input and recipe in the URL. Avoid sharing live tokens/keys in links; use the synthetic sample when taking screenshots.</li>
+<li>Download CyberChef&rsquo;s offline release before the event if permitted. Verify the downloaded package opens without network access; a bookmarked online tab alone is not an offline copy.</li>
+<li>Preserve binary output using the download button. Confirm its hash/length in Python, HxD, or xxd.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Wrong output</th>
+          <th>Check next</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Decoder error</td>
+          <td>Alphabet, omitted padding, truncation, copy artifacts</td>
+      </tr>
+      <tr>
+          <td>Coherent prefix, wrong suffix</td>
+          <td>Incorrect key length/alignment, partial bytes, wrong mode</td>
+      </tr>
+      <tr>
+          <td>AES padding error</td>
+          <td>Key/IV bytes, CBC mode, full ciphertext, real padding</td>
+      </tr>
+      <tr>
+          <td>Decompression error</td>
+          <td>Wrapper, start offset, complete stream</td>
+      </tr>
+      <tr>
+          <td>Output looks like another encoding</td>
+          <td>Inspect then add one justified stage</td>
+      </tr>
+      <tr>
+          <td>Magic offers many candidates</td>
+          <td>Validate clue, signature, full message and round-trip</td>
+      </tr>
+      <tr>
+          <td>Download differs from copied text</td>
+          <td>Binary/text conversion; use exact download bytes</td>
+      </tr>
+  </tbody>
+</table>
+<p>References: <a href="https://github.com/gchq/CyberChef/wiki/Getting-started">official CyberChef getting started</a>, <a href="https://github.com/gchq/CyberChef/tree/master/src/core/operations">official operation source</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/tools-cheatsheet/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Tools · Visual Cheatsheets</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/tools-cheatsheet/approved-tools-map/" class="flex align-center">
+        <span>39 Tools · Technique Map</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-know-the-four-panels">1. Know the four panels</a></li>
+    <li><a href="#2-choose-the-first-operation">2. Choose the first operation</a></li>
+    <li><a href="#3-base64-hex-and-multiple-layers">3. Base64, hex, and multiple layers</a>
+      <ul>
+        <li><a href="#one-base64-layer">One Base64 layer</a></li>
+        <li><a href="#one-hex-layer">One hex layer</a></li>
+        <li><a href="#two-hex-layers">Two hex layers</a></li>
+        <li><a href="#reproducible-python-control">Reproducible Python control</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-xor-specify-bytes-not-appearances">4. XOR: specify bytes, not appearances</a></li>
+    <li><a href="#5-compression-identify-the-wrapper">5. Compression: identify the wrapper</a></li>
+    <li><a href="#6-aes-a-parameter-checklist">6. AES: a parameter checklist</a></li>
+    <li><a href="#7-jwt-inspection">7. JWT inspection</a></li>
+    <li><a href="#8-per-line-transforms-with-fork">8. Per-line transforms with Fork</a></li>
+    <li><a href="#9-regex-and-extraction">9. Regex and extraction</a></li>
+    <li><a href="#10-save-a-reproducible-recipe">10. Save a reproducible recipe</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

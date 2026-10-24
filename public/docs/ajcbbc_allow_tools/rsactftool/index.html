@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: weak RSA keys, known RSA attack patterns and private key recovery.
+Run in: WSL; Python based tool.
+Check the entry point first # Current upstream CLI RsaCtfTool --help # Older supplied checkouts may instead use: # python3 /path/to/RsaCtfTool.py --helpUse the installed version’s help. Recent upstream uses --decryptfile; older examples often use --uncipherfile.
+Inspect a public key RsaCtfTool --dumpkey --key public.pem openssl pkey -pubin -in public.pem -text -nooutTry a relevant attack # General weak-key recovery RsaCtfTool --publickey public.pem --private # Small private exponent candidate RsaCtfTool --publickey public.pem --attack wiener --private # Multiple supplied public keys RsaCtfTool --publickey &#39;*.pub&#39; --privateDecrypt challenge ciphertext RsaCtfTool --publickey public.pem --decryptfile ciphertext.binConfirm whether the challenge ciphertext is raw bytes, hex, Base64 or an integer before supplying it.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/rsactftool/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="RsaCtfTool">
+  <meta property="og:description" content="Use for: weak RSA keys, known RSA attack patterns and private key recovery.
+Run in: WSL; Python based tool.
+Check the entry point first # Current upstream CLI RsaCtfTool --help # Older supplied checkouts may instead use: # python3 /path/to/RsaCtfTool.py --helpUse the installed version’s help. Recent upstream uses --decryptfile; older examples often use --uncipherfile.
+Inspect a public key RsaCtfTool --dumpkey --key public.pem openssl pkey -pubin -in public.pem -text -nooutTry a relevant attack # General weak-key recovery RsaCtfTool --publickey public.pem --private # Small private exponent candidate RsaCtfTool --publickey public.pem --attack wiener --private # Multiple supplied public keys RsaCtfTool --publickey &#39;*.pub&#39; --privateDecrypt challenge ciphertext RsaCtfTool --publickey public.pem --decryptfile ciphertext.binConfirm whether the challenge ciphertext is raw bytes, hex, Base64 or an integer before supplying it.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="RsaCtfTool">
+  <meta itemprop="description" content="Use for: weak RSA keys, known RSA attack patterns and private key recovery.
+Run in: WSL; Python based tool.
+Check the entry point first # Current upstream CLI RsaCtfTool --help # Older supplied checkouts may instead use: # python3 /path/to/RsaCtfTool.py --helpUse the installed version’s help. Recent upstream uses --decryptfile; older examples often use --uncipherfile.
+Inspect a public key RsaCtfTool --dumpkey --key public.pem openssl pkey -pubin -in public.pem -text -nooutTry a relevant attack # General weak-key recovery RsaCtfTool --publickey public.pem --private # Small private exponent candidate RsaCtfTool --publickey public.pem --attack wiener --private # Multiple supplied public keys RsaCtfTool --publickey &#39;*.pub&#39; --privateDecrypt challenge ciphertext RsaCtfTool --publickey public.pem --decryptfile ciphertext.binConfirm whether the challenge ciphertext is raw bytes, hex, Base64 or an integer before supplying it.">
+  <meta itemprop="wordCount" content="708">
+
+<title>RsaCtfTool • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/rsactftool/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="active" aria-current="page">RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>RsaCtfTool</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#check-the-entry-point-first">Check the entry point first</a></li>
+    <li><a href="#inspect-a-public-key">Inspect a public key</a></li>
+    <li><a href="#try-a-relevant-attack">Try a relevant attack</a></li>
+    <li><a href="#decrypt-challenge-ciphertext">Decrypt challenge ciphertext</a></li>
+    <li><a href="#ctf-notes">CTF notes</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#match-the-rsa-weakness-before-selecting-an-attack">Match the RSA weakness before selecting an attack</a></li>
+    <li><a href="#ctf-shared-prime-recovery-without-extra-packages">CTF: shared-prime recovery without extra packages</a></li>
+    <li><a href="#build-a-public-key-from-decimal-n-and-e">Build a public key from decimal n and e</a></li>
+    <li><a href="#try-close-prime-factorization">Try close-prime factorization</a></li>
+    <li><a href="#convert-a-ciphertext-integer-to-bytes">Convert a ciphertext integer to bytes</a></li>
+    <li><a href="#check-recovered-textbook-plaintext">Check recovered textbook plaintext</a></li>
+    <li><a href="#keep-attack-dependencies-separate">Keep attack dependencies separate</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>4 MIN READ</span></div>
+<h1 class="page-title">RsaCtfTool</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> weak RSA keys, known RSA attack patterns and private key recovery.<br>
+<strong>Run in:</strong> WSL; Python based tool.</p>
+<h2 id="check-the-entry-point-first">Check the entry point first<a class="anchor" href="#check-the-entry-point-first"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Current upstream CLI</span>
+</span></span><span style="display:flex;"><span>RsaCtfTool --help
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Older supplied checkouts may instead use:</span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># python3 /path/to/RsaCtfTool.py --help</span></span></span></code></pre></div><p>Use the installed version’s help. Recent upstream uses <code>--decryptfile</code>; older examples often use <code>--uncipherfile</code>.</p>
+<h2 id="inspect-a-public-key">Inspect a public key<a class="anchor" href="#inspect-a-public-key"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>RsaCtfTool --dumpkey --key public.pem
+</span></span><span style="display:flex;"><span>openssl pkey -pubin -in public.pem -text -noout</span></span></code></pre></div><h2 id="try-a-relevant-attack">Try a relevant attack<a class="anchor" href="#try-a-relevant-attack"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># General weak-key recovery</span>
+</span></span><span style="display:flex;"><span>RsaCtfTool --publickey public.pem --private
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Small private exponent candidate</span>
+</span></span><span style="display:flex;"><span>RsaCtfTool --publickey public.pem --attack wiener --private
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Multiple supplied public keys</span>
+</span></span><span style="display:flex;"><span>RsaCtfTool --publickey <span style="color:#a3be8c">&#39;*.pub&#39;</span> --private</span></span></code></pre></div><h2 id="decrypt-challenge-ciphertext">Decrypt challenge ciphertext<a class="anchor" href="#decrypt-challenge-ciphertext"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>RsaCtfTool --publickey public.pem --decryptfile ciphertext.bin</span></span></code></pre></div><p>Confirm whether the challenge ciphertext is raw bytes, hex, Base64 or an integer before supplying it.</p>
+<h2 id="ctf-notes">CTF notes<a class="anchor" href="#ctf-notes"></a></h2>
+<ul>
+<li>Record <code>n</code>, <code>e</code>, ciphertext and any leaked factors/CRT values.</li>
+<li>Select an attack from the evidence rather than waiting indefinitely on all methods.</li>
+<li>Ordinary large RSA keys are not automatically breakable.</li>
+<li>Some attacks require optional dependencies or online services; availability and competition approval must be checked separately.</li>
+<li>Verify recovered plaintext bytes and padding; textbook RSA and OAEP differ.</li>
+</ul>
+<h2 id="flags-explained">Flags explained<a class="anchor" href="#flags-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Flag</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>--publickey FILE</code></td>
+          <td>Select the target public key / supported key pattern</td>
+      </tr>
+      <tr>
+          <td><code>--private</code></td>
+          <td>Request recovered private key output</td>
+      </tr>
+      <tr>
+          <td><code>--attack NAME</code></td>
+          <td>Select a named supported attack</td>
+      </tr>
+      <tr>
+          <td><code>--decryptfile FILE</code></td>
+          <td>Read ciphertext bytes for decryption in current upstream</td>
+      </tr>
+      <tr>
+          <td><code>--dumpkey</code></td>
+          <td>Display key parameters</td>
+      </tr>
+      <tr>
+          <td><code>--key FILE</code></td>
+          <td>Supply the key inspected by dump/reconstruction modes</td>
+      </tr>
+      <tr>
+          <td><code>--createpub</code></td>
+          <td>Construct a public key using numeric parameters</td>
+      </tr>
+      <tr>
+          <td><code>-n NUMBER</code></td>
+          <td>RSA modulus n</td>
+      </tr>
+      <tr>
+          <td><code>-e NUMBER</code></td>
+          <td>RSA public exponent e</td>
+      </tr>
+  </tbody>
+</table>
+<p><code>-e</code> means exponent here, while binwalk uses it for extraction. Confirm names with <code>--help</code>, especially on older supplied checkouts.</p>
+<h2 id="match-the-rsa-weakness-before-selecting-an-attack">Match the RSA weakness before selecting an attack<a class="anchor" href="#match-the-rsa-weakness-before-selecting-an-attack"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Given clue</th>
+          <th>Candidate technique</th>
+          <th>Necessary check</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Two public keys share a prime</td>
+          <td>GCD between moduli</td>
+          <td><code>1 &lt; gcd(n1,n2) &lt; n1</code></td>
+      </tr>
+      <tr>
+          <td><code>p</code> and <code>q</code> very close</td>
+          <td>Fermat factorization</td>
+          <td>Difference must be small enough</td>
+      </tr>
+      <tr>
+          <td>Unusually small private exponent</td>
+          <td>Wiener</td>
+          <td>Check recovered factors/private key</td>
+      </tr>
+      <tr>
+          <td>Tiny <code>e</code>, short unpadded plaintext</td>
+          <td>Exact integer root</td>
+          <td>The plaintext power must not wrap modulo n</td>
+      </tr>
+      <tr>
+          <td>Same message, small e, several moduli</td>
+          <td>Broadcast attack</td>
+          <td>Enough compatible ciphertexts/moduli</td>
+      </tr>
+      <tr>
+          <td>Leaked p/q/d/CRT values</td>
+          <td>Reconstruct key</td>
+          <td>Confirm <code>p*q == n</code> and valid exponents</td>
+      </tr>
+      <tr>
+          <td>Normal large random modulus</td>
+          <td>No obvious weakness</td>
+          <td>Search the challenge for leakage/implementation errors</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ctf-shared-prime-recovery-without-extra-packages">CTF: shared-prime recovery without extra packages<a class="anchor" href="#ctf-shared-prime-recovery-without-extra-packages"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">math</span> <span style="color:#81a1c1;font-weight:bold">import</span> gcd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Worked example: both moduli share 61</span>
+</span></span><span style="display:flex;"><span>n1<span style="color:#eceff4">,</span> n2 <span style="color:#81a1c1">=</span> <span style="color:#b48ead">3233</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">2867</span>
+</span></span><span style="display:flex;"><span>p <span style="color:#81a1c1">=</span> gcd<span style="color:#eceff4">(</span>n1<span style="color:#eceff4">,</span> n2<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> <span style="color:#b48ead">1</span> <span style="color:#81a1c1">&lt;</span> p <span style="color:#81a1c1">&lt;</span> n1
+</span></span><span style="display:flex;"><span>q <span style="color:#81a1c1">=</span> n1 <span style="color:#81a1c1">//</span> p
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> p <span style="color:#81a1c1">*</span> q <span style="color:#81a1c1">==</span> n1
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;factors:&#34;</span><span style="color:#eceff4">,</span> p<span style="color:#eceff4">,</span> q<span style="color:#eceff4">)</span></span></span></code></pre></div><p>For many keys, inspect the supplied tool’s multi-key mode first. A GCD equal to the modulus can mean duplicate keys rather than a useful partial factor.</p>
+<h2 id="build-a-public-key-from-decimal-n-and-e">Build a public key from decimal n and e<a class="anchor" href="#build-a-public-key-from-decimal-n-and-e"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Tiny worked values for syntax; use your challenge&#39;s full integers</span>
+</span></span><span style="display:flex;"><span>RsaCtfTool --createpub -n <span style="color:#b48ead">3233</span> -e <span style="color:#b48ead">17</span> &gt; example_public.pem</span></span></code></pre></div><p>Confirm the file contains only a PEM block before using it. Some versions print diagnostics separately or use a different output option.</p>
+<h2 id="try-close-prime-factorization">Try close-prime factorization<a class="anchor" href="#try-close-prime-factorization"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Use this only if the installed help lists the fermat attack</span>
+</span></span><span style="display:flex;"><span>RsaCtfTool --publickey public.pem --attack fermat --private</span></span></code></pre></div><p>A Fermat failure does not eliminate every RSA weakness. Decide the next technique from the challenge’s parameters and leaks.</p>
+<h2 id="convert-a-ciphertext-integer-to-bytes">Convert a ciphertext integer to bytes<a class="anchor" href="#convert-a-ciphertext-integer-to-bytes"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>c <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">int</span><span style="color:#eceff4">(</span>Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;cipher_integer.txt&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>read_text<span style="color:#eceff4">()</span><span style="color:#81a1c1">.</span>strip<span style="color:#eceff4">(),</span> <span style="color:#b48ead">10</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>raw <span style="color:#81a1c1">=</span> c<span style="color:#81a1c1">.</span>to_bytes<span style="color:#eceff4">(</span><span style="color:#81a1c1">max</span><span style="color:#eceff4">(</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">(</span>c<span style="color:#81a1c1">.</span>bit_length<span style="color:#eceff4">()</span> <span style="color:#81a1c1">+</span> <span style="color:#b48ead">7</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">//</span> <span style="color:#b48ead">8</span><span style="color:#eceff4">),</span> <span style="color:#a3be8c">&#34;big&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;ciphertext.bin&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>write_bytes<span style="color:#eceff4">(</span>raw<span style="color:#eceff4">)</span></span></span></code></pre></div><p>For fixed-width RSA blocks, use <code>(n.bit_length() + 7) // 8</code> as the width instead. If the input is hex text, use <code>int(text, 16)</code>; do not treat it as decimal.</p>
+<h2 id="check-recovered-textbook-plaintext">Check recovered textbook plaintext<a class="anchor" href="#check-recovered-textbook-plaintext"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> p <span style="color:#81a1c1">*</span> q <span style="color:#81a1c1">==</span> n
+</span></span><span style="display:flex;"><span>d <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">pow</span><span style="color:#eceff4">(</span>e<span style="color:#eceff4">,</span> <span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">(</span>p <span style="color:#81a1c1">-</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">*</span> <span style="color:#eceff4">(</span>q <span style="color:#81a1c1">-</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>m <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">pow</span><span style="color:#eceff4">(</span>c<span style="color:#eceff4">,</span> d<span style="color:#eceff4">,</span> n<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> <span style="color:#81a1c1">pow</span><span style="color:#eceff4">(</span>m<span style="color:#eceff4">,</span> e<span style="color:#eceff4">,</span> n<span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> c <span style="color:#81a1c1">%</span> n
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>m<span style="color:#81a1c1">.</span>to_bytes<span style="color:#eceff4">(</span><span style="color:#81a1c1">max</span><span style="color:#eceff4">(</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">(</span>m<span style="color:#81a1c1">.</span>bit_length<span style="color:#eceff4">()</span> <span style="color:#81a1c1">+</span> <span style="color:#b48ead">7</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">//</span> <span style="color:#b48ead">8</span><span style="color:#eceff4">),</span> <span style="color:#a3be8c">&#34;big&#34;</span><span style="color:#eceff4">))</span></span></span></code></pre></div><p>Here <code>p</code>, <code>q</code>, <code>n</code>, <code>e</code> and <code>c</code> are the actual recovered/supplied integers. Verify the key mathematically before blaming text decoding.</p>
+<h2 id="keep-attack-dependencies-separate">Keep attack dependencies separate<a class="anchor" href="#keep-attack-dependencies-separate"></a></h2>
+<p>The approved tool may have attacks requiring SageMath or external factorization helpers. Its presence in a menu does not show the helper is installed. Record “dependency missing” separately from “attack ran and failed.” Online factor databases also depend on tournament network access.</p>
+<p>References: <a href="https://github.com/RsaCtfTool/RsaCtfTool">RsaCtfTool current CLI and examples</a>, <a href="https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex">Python integer operations</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../reversing-expl/crypto-obfuscation/">Crypto and obfuscation recognition</a></li>
+<li><a href="../../tools-cheatsheet/python-library/">Python and crypto reference map</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>fsck.fat (dosfstools)</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/volatility3/" class="flex align-center">
+        <span>Volatility 3</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#check-the-entry-point-first">Check the entry point first</a></li>
+    <li><a href="#inspect-a-public-key">Inspect a public key</a></li>
+    <li><a href="#try-a-relevant-attack">Try a relevant attack</a></li>
+    <li><a href="#decrypt-challenge-ciphertext">Decrypt challenge ciphertext</a></li>
+    <li><a href="#ctf-notes">CTF notes</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#match-the-rsa-weakness-before-selecting-an-attack">Match the RSA weakness before selecting an attack</a></li>
+    <li><a href="#ctf-shared-prime-recovery-without-extra-packages">CTF: shared-prime recovery without extra packages</a></li>
+    <li><a href="#build-a-public-key-from-decimal-n-and-e">Build a public key from decimal n and e</a></li>
+    <li><a href="#try-close-prime-factorization">Try close-prime factorization</a></li>
+    <li><a href="#convert-a-ciphertext-integer-to-bytes">Convert a ciphertext integer to bytes</a></li>
+    <li><a href="#check-recovered-textbook-plaintext">Check recovered textbook plaintext</a></li>
+    <li><a href="#keep-attack-dependencies-separate">Keep attack dependencies separate</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

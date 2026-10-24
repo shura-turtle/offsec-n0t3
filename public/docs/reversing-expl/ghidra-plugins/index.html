@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Ghidra plugins and offline extensions Start with the supplied installation. Built-in analysis can cover most CTF reversing. External extensions are optional tools with their own compatibility and event-approval status. This page contains no AI/MCP assistant extensions.
+1. Plugin, extension and script are different Type Meaning Typical entry point Built-in plugin Feature already bundled with Ghidra File → Configure in a tool; Window panels Extension Extra packaged module, often Java Project Manager → File → Install Extensions Script A local Java/Python automation file Window → Script Manager and script directories Standalone companion Separate program operating on sample/output Its own executable and dependencies Menu labels differ slightly across releases. A missing feature may only need enabling in the current tool configuration. Do not download a third-party package to obtain a panel already bundled with Ghidra.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/reversing-expl/ghidra-plugins/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Ghidra Plugins · Built-ins & Offline Extras">
+  <meta property="og:description" content="Ghidra plugins and offline extensions Start with the supplied installation. Built-in analysis can cover most CTF reversing. External extensions are optional tools with their own compatibility and event-approval status. This page contains no AI/MCP assistant extensions.
+1. Plugin, extension and script are different Type Meaning Typical entry point Built-in plugin Feature already bundled with Ghidra File → Configure in a tool; Window panels Extension Extra packaged module, often Java Project Manager → File → Install Extensions Script A local Java/Python automation file Window → Script Manager and script directories Standalone companion Separate program operating on sample/output Its own executable and dependencies Menu labels differ slightly across releases. A missing feature may only need enabling in the current tool configuration. Do not download a third-party package to obtain a panel already bundled with Ghidra.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Ghidra Plugins · Built-ins & Offline Extras">
+  <meta itemprop="description" content="Ghidra plugins and offline extensions Start with the supplied installation. Built-in analysis can cover most CTF reversing. External extensions are optional tools with their own compatibility and event-approval status. This page contains no AI/MCP assistant extensions.
+1. Plugin, extension and script are different Type Meaning Typical entry point Built-in plugin Feature already bundled with Ghidra File → Configure in a tool; Window panels Extension Extra packaged module, often Java Project Manager → File → Install Extensions Script A local Java/Python automation file Window → Script Manager and script directories Standalone companion Separate program operating on sample/output Its own executable and dependencies Menu labels differ slightly across releases. A missing feature may only need enabling in the current tool configuration. Do not download a third-party package to obtain a panel already bundled with Ghidra.">
+  <meta itemprop="wordCount" content="861">
+
+<title>Ghidra Plugins · Built-ins &amp; Offline Extras • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/reversing-expl/ghidra-plugins/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details open>
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="active" aria-current="page">Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Ghidra Plugins · Built-ins &amp; Offline Extras</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-plugin-extension-and-script-are-different">1. Plugin, extension and script are different</a></li>
+    <li><a href="#2-useful-bundled-features">2. Useful bundled features</a>
+      <ul>
+        <li><a href="#version-tracking-workflow">Version Tracking workflow</a></li>
+        <li><a href="#bsim-workflow">BSim workflow</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-optional-non-ai-companions">3. Optional non-AI companions</a></li>
+    <li><a href="#4-installing-a-packaged-extension">4. Installing a packaged extension</a></li>
+    <li><a href="#5-running-local-scripts">5. Running local scripts</a></li>
+    <li><a href="#6-debugger-synchronization-caveats">6. Debugger synchronization caveats</a></li>
+    <li><a href="#7-pre-event-offline-check">7. Pre-event offline check</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="reversing"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/reversing-expl/">Reverse Engineering</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="ghidra-plugins-and-offline-extensions">Ghidra plugins and offline extensions<a class="anchor" href="#ghidra-plugins-and-offline-extensions"></a></h1>
+<p><strong>Start with the supplied installation.</strong> Built-in analysis can cover most CTF reversing. External extensions are optional tools with their own compatibility and event-approval status. This page contains no AI/MCP assistant extensions.</p>
+<h2 id="1-plugin-extension-and-script-are-different">1. Plugin, extension and script are different<a class="anchor" href="#1-plugin-extension-and-script-are-different"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Type</th>
+          <th>Meaning</th>
+          <th>Typical entry point</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Built-in plugin</td>
+          <td>Feature already bundled with Ghidra</td>
+          <td>File → Configure in a tool; Window panels</td>
+      </tr>
+      <tr>
+          <td>Extension</td>
+          <td>Extra packaged module, often Java</td>
+          <td>Project Manager → File → Install Extensions</td>
+      </tr>
+      <tr>
+          <td>Script</td>
+          <td>A local Java/Python automation file</td>
+          <td>Window → Script Manager and script directories</td>
+      </tr>
+      <tr>
+          <td>Standalone companion</td>
+          <td>Separate program operating on sample/output</td>
+          <td>Its own executable and dependencies</td>
+      </tr>
+  </tbody>
+</table>
+<p>Menu labels differ slightly across releases. A missing feature may only need enabling in the current tool configuration. Do not download a third-party package to obtain a panel already bundled with Ghidra.</p>
+<h2 id="2-useful-bundled-features">2. Useful bundled features<a class="anchor" href="#2-useful-bundled-features"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Feature</th>
+          <th>Good use</th>
+          <th>Limitation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Function ID</td>
+          <td>Recognize known compiled library functions</td>
+          <td>Needs compatible signatures; optimized variants may differ</td>
+      </tr>
+      <tr>
+          <td>Function Graph</td>
+          <td>Visualize basic-block branches</td>
+          <td>Control-flow model can be incomplete for indirect jumps</td>
+      </tr>
+      <tr>
+          <td>Function Call Trees</td>
+          <td>Find callers and callees</td>
+          <td>Indirect calls may be unresolved</td>
+      </tr>
+      <tr>
+          <td>Data Type Manager</td>
+          <td>Apply structures, enums and headers</td>
+          <td>Wrong types can mislead decompilation</td>
+      </tr>
+      <tr>
+          <td>Version Tracking</td>
+          <td>Transfer validated matches/annotations between two related programs</td>
+          <td>Matches need review; differences can invalidate assumptions</td>
+      </tr>
+      <tr>
+          <td>BSim</td>
+          <td>Similarity search against a prepared corpus</td>
+          <td>Requires signature/database setup; similarity is not identity</td>
+      </tr>
+      <tr>
+          <td>Debugger tool</td>
+          <td>Connect supported backends and correlate static/dynamic state</td>
+          <td>Backend setup and supported OS/architecture vary</td>
+      </tr>
+      <tr>
+          <td>Script Manager</td>
+          <td>Repetitive local extraction and annotation</td>
+          <td>Scripts can change the program database</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="version-tracking-workflow">Version Tracking workflow<a class="anchor" href="#version-tracking-workflow"></a></h3>
+<p>Import and analyze both known and unknown builds, create a tracking session, select source/destination and run a suitable correlator. Review proposed matches before applying names/types. Confirm both call structure and important constants; a same-looking function can have a changed check.</p>
+<h3 id="bsim-workflow">BSim workflow<a class="anchor" href="#bsim-workflow"></a></h3>
+<p>Choose a corpus you already possess and are permitted to use, generate/ingest function signatures using the installed version&rsquo;s documentation, then query interesting functions. Use the result as a lead to known implementations. It is excessive setup for a tiny one-off byte validator with no relevant corpus.</p>
+<h2 id="3-optional-non-ai-companions">3. Optional non-AI companions<a class="anchor" href="#3-optional-non-ai-companions"></a></h2>
+<p>These are <strong>not established as allowed by the supplied tournament list</strong>. Prepare them only if your event permits them; the manual workflow remains usable without them.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Project</th>
+          <th>Purpose</th>
+          <th>Compatibility/installation notes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="https://github.com/bootleg/ret-sync">ret-sync</a></td>
+          <td>Synchronize debugger location with Ghidra/other disassemblers</td>
+          <td>Requires both debugger-side and disassembler-side components; match release/backend and address mapping</td>
+      </tr>
+      <tr>
+          <td><a href="https://github.com/mandiant/flare-floss">FLOSS</a></td>
+          <td>Recover several classes of obfuscated strings</td>
+          <td>Standalone companion, not a stock Ghidra plugin; supported formats/architectures and runtime requirements apply</td>
+      </tr>
+      <tr>
+          <td><a href="https://github.com/mandiant/capa">capa</a></td>
+          <td>Identify capabilities from rule matches</td>
+          <td>Standalone rule-based companion; prepare matching rules and supported analyzer backend offline</td>
+      </tr>
+      <tr>
+          <td><a href="https://github.com/astrelsky/Ghidra-Cpp-Class-Analyzer">Ghidra C++ Class Analyzer</a></td>
+          <td>Historical RTTI/class reconstruction extension</td>
+          <td>Repository archived in 2023; no assumption it builds against your current Ghidra</td>
+      </tr>
+  </tbody>
+</table>
+<p>There is no universal current extension zip that works across all Ghidra releases. For each candidate, record the exact release/tag, intended Ghidra version, Java requirements, dependency list and install method from its own README. An archived extension is a reference candidate rather than a default installation recommendation.</p>
+<h2 id="4-installing-a-packaged-extension">4. Installing a packaged extension<a class="anchor" href="#4-installing-a-packaged-extension"></a></h2>
+<ol>
+<li>Read the extension&rsquo;s compatibility matrix/release notes. Record <strong>your actual Ghidra version</strong> from Help → About.</li>
+<li>Use the release built for that version, or build source using the documented matching Ghidra development setup.</li>
+<li>In Project Manager, open <strong>File → Install Extensions</strong>, select the package using the add control, enable it and restart if requested.</li>
+<li>Open the analysis tool and enable its plugin/panel in tool configuration if the extension requires that step.</li>
+<li>Test on a small known local executable before the event, then preserve the package and dependencies offline.</li>
+</ol>
+<p>A generic Gradle extension build often uses the following shape; it applies only when the repository explicitly provides that build configuration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gradle -PGHIDRA_INSTALL_DIR<span style="color:#81a1c1">=</span>/path/to/exact-ghidra-install buildExtension</span></span></code></pre></div><p>Do not rename a zip or edit <code>extension.properties</code> to pretend a different version is compatible. Successful loading alone is weaker than successful analysis on a fixture.</p>
+<h2 id="5-running-local-scripts">5. Running local scripts<a class="anchor" href="#5-running-local-scripts"></a></h2>
+<p>Add a scripts directory through Script Manager&rsquo;s directory controls. Refresh, inspect the script source and select the correct runtime. The classic Ghidra Python integration is Jython-based; PyGhidra is a separate CPython integration with its own setup. A Python 3 script using <code>pathlib</code>, f-strings or third-party CPython packages does not automatically run as a classic Jython script.</p>
+<p>The downloadable scripts in <a href="../python-snippets/">Python snippets</a> are <strong>ordinary command-line Python 3</strong>, not Ghidra scripts. Export bytes first and run them outside Ghidra.</p>
+<h2 id="6-debugger-synchronization-caveats">6. Debugger synchronization caveats<a class="anchor" href="#6-debugger-synchronization-caveats"></a></h2>
+<p>For ret-sync or native Ghidra Debugger workflows, write down:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Static image base:
+</span></span><span style="display:flex;"><span>Runtime module base:
+</span></span><span style="display:flex;"><span>RVA = static address - static image base:
+</span></span><span style="display:flex;"><span>Runtime address = runtime module base + RVA:
+</span></span><span style="display:flex;"><span>Debugger backend / architecture:
+</span></span><span style="display:flex;"><span>Extension build and Ghidra version:</span></span></code></pre></div><p>ASLR changes runtime bases. A correct plugin connection with an incorrect module mapping highlights the wrong code. On Linux, mappings differ per segment; on Windows, record the module load base. Confirm one known instruction&rsquo;s bytes at the correlated address.</p>
+<h2 id="7-pre-event-offline-check">7. Pre-event offline check<a class="anchor" href="#7-pre-event-offline-check"></a></h2>
+<p>Open a test program, show one useful result, disconnect network and reopen the project. Ensure local help, rule bundles and signature databases remain available. Document the matching manual fallback: string references, library constants, structures and breakpoints are still useful without extensions.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://github.com/NationalSecurityAgency/ghidra">Ghidra distribution/source</a>, <a href="https://github.com/NationalSecurityAgency/ghidra/tree/master/Ghidra/Features/VersionTracking">Version Tracking source/docs</a>, <a href="https://github.com/NationalSecurityAgency/ghidra/tree/master/Ghidra/Features/BSim">BSim feature</a>, <a href="https://github.com/bootleg/ret-sync">ret-sync installation and backend docs</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/reversing-expl/ghidra-cheatsheet/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Ghidra Cheatsheet · From Strings to Check</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/reversing-expl/static-analysis/" class="flex align-center">
+        <span>Static Analysis · Bytes, Types &amp; Control Flow</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-plugin-extension-and-script-are-different">1. Plugin, extension and script are different</a></li>
+    <li><a href="#2-useful-bundled-features">2. Useful bundled features</a>
+      <ul>
+        <li><a href="#version-tracking-workflow">Version Tracking workflow</a></li>
+        <li><a href="#bsim-workflow">BSim workflow</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-optional-non-ai-companions">3. Optional non-AI companions</a></li>
+    <li><a href="#4-installing-a-packaged-extension">4. Installing a packaged extension</a></li>
+    <li><a href="#5-running-local-scripts">5. Running local scripts</a></li>
+    <li><a href="#6-debugger-synchronization-caveats">6. Debugger synchronization caveats</a></li>
+    <li><a href="#7-pre-event-offline-check">7. Pre-event offline check</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

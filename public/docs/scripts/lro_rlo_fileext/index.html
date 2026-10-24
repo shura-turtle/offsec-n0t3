@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="#!/usr/bin/env python3 &#34;&#34;&#34;Build the RLO/LRO filename pattern shown in the M2 lab writeup.&#34;&#34;&#34; from __future__ import annotations import argparse import json from pathlib import Path RLO = &#34;\u202e&#34; LRO = &#34;\u202d&#34; def build_name(display_name: str, extension: str, prefix: str | None) -&gt; tuple[str, str]: if not extension.startswith(&#34;.&#34;) or len(extension) &lt; 2: raise ValueError(&#34;--extension must include its leading dot, for example .exe&#34;) if prefix is None: marker_at = display_name.lower().find(extension.lower()) if marker_at &lt;= 0: raise ValueError( f&#34;{display_name!r} has no {extension!r} inside it; supply --prefix &#34; &#34;whose text is the start of the display name and ends in the real extension&#34; ) prefix = display_name[: marker_at &#43; len(extension)] if not display_name.startswith(prefix): raise ValueError(&#34;--prefix must match the beginning of the displayed name&#34;) if not prefix.lower().endswith(extension.lower()): raise ValueError(&#34;--prefix must end with the real extension&#34;) remainder = display_name[len(prefix) :] if not remainder: raise ValueError(&#34;the prefix must leave some displayed text after it&#34;) # RLO reverses the remainder for display. LRO then starts a left-to-right # run containing the prefix. That prefix is last in the stored name, so its # final extension remains the file&#39;s actual extension. stored_name = RLO &#43; remainder[::-1] &#43; LRO &#43; prefix return stored_name, prefix def main() -&gt; int: parser = argparse.ArgumentParser( description=&#34;Preview or apply the M2 lab RLO/LRO filename pattern.&#34; ) parser.add_argument(&#34;source&#34;, type=Path, help=&#34;Existing file, such as payload.exe&#34;) parser.add_argument(&#34;display_name&#34;, help=&#34;Name you want the UI to display&#34;) parser.add_argument( &#34;--prefix&#34;, help=&#34;Displayed starting text ending with the source file&#39;s real extension; inferred when possible&#34;, ) parser.add_argument(&#34;--apply&#34;, action=&#34;store_true&#34;, help=&#34;Rename the source file&#34;) parser.add_argument( &#34;--literal&#34;, action=&#34;store_true&#34;, help=&#34;Print the raw Unicode name too; bidi controls are invisible&#34;, ) args = parser.parse_args() if not args.source.is_file(): parser.error(f&#34;source file does not exist or is not a regular file: {args.source}&#34;) if &#34;/&#34; in args.display_name or &#34;\\&#34; in args.display_name: parser.error(&#34;display_name must be a filename, without directory separators&#34;) extension = args.source.suffix if not extension: parser.error(&#34;source file has no extension to preserve&#34;) try: stored_name, prefix = build_name(args.display_name, extension, args.prefix) except ValueError as exc: parser.error(str(exc)) remainder = args.display_name[len(prefix) :] destination = args.source.with_name(stored_name) print(f&#34;Displayed name: {args.display_name}&#34;) print(f&#34;Source file: {args.source}&#34;) print(f&#34;Real extension: {extension}&#34;) print(f&#34;Split: {prefix!r} &#43; {remainder!r}&#34;) print(f&#34;Escaped name: {json.dumps(stored_name, ensure_ascii=True)}&#34;) print(&#34;Controls: U&#43;202E RLO, then U&#43;202D LRO&#34;) if args.literal: print(&#34;Literal destination name follows; bidi controls are invisible:&#34;) print(stored_name) if args.apply: if destination.exists(): parser.error(f&#34;destination already exists: {destination!s}&#34;) args.source.rename(destination) print(f&#34;Renamed to: {destination}&#34;) else: print(&#34;Preview only. Add --apply to rename the source file.&#34;) return 0 if __name__ == &#34;__main__&#34;: raise SystemExit(main())python script.py file.exe &#39;CSG2025.Exercise.doc&#39; --apply">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/scripts/lro_rlo_fileext/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Lro Rlo File Ext">
+  <meta property="og:description" content="#!/usr/bin/env python3 &#34;&#34;&#34;Build the RLO/LRO filename pattern shown in the M2 lab writeup.&#34;&#34;&#34; from __future__ import annotations import argparse import json from pathlib import Path RLO = &#34;\u202e&#34; LRO = &#34;\u202d&#34; def build_name(display_name: str, extension: str, prefix: str | None) -&gt; tuple[str, str]: if not extension.startswith(&#34;.&#34;) or len(extension) &lt; 2: raise ValueError(&#34;--extension must include its leading dot, for example .exe&#34;) if prefix is None: marker_at = display_name.lower().find(extension.lower()) if marker_at &lt;= 0: raise ValueError( f&#34;{display_name!r} has no {extension!r} inside it; supply --prefix &#34; &#34;whose text is the start of the display name and ends in the real extension&#34; ) prefix = display_name[: marker_at &#43; len(extension)] if not display_name.startswith(prefix): raise ValueError(&#34;--prefix must match the beginning of the displayed name&#34;) if not prefix.lower().endswith(extension.lower()): raise ValueError(&#34;--prefix must end with the real extension&#34;) remainder = display_name[len(prefix) :] if not remainder: raise ValueError(&#34;the prefix must leave some displayed text after it&#34;) # RLO reverses the remainder for display. LRO then starts a left-to-right # run containing the prefix. That prefix is last in the stored name, so its # final extension remains the file&#39;s actual extension. stored_name = RLO &#43; remainder[::-1] &#43; LRO &#43; prefix return stored_name, prefix def main() -&gt; int: parser = argparse.ArgumentParser( description=&#34;Preview or apply the M2 lab RLO/LRO filename pattern.&#34; ) parser.add_argument(&#34;source&#34;, type=Path, help=&#34;Existing file, such as payload.exe&#34;) parser.add_argument(&#34;display_name&#34;, help=&#34;Name you want the UI to display&#34;) parser.add_argument( &#34;--prefix&#34;, help=&#34;Displayed starting text ending with the source file&#39;s real extension; inferred when possible&#34;, ) parser.add_argument(&#34;--apply&#34;, action=&#34;store_true&#34;, help=&#34;Rename the source file&#34;) parser.add_argument( &#34;--literal&#34;, action=&#34;store_true&#34;, help=&#34;Print the raw Unicode name too; bidi controls are invisible&#34;, ) args = parser.parse_args() if not args.source.is_file(): parser.error(f&#34;source file does not exist or is not a regular file: {args.source}&#34;) if &#34;/&#34; in args.display_name or &#34;\\&#34; in args.display_name: parser.error(&#34;display_name must be a filename, without directory separators&#34;) extension = args.source.suffix if not extension: parser.error(&#34;source file has no extension to preserve&#34;) try: stored_name, prefix = build_name(args.display_name, extension, args.prefix) except ValueError as exc: parser.error(str(exc)) remainder = args.display_name[len(prefix) :] destination = args.source.with_name(stored_name) print(f&#34;Displayed name: {args.display_name}&#34;) print(f&#34;Source file: {args.source}&#34;) print(f&#34;Real extension: {extension}&#34;) print(f&#34;Split: {prefix!r} &#43; {remainder!r}&#34;) print(f&#34;Escaped name: {json.dumps(stored_name, ensure_ascii=True)}&#34;) print(&#34;Controls: U&#43;202E RLO, then U&#43;202D LRO&#34;) if args.literal: print(&#34;Literal destination name follows; bidi controls are invisible:&#34;) print(stored_name) if args.apply: if destination.exists(): parser.error(f&#34;destination already exists: {destination!s}&#34;) args.source.rename(destination) print(f&#34;Renamed to: {destination}&#34;) else: print(&#34;Preview only. Add --apply to rename the source file.&#34;) return 0 if __name__ == &#34;__main__&#34;: raise SystemExit(main())python script.py file.exe &#39;CSG2025.Exercise.doc&#39; --apply">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Lro Rlo File Ext">
+  <meta itemprop="description" content="#!/usr/bin/env python3 &#34;&#34;&#34;Build the RLO/LRO filename pattern shown in the M2 lab writeup.&#34;&#34;&#34; from __future__ import annotations import argparse import json from pathlib import Path RLO = &#34;\u202e&#34; LRO = &#34;\u202d&#34; def build_name(display_name: str, extension: str, prefix: str | None) -&gt; tuple[str, str]: if not extension.startswith(&#34;.&#34;) or len(extension) &lt; 2: raise ValueError(&#34;--extension must include its leading dot, for example .exe&#34;) if prefix is None: marker_at = display_name.lower().find(extension.lower()) if marker_at &lt;= 0: raise ValueError( f&#34;{display_name!r} has no {extension!r} inside it; supply --prefix &#34; &#34;whose text is the start of the display name and ends in the real extension&#34; ) prefix = display_name[: marker_at &#43; len(extension)] if not display_name.startswith(prefix): raise ValueError(&#34;--prefix must match the beginning of the displayed name&#34;) if not prefix.lower().endswith(extension.lower()): raise ValueError(&#34;--prefix must end with the real extension&#34;) remainder = display_name[len(prefix) :] if not remainder: raise ValueError(&#34;the prefix must leave some displayed text after it&#34;) # RLO reverses the remainder for display. LRO then starts a left-to-right # run containing the prefix. That prefix is last in the stored name, so its # final extension remains the file&#39;s actual extension. stored_name = RLO &#43; remainder[::-1] &#43; LRO &#43; prefix return stored_name, prefix def main() -&gt; int: parser = argparse.ArgumentParser( description=&#34;Preview or apply the M2 lab RLO/LRO filename pattern.&#34; ) parser.add_argument(&#34;source&#34;, type=Path, help=&#34;Existing file, such as payload.exe&#34;) parser.add_argument(&#34;display_name&#34;, help=&#34;Name you want the UI to display&#34;) parser.add_argument( &#34;--prefix&#34;, help=&#34;Displayed starting text ending with the source file&#39;s real extension; inferred when possible&#34;, ) parser.add_argument(&#34;--apply&#34;, action=&#34;store_true&#34;, help=&#34;Rename the source file&#34;) parser.add_argument( &#34;--literal&#34;, action=&#34;store_true&#34;, help=&#34;Print the raw Unicode name too; bidi controls are invisible&#34;, ) args = parser.parse_args() if not args.source.is_file(): parser.error(f&#34;source file does not exist or is not a regular file: {args.source}&#34;) if &#34;/&#34; in args.display_name or &#34;\\&#34; in args.display_name: parser.error(&#34;display_name must be a filename, without directory separators&#34;) extension = args.source.suffix if not extension: parser.error(&#34;source file has no extension to preserve&#34;) try: stored_name, prefix = build_name(args.display_name, extension, args.prefix) except ValueError as exc: parser.error(str(exc)) remainder = args.display_name[len(prefix) :] destination = args.source.with_name(stored_name) print(f&#34;Displayed name: {args.display_name}&#34;) print(f&#34;Source file: {args.source}&#34;) print(f&#34;Real extension: {extension}&#34;) print(f&#34;Split: {prefix!r} &#43; {remainder!r}&#34;) print(f&#34;Escaped name: {json.dumps(stored_name, ensure_ascii=True)}&#34;) print(&#34;Controls: U&#43;202E RLO, then U&#43;202D LRO&#34;) if args.literal: print(&#34;Literal destination name follows; bidi controls are invisible:&#34;) print(stored_name) if args.apply: if destination.exists(): parser.error(f&#34;destination already exists: {destination!s}&#34;) args.source.rename(destination) print(f&#34;Renamed to: {destination}&#34;) else: print(&#34;Preview only. Add --apply to rename the source file.&#34;) return 0 if __name__ == &#34;__main__&#34;: raise SystemExit(main())python script.py file.exe &#39;CSG2025.Exercise.doc&#39; --apply">
+  <meta itemprop="wordCount" content="394">
+
+<title>Lro Rlo File Ext • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/scripts/lro_rlo_fileext/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details open>
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="active" aria-current="page">Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Lro Rlo File Ext</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents"></nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="scripts"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/scripts/">Scripts</a></nav><span>2 MIN READ</span></div>
+<h1 class="page-title">Lro Rlo File Ext</h1>
+
+
+      
+  <article class="markdown book-article"><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#a3be8c">&#34;&#34;&#34;Build the RLO/LRO filename pattern shown in the M2 lab writeup.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">__future__</span> <span style="color:#81a1c1;font-weight:bold">import</span> annotations
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">argparse</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">json</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>RLO <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">&#34;</span><span style="color:#ebcb8b">\u202e</span><span style="color:#a3be8c">&#34;</span>
+</span></span><span style="display:flex;"><span>LRO <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">&#34;</span><span style="color:#ebcb8b">\u202d</span><span style="color:#a3be8c">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">build_name</span><span style="color:#eceff4">(</span>display_name<span style="color:#eceff4">:</span> <span style="color:#81a1c1">str</span><span style="color:#eceff4">,</span> extension<span style="color:#eceff4">:</span> <span style="color:#81a1c1">str</span><span style="color:#eceff4">,</span> prefix<span style="color:#eceff4">:</span> <span style="color:#81a1c1">str</span> <span style="color:#81a1c1">|</span> <span style="color:#81a1c1;font-weight:bold">None</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">-&gt;</span> <span style="color:#81a1c1">tuple</span><span style="color:#eceff4">[</span><span style="color:#81a1c1">str</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">str</span><span style="color:#eceff4">]:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> extension<span style="color:#81a1c1">.</span>startswith<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;.&#34;</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">or</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>extension<span style="color:#eceff4">)</span> <span style="color:#81a1c1">&lt;</span> <span style="color:#b48ead">2</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;--extension must include its leading dot, for example .exe&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> prefix <span style="color:#81a1c1;font-weight:bold">is</span> <span style="color:#81a1c1;font-weight:bold">None</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        marker_at <span style="color:#81a1c1">=</span> display_name<span style="color:#81a1c1">.</span>lower<span style="color:#eceff4">()</span><span style="color:#81a1c1">.</span>find<span style="color:#eceff4">(</span>extension<span style="color:#81a1c1">.</span>lower<span style="color:#eceff4">())</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">if</span> marker_at <span style="color:#81a1c1">&lt;=</span> <span style="color:#b48ead">0</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;</span><span style="color:#a3be8c">{</span>display_name<span style="color:#a3be8c">!r}</span><span style="color:#a3be8c"> has no </span><span style="color:#a3be8c">{</span>extension<span style="color:#a3be8c">!r}</span><span style="color:#a3be8c"> inside it; supply --prefix &#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a3be8c">&#34;whose text is the start of the display name and ends in the real extension&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        prefix <span style="color:#81a1c1">=</span> display_name<span style="color:#eceff4">[:</span> marker_at <span style="color:#81a1c1">+</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>extension<span style="color:#eceff4">)]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> display_name<span style="color:#81a1c1">.</span>startswith<span style="color:#eceff4">(</span>prefix<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;--prefix must match the beginning of the displayed name&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> prefix<span style="color:#81a1c1">.</span>lower<span style="color:#eceff4">()</span><span style="color:#81a1c1">.</span>endswith<span style="color:#eceff4">(</span>extension<span style="color:#81a1c1">.</span>lower<span style="color:#eceff4">()):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;--prefix must end with the real extension&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    remainder <span style="color:#81a1c1">=</span> display_name<span style="color:#eceff4">[</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>prefix<span style="color:#eceff4">)</span> <span style="color:#eceff4">:]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> remainder<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;the prefix must leave some displayed text after it&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#616e87;font-style:italic"># RLO reverses the remainder for display. LRO then starts a left-to-right</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#616e87;font-style:italic"># run containing the prefix. That prefix is last in the stored name, so its</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#616e87;font-style:italic"># final extension remains the file&#39;s actual extension.</span>
+</span></span><span style="display:flex;"><span>    stored_name <span style="color:#81a1c1">=</span> RLO <span style="color:#81a1c1">+</span> remainder<span style="color:#eceff4">[::</span><span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">]</span> <span style="color:#81a1c1">+</span> LRO <span style="color:#81a1c1">+</span> prefix
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> stored_name<span style="color:#eceff4">,</span> prefix
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">main</span><span style="color:#eceff4">()</span> <span style="color:#81a1c1">-&gt;</span> <span style="color:#81a1c1">int</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    parser <span style="color:#81a1c1">=</span> argparse<span style="color:#81a1c1">.</span>ArgumentParser<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>        description<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;Preview or apply the M2 lab RLO/LRO filename pattern.&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    parser<span style="color:#81a1c1">.</span>add_argument<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;source&#34;</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">type</span><span style="color:#81a1c1">=</span>Path<span style="color:#eceff4">,</span> help<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;Existing file, such as payload.exe&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    parser<span style="color:#81a1c1">.</span>add_argument<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;display_name&#34;</span><span style="color:#eceff4">,</span> help<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;Name you want the UI to display&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    parser<span style="color:#81a1c1">.</span>add_argument<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a3be8c">&#34;--prefix&#34;</span><span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>        help<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;Displayed starting text ending with the source file&#39;s real extension; inferred when possible&#34;</span><span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    parser<span style="color:#81a1c1">.</span>add_argument<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;--apply&#34;</span><span style="color:#eceff4">,</span> action<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;store_true&#34;</span><span style="color:#eceff4">,</span> help<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;Rename the source file&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    parser<span style="color:#81a1c1">.</span>add_argument<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a3be8c">&#34;--literal&#34;</span><span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>        action<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;store_true&#34;</span><span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>        help<span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#34;Print the raw Unicode name too; bidi controls are invisible&#34;</span><span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    args <span style="color:#81a1c1">=</span> parser<span style="color:#81a1c1">.</span>parse_args<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> args<span style="color:#81a1c1">.</span>source<span style="color:#81a1c1">.</span>is_file<span style="color:#eceff4">():</span>
+</span></span><span style="display:flex;"><span>        parser<span style="color:#81a1c1">.</span>error<span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;source file does not exist or is not a regular file: </span><span style="color:#a3be8c">{</span>args<span style="color:#81a1c1">.</span>source<span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#a3be8c">&#34;/&#34;</span> <span style="color:#81a1c1;font-weight:bold">in</span> args<span style="color:#81a1c1">.</span>display_name <span style="color:#81a1c1;font-weight:bold">or</span> <span style="color:#a3be8c">&#34;</span><span style="color:#ebcb8b">\\</span><span style="color:#a3be8c">&#34;</span> <span style="color:#81a1c1;font-weight:bold">in</span> args<span style="color:#81a1c1">.</span>display_name<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        parser<span style="color:#81a1c1">.</span>error<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;display_name must be a filename, without directory separators&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    extension <span style="color:#81a1c1">=</span> args<span style="color:#81a1c1">.</span>source<span style="color:#81a1c1">.</span>suffix
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> extension<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        parser<span style="color:#81a1c1">.</span>error<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;source file has no extension to preserve&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">try</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        stored_name<span style="color:#eceff4">,</span> prefix <span style="color:#81a1c1">=</span> build_name<span style="color:#eceff4">(</span>args<span style="color:#81a1c1">.</span>display_name<span style="color:#eceff4">,</span> extension<span style="color:#eceff4">,</span> args<span style="color:#81a1c1">.</span>prefix<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">except</span> <span style="color:#bf616a">ValueError</span> <span style="color:#81a1c1;font-weight:bold">as</span> exc<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        parser<span style="color:#81a1c1">.</span>error<span style="color:#eceff4">(</span><span style="color:#81a1c1">str</span><span style="color:#eceff4">(</span>exc<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    remainder <span style="color:#81a1c1">=</span> args<span style="color:#81a1c1">.</span>display_name<span style="color:#eceff4">[</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>prefix<span style="color:#eceff4">)</span> <span style="color:#eceff4">:]</span>
+</span></span><span style="display:flex;"><span>    destination <span style="color:#81a1c1">=</span> args<span style="color:#81a1c1">.</span>source<span style="color:#81a1c1">.</span>with_name<span style="color:#eceff4">(</span>stored_name<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;Displayed name: </span><span style="color:#a3be8c">{</span>args<span style="color:#81a1c1">.</span>display_name<span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;Source file:    </span><span style="color:#a3be8c">{</span>args<span style="color:#81a1c1">.</span>source<span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;Real extension: </span><span style="color:#a3be8c">{</span>extension<span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;Split:          </span><span style="color:#a3be8c">{</span>prefix<span style="color:#a3be8c">!r}</span><span style="color:#a3be8c"> + </span><span style="color:#a3be8c">{</span>remainder<span style="color:#a3be8c">!r}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;Escaped name:   </span><span style="color:#a3be8c">{</span>json<span style="color:#81a1c1">.</span>dumps<span style="color:#eceff4">(</span>stored_name<span style="color:#eceff4">,</span> ensure_ascii<span style="color:#81a1c1">=</span><span style="color:#81a1c1;font-weight:bold">True</span><span style="color:#eceff4">)</span><span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;Controls:       U+202E RLO, then U+202D LRO&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> args<span style="color:#81a1c1">.</span>literal<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;Literal destination name follows; bidi controls are invisible:&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>stored_name<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> args<span style="color:#81a1c1">.</span>apply<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">if</span> destination<span style="color:#81a1c1">.</span>exists<span style="color:#eceff4">():</span>
+</span></span><span style="display:flex;"><span>            parser<span style="color:#81a1c1">.</span>error<span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;destination already exists: </span><span style="color:#a3be8c">{</span>destination<span style="color:#a3be8c">!s}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        args<span style="color:#81a1c1">.</span>source<span style="color:#81a1c1">.</span>rename<span style="color:#eceff4">(</span>destination<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;Renamed to:     </span><span style="color:#a3be8c">{</span>destination<span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">else</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;Preview only. Add --apply to rename the source file.&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#b48ead">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">if</span> __name__ <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">&#34;__main__&#34;</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">SystemExit</span><span style="color:#eceff4">(</span>main<span style="color:#eceff4">())</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python script.py file.exe <span style="color:#a3be8c">&#39;CSG2025.Exercise.doc&#39;</span> --apply</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/scripts/craft_img_py/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Craft Img Py</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/windows_rev/" class="flex align-center">
+        <span>Windows Rev</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents"></nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

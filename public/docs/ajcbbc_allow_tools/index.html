@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tournament tool notes: what it is for → useful commands → CTF walkthrough → gotchas. One Markdown page per entry in the supplied 39-tool Windows approved list. Sidebar order follows the original list.
+Each page now includes deeper CTF workflows and worked examples. CLI pages explain their options in tables; GUI pages explain the corresponding controls and how to move useful evidence into CLI tools.
+Technique playbooks and visual guides Use these when you know the artifact or suspected vulnerability and need the next test:
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="AJCBBC Allowed Tools">
+  <meta property="og:description" content="Tournament tool notes: what it is for → useful commands → CTF walkthrough → gotchas. One Markdown page per entry in the supplied 39-tool Windows approved list. Sidebar order follows the original list.
+Each page now includes deeper CTF workflows and worked examples. CLI pages explain their options in tables; GUI pages explain the corresponding controls and how to move useful evidence into CLI tools.
+Technique playbooks and visual guides Use these when you know the artifact or suspected vulnerability and need the next test:">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
+
+
+  <meta itemprop="name" content="AJCBBC Allowed Tools">
+  <meta itemprop="description" content="Tournament tool notes: what it is for → useful commands → CTF walkthrough → gotchas. One Markdown page per entry in the supplied 39-tool Windows approved list. Sidebar order follows the original list.
+Each page now includes deeper CTF workflows and worked examples. CLI pages explain their options in tables; GUI pages explain the corresponding controls and how to move useful evidence into CLI tools.
+Technique playbooks and visual guides Use these when you know the artifact or suspected vulnerability and need the next test:">
+  <meta itemprop="wordCount" content="1187">
+
+<title>AJCBBC Allowed Tools • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script><link rel="alternate" type="application/rss+xml" href="http://localhost:1313/docs/ajcbbc_allow_tools/index.xml" title="AJCBBC Allowed Tools" />
+
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-section book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview active">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>AJCBBC Allowed Tools</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#technique-playbooks-and-visual-guides">Technique playbooks and visual guides</a></li>
+    <li><a href="#read-a-command-before-copying-it">Read a command before copying it</a></li>
+    <li><a href="#shell-syntax-used-throughout">Shell syntax used throughout</a></li>
+    <li><a href="#supporting-shell-flags-used-in-the-examples">Supporting shell flags used in the examples</a></li>
+    <li><a href="#tournament-setup">Tournament setup</a></li>
+    <li><a href="#how-to-read-the-commands">How to read the commands</a></li>
+    <li><a href="#start-from-the-challenge">Start from the challenge</a></li>
+    <li><a href="#all-39-tool-notes">All 39 tool notes</a></li>
+    <li><a href="#before-working-on-an-artifact">Before working on an artifact</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/">Fieldnotes</a></nav><span>6 MIN READ</span></div>
+<h1 class="page-title">AJCBBC Allowed Tools</h1>
+
+
+      
+
+  <article class="markdown book-article"><p>Tournament tool notes: <strong>what it is for → useful commands → CTF walkthrough → gotchas</strong>. One Markdown page per entry in the supplied 39-tool Windows approved list. Sidebar order follows the original list.</p>
+<p>Each page now includes deeper CTF workflows and worked examples. CLI pages explain their options in tables; GUI pages explain the corresponding controls and how to move useful evidence into CLI tools.</p>
+<h2 id="technique-playbooks-and-visual-guides">Technique playbooks and visual guides<a class="anchor" href="#technique-playbooks-and-visual-guides"></a></h2>
+<p>Use these when you know the artifact or suspected vulnerability and need the next test:</p>
+<ul>
+<li><a href="../web-expl/">Web payloads and database fingerprints</a></li>
+<li><a href="../network-expl/">Network captures and stateful protocols</a></li>
+<li><a href="../steganograph-expl/">Steganography, images, documents and audio</a></li>
+<li><a href="../reversing-expl/">Reversing, Ghidra and debugger workflows</a></li>
+<li><a href="../tools-cheatsheet/cyberchef-cheatsheet/">Visual CyberChef recipes</a></li>
+<li><a href="../tools-cheatsheet/approved-tools-map/">All 39 tools mapped to techniques</a></li>
+<li><a href="../tools-cheatsheet/python-library/">Prepared Python snippet library</a></li>
+</ul>
+<p>Each individual tool page also links back to relevant playbooks.</p>
+<p>For encoding and cryptography code, use the <a href="python3/#cookbook-map">Python cookbook</a>: Base encodings, XOR, classical ciphers, hashes/KDFs, AES modes, ChaCha20/XChaCha20, authenticated encryption and RSA.</p>
+<h2 id="read-a-command-before-copying-it">Read a command before copying it<a class="anchor" href="#read-a-command-before-copying-it"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># TShark example for a WSL installation, if supplied</span>
+</span></span><span style="display:flex;"><span>tshark -r traffic.pcapng -Y <span style="color:#a3be8c">&#39;http.request&#39;</span> -T fields -e http.request.uri</span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>Piece</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>tshark</code></td>
+          <td>Executable</td>
+      </tr>
+      <tr>
+          <td><code>-r traffic.pcapng</code></td>
+          <td>Input capture</td>
+      </tr>
+      <tr>
+          <td><code>-Y 'http.request'</code></td>
+          <td>Display filter selecting HTTP requests</td>
+      </tr>
+      <tr>
+          <td><code>-T fields</code></td>
+          <td>Output selected fields rather than packet summaries</td>
+      </tr>
+      <tr>
+          <td><code>-e http.request.uri</code></td>
+          <td>Choose the URI field to print</td>
+      </tr>
+  </tbody>
+</table>
+<p>Options are tool-specific. Learn the operation and the option&rsquo;s argument together:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Flag</th>
+          <th>Different meanings across approved tools</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-r</code></td>
+          <td>TShark/Zeek: read PCAP; xxd: reverse hex; fls/ExifTool: recurse; fsck.fat: repair; Volatility: renderer</td>
+      </tr>
+      <tr>
+          <td><code>-d</code></td>
+          <td>objdump: disassemble; xz/OpenSSL enc: decompress/decrypt; Zimmerman parsers: directory; cannelloni: debug categories</td>
+      </tr>
+      <tr>
+          <td><code>-e</code></td>
+          <td>binwalk: extract; TShark: output field; strings: encoding; RsaCtfTool: public exponent</td>
+      </tr>
+      <tr>
+          <td><code>-l</code></td>
+          <td>xz: list; xxd: byte limit; pdftotext: last page; cannelloni: local port</td>
+      </tr>
+      <tr>
+          <td><code>-o</code></td>
+          <td>Many tools: output; Sleuth Kit: filesystem sector offset; Volatility: output directory</td>
+      </tr>
+  </tbody>
+</table>
+<p>Uppercase/lowercase matters: <code>-R</code> and <code>-r</code> can be unrelated. Short flags can sometimes combine (<code>xz -dk</code> = <code>-d -k</code>), but do not assume every parser permits that.</p>
+<h2 id="shell-syntax-used-throughout">Shell syntax used throughout<a class="anchor" href="#shell-syntax-used-throughout"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Syntax</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>&gt;</code></td>
+          <td>Redirect stdout to a file; replaces existing content</td>
+      </tr>
+      <tr>
+          <td><code>&gt;&gt;</code></td>
+          <td>Append stdout</td>
+      </tr>
+      <tr>
+          <td><code>2&gt;</code></td>
+          <td>Redirect stderr</td>
+      </tr>
+      <tr>
+          <td><code>2&gt;&amp;1</code></td>
+          <td>Send stderr to the current stdout destination</td>
+      </tr>
+      <tr>
+          <td><code>A | B</code></td>
+          <td>Pass A&rsquo;s stdout into B</td>
+      </tr>
+      <tr>
+          <td><code># note</code></td>
+          <td>Comment in Bash/PowerShell examples</td>
+      </tr>
+      <tr>
+          <td><code>\</code> at Bash line end</td>
+          <td>Continue the command on the next line</td>
+      </tr>
+      <tr>
+          <td>Backtick at PowerShell line end</td>
+          <td>Continue the command on the next line</td>
+      </tr>
+      <tr>
+          <td><code>'single quotes'</code></td>
+          <td>Keep argument text literal under the shell&rsquo;s quoting rules</td>
+      </tr>
+  </tbody>
+</table>
+<p>Keep binary output in binary-preserving paths. Text exporters can use text pipelines; packet captures, extracted streams and attachments need byte-exact handling.</p>
+<h2 id="supporting-shell-flags-used-in-the-examples">Supporting shell flags used in the examples<a class="anchor" href="#supporting-shell-flags-used-in-the-examples"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Utility / flag</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>grep -i</code></td>
+          <td>Ignore letter case</td>
+      </tr>
+      <tr>
+          <td><code>grep -n</code></td>
+          <td>Show matching text line numbers</td>
+      </tr>
+      <tr>
+          <td><code>grep -E</code></td>
+          <td>Use extended regular expressions</td>
+      </tr>
+      <tr>
+          <td><code>grep -a</code></td>
+          <td>Treat binary input as text for this search</td>
+      </tr>
+      <tr>
+          <td><code>grep -C N</code></td>
+          <td>Show N lines before/after each matching line</td>
+      </tr>
+      <tr>
+          <td><code>sort -u</code></td>
+          <td>Sort and remove duplicate lines; original order is lost</td>
+      </tr>
+      <tr>
+          <td><code>diff -u</code></td>
+          <td>Show differences with surrounding text</td>
+      </tr>
+      <tr>
+          <td><code>head -n N</code></td>
+          <td>Show only the first N lines</td>
+      </tr>
+      <tr>
+          <td><code>mkdir -p DIR</code></td>
+          <td>Create parent directories as needed; existing directory is accepted</td>
+      </tr>
+      <tr>
+          <td><code>ls -l -a -h</code></td>
+          <td>Detailed listing, including dotfiles, with readable sizes</td>
+      </tr>
+      <tr>
+          <td><code>sha256sum FILE</code></td>
+          <td>Hash the file&rsquo;s bytes with SHA-256</td>
+      </tr>
+  </tbody>
+</table>
+<p>For <code>dd</code>, <code>if=</code> is input, <code>of=</code> is output, <code>bs=</code> is block size, <code>skip=</code> skips input blocks, and <code>count=</code> limits copied blocks. Multiply block counts by block size to get byte positions. Every example using these supporting utilities explains its immediate goal.</p>
+<h2 id="tournament-setup">Tournament setup<a class="anchor" href="#tournament-setup"></a></h2>
+<ul>
+<li><strong>Windows:</strong> GUI tools and TShark, as listed below.</li>
+<li><strong>WSL:</strong> Linux CLI tools; Burp and Ghidra require a working GUI/display setup.</li>
+<li><strong>Browser:</strong> CyberChef and browser-only exercises.</li>
+<li><strong>Library rule from the supplied list:</strong> Python/uv may add libraries except AI/ML related packages. Installing AI related libraries or sub-tools is prohibited for extensible tools generally.</li>
+<li>Most versions are listed as “latest”; the actual PC’s <code>--help</code> and installed build determine available options. The supplied list specifies <strong>Ghidra 12.1.4</strong> and <strong>Burp 2026.4.x</strong>. These are listed versions, not a claim that they are current upstream releases.</li>
+</ul>
+<h2 id="how-to-read-the-commands">How to read the commands<a class="anchor" href="#how-to-read-the-commands"></a></h2>
+<p><code>bash</code> blocks run inside WSL. <code>powershell</code> blocks run in Windows PowerShell. <code>text</code> blocks show GUI recipes, filters or debugger commands; their heading tells you where to enter them.</p>
+<p>Paths such as <code>/path/to/</code>, <code>C:\CTF\</code>, sample offsets, PIDs and <code>192.0.2.10</code> are placeholders. Replace them with your challenge values. <code>flag{demo}</code> is an example, not a tournament result.</p>
+<p>Common shell utilities in examples (<code>grep</code>, <code>dd</code>, <code>cp</code>, etc.) are supporting commands; the supplied list does not separately establish their competition approval or availability.</p>
+<h2 id="start-from-the-challenge">Start from the challenge<a class="anchor" href="#start-from-the-challenge"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>You received</th>
+          <th>Good starting tools</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Encoded text / cipher clue</td>
+          <td>CyberChef → Python → OpenSSL / RsaCtfTool</td>
+      </tr>
+      <tr>
+          <td>PNG/BMP/JPEG</td>
+          <td>ExifTool → strings → binwalk → zsteg / ZBar</td>
+      </tr>
+      <tr>
+          <td>PDF</td>
+          <td>PDF Viewer → pdftotext → ExifTool → qpdf</td>
+      </tr>
+      <tr>
+          <td>PCAP</td>
+          <td>Wireshark → TShark → Zeek</td>
+      </tr>
+      <tr>
+          <td>CAN endpoint / CAN log</td>
+          <td>cannelloni → can-utils</td>
+      </tr>
+      <tr>
+          <td>Linux executable</td>
+          <td>strings → objdump → Ghidra → gdb</td>
+      </tr>
+      <tr>
+          <td>Native Windows executable</td>
+          <td>strings / HxD → Ghidra → x64dbg</td>
+      </tr>
+      <tr>
+          <td>.NET executable</td>
+          <td>dnSpyEx</td>
+      </tr>
+      <tr>
+          <td>Disk image</td>
+          <td>Autopsy / The Sleuth Kit; fsck.fat for FAT diagnosis</td>
+      </tr>
+      <tr>
+          <td>Memory image</td>
+          <td>Volatility 3; SSH recovery plugin for matching Linux/OpenSSH evidence</td>
+      </tr>
+      <tr>
+          <td>Windows forensic artifacts</td>
+          <td>Eric Zimmerman&rsquo;s Tools</td>
+      </tr>
+      <tr>
+          <td>Web app / API</td>
+          <td>Chrome → Burp → jq / Python</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="all-39-tool-notes">All 39 tool notes<a class="anchor" href="#all-39-tool-notes"></a></h2>
+<p>Origin: <strong>1</strong> = TrendMicro proposed; <strong>2</strong> = participant requested. Locations and categories below come from the user-supplied tournament list.</p>
+<table>
+  <thead>
+      <tr>
+          <th>No.</th>
+          <th>Tool note</th>
+          <th>Origin</th>
+          <th>Location</th>
+          <th>Category</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td><a href="cyberchef/">CyberChef</a></td>
+          <td>1</td>
+          <td>Browser</td>
+          <td>Forensic, Network, Crypto, Web</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td><a href="wireshark/">Wireshark</a></td>
+          <td>1</td>
+          <td>Windows</td>
+          <td>Network, Forensic</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td><a href="pdf_viewer/">PDF Viewer</a></td>
+          <td>1</td>
+          <td>Windows</td>
+          <td>Stegano</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td><a href="openvpn_client/">OpenVPN Client</a></td>
+          <td>1</td>
+          <td>Windows</td>
+          <td>MISC</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td><a href="google_chrome/">Google Chrome</a></td>
+          <td>1</td>
+          <td>Windows</td>
+          <td>All</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td><a href="wsl/">WSL</a></td>
+          <td>1</td>
+          <td>Windows</td>
+          <td>All</td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td><a href="python3/">Python 3</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>OSINT, Stegano, Crypto, Reversing, Web, Forensic, MISC</td>
+      </tr>
+      <tr>
+          <td>8</td>
+          <td><a href="uv/">uv</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>MISC</td>
+      </tr>
+      <tr>
+          <td>9</td>
+          <td><a href="gdb/">gdb</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>MISC, Reversing</td>
+      </tr>
+      <tr>
+          <td>10</td>
+          <td><a href="objdump/">objdump</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>MISC, Reversing</td>
+      </tr>
+      <tr>
+          <td>11</td>
+          <td><a href="strings/">strings</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Stegano</td>
+      </tr>
+      <tr>
+          <td>12</td>
+          <td><a href="zsteg/">zsteg</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Stegano, Crypto</td>
+      </tr>
+      <tr>
+          <td>13</td>
+          <td><a href="binwalk/">binwalk</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Stegano</td>
+      </tr>
+      <tr>
+          <td>14</td>
+          <td><a href="exiftool/">ExifTool</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>OSINT</td>
+      </tr>
+      <tr>
+          <td>15</td>
+          <td><a href="pdftotext/">pdftotext</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>OSINT</td>
+      </tr>
+      <tr>
+          <td>16</td>
+          <td><a href="can_utils/">can-utils</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Network</td>
+      </tr>
+      <tr>
+          <td>17</td>
+          <td><a href="cannelloni/">cannelloni</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Network</td>
+      </tr>
+      <tr>
+          <td>18</td>
+          <td><a href="zeek/">Zeek</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Network</td>
+      </tr>
+      <tr>
+          <td>19</td>
+          <td><a href="zbar/">ZBar</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Stegano</td>
+      </tr>
+      <tr>
+          <td>20</td>
+          <td><a href="burp_suite_community/">Burp Suite Community</a></td>
+          <td>1</td>
+          <td>WSL GUI</td>
+          <td>Web</td>
+      </tr>
+      <tr>
+          <td>21</td>
+          <td><a href="jq/">jq</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>MISC, Web</td>
+      </tr>
+      <tr>
+          <td>22</td>
+          <td><a href="ghidra/">Ghidra</a></td>
+          <td>1</td>
+          <td>WSL GUI</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>23</td>
+          <td><a href="sleuth_kit/">The Sleuth Kit</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Forensic, Reversing</td>
+      </tr>
+      <tr>
+          <td>24</td>
+          <td><a href="openssl/">OpenSSL</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Forensic, Network, OSINT, Crypto</td>
+      </tr>
+      <tr>
+          <td>25</td>
+          <td><a href="xz/">xz</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Forensic</td>
+      </tr>
+      <tr>
+          <td>26</td>
+          <td><a href="qpdf/">qpdf</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Stegano</td>
+      </tr>
+      <tr>
+          <td>27</td>
+          <td><a href="llvm_mc/">llvm-mc</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>28</td>
+          <td><a href="xxd/">xxd</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>29</td>
+          <td><a href="fsck_fat/">fsck.fat</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>30</td>
+          <td><a href="rsactftool/">RsaCtfTool</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Crypto</td>
+      </tr>
+      <tr>
+          <td>31</td>
+          <td><a href="volatility3/">Volatility 3</a></td>
+          <td>1</td>
+          <td>WSL</td>
+          <td>Forensic</td>
+      </tr>
+      <tr>
+          <td>32</td>
+          <td><a href="openssh_session_key_recovery/">OpenSSH-Session-Key-Recovery</a></td>
+          <td>1</td>
+          <td>Volatility 3 plugin</td>
+          <td>Not specified in supplied list</td>
+      </tr>
+      <tr>
+          <td>33</td>
+          <td><a href="x64dbg/">x64dbg</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>34</td>
+          <td><a href="autopsy/">Autopsy</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Forensic</td>
+      </tr>
+      <tr>
+          <td>35</td>
+          <td><a href="hxd/">HxD</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Forensic, Reversing, Stegano</td>
+      </tr>
+      <tr>
+          <td>36</td>
+          <td><a href="tshark/">TShark</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Network, Forensic</td>
+      </tr>
+      <tr>
+          <td>37</td>
+          <td><a href="notepad_plus_plus/">Notepad++</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>38</td>
+          <td><a href="dnspyex/">dnSpyEx</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Reversing</td>
+      </tr>
+      <tr>
+          <td>39</td>
+          <td><a href="eric_zimmerman_tools/">Eric Zimmerman&rsquo;s Tools</a></td>
+          <td>2</td>
+          <td>Windows</td>
+          <td>Forensic</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="before-working-on-an-artifact">Before working on an artifact<a class="anchor" href="#before-working-on-an-artifact"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># WSL: keep one directory per challenge and record the input hash</span>
+</span></span><span style="display:flex;"><span>mkdir -p ~/ajcbbc/challenge01/out
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">cd</span> ~/ajcbbc/challenge01
+</span></span><span style="display:flex;"><span>sha256sum challenge.bin &gt; input_sha256.txt</span></span></code></pre></div><p>Work on copies for patches/repairs. Record the exact command, input, useful output and next step. For stateful network challenges, keep the session alive until the objective’s final result appears.</p>
+<p>Each tool page links to its official documentation or upstream project. Commands are reference examples; they have not been executed on the competition PCs.</p>
+</article>
+  <div class="section-directory"><div class="directory-label">EXPLORE THIS SECTION <span>39 ENTRIES</span></div><div class="note-grid"><a class="note-card" href="/docs/ajcbbc_allow_tools/cyberchef/"><span class="note-icon" aria-hidden="true">⌘</span><strong>CyberChef</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/wireshark/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Wireshark</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/pdf_viewer/"><span class="note-icon" aria-hidden="true">⌘</span><strong>PDF Viewer</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/openvpn_client/"><span class="note-icon" aria-hidden="true">⌘</span><strong>OpenVPN Client</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/google_chrome/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Google Chrome</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/wsl/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Windows Subsystem for Linux (WSL)</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/python3/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Python 3</strong><span>24 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/uv/"><span class="note-icon" aria-hidden="true">⌘</span><strong>uv</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/gdb/"><span class="note-icon" aria-hidden="true">⌘</span><strong>gdb</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/objdump/"><span class="note-icon" aria-hidden="true">⌘</span><strong>objdump</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/strings/"><span class="note-icon" aria-hidden="true">⌘</span><strong>strings</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/zsteg/"><span class="note-icon" aria-hidden="true">⌘</span><strong>zsteg</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/binwalk/"><span class="note-icon" aria-hidden="true">⌘</span><strong>binwalk</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/exiftool/"><span class="note-icon" aria-hidden="true">⌘</span><strong>ExifTool</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/pdftotext/"><span class="note-icon" aria-hidden="true">⌘</span><strong>pdftotext (Poppler utils)</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/can_utils/"><span class="note-icon" aria-hidden="true">⌘</span><strong>can-utils</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/cannelloni/"><span class="note-icon" aria-hidden="true">⌘</span><strong>cannelloni</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/zeek/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Zeek</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/zbar/"><span class="note-icon" aria-hidden="true">⌘</span><strong>ZBar</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/burp_suite_community/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Burp Suite Community Edition</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/jq/"><span class="note-icon" aria-hidden="true">⌘</span><strong>jq</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/ghidra/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Ghidra</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/sleuth_kit/"><span class="note-icon" aria-hidden="true">⌘</span><strong>The Sleuth Kit</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/openssl/"><span class="note-icon" aria-hidden="true">⌘</span><strong>OpenSSL</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/xz/"><span class="note-icon" aria-hidden="true">⌘</span><strong>xz</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/qpdf/"><span class="note-icon" aria-hidden="true">⌘</span><strong>qpdf</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/llvm_mc/"><span class="note-icon" aria-hidden="true">⌘</span><strong>llvm-mc (LLVM tools)</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/xxd/"><span class="note-icon" aria-hidden="true">⌘</span><strong>xxd</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/fsck_fat/"><span class="note-icon" aria-hidden="true">⌘</span><strong>fsck.fat (dosfstools)</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/rsactftool/"><span class="note-icon" aria-hidden="true">⌘</span><strong>RsaCtfTool</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/volatility3/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Volatility 3</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/"><span class="note-icon" aria-hidden="true">⌘</span><strong>OpenSSH-Session-Key-Recovery</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/x64dbg/"><span class="note-icon" aria-hidden="true">⌘</span><strong>x64dbg</strong><span>4 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/autopsy/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Autopsy</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/hxd/"><span class="note-icon" aria-hidden="true">⌘</span><strong>HxD</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/tshark/"><span class="note-icon" aria-hidden="true">⌘</span><strong>TShark</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/notepad_plus_plus/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Notepad&#43;&#43;</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/dnspyex/"><span class="note-icon" aria-hidden="true">⌘</span><strong>dnSpyEx (dnSpy)</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a><a class="note-card" href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/"><span class="note-icon" aria-hidden="true">⌘</span><strong>Eric Zimmerman&#39;s Tools</strong><span>3 min read</span><span class="note-arrow" aria-hidden="true">↗</span></a></div></div>
+
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/windows_rev/x64dbg_cheatsheet/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>X64dbg Cheatsheet</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/cyberchef/" class="flex align-center">
+        <span>CyberChef</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#technique-playbooks-and-visual-guides">Technique playbooks and visual guides</a></li>
+    <li><a href="#read-a-command-before-copying-it">Read a command before copying it</a></li>
+    <li><a href="#shell-syntax-used-throughout">Shell syntax used throughout</a></li>
+    <li><a href="#supporting-shell-flags-used-in-the-examples">Supporting shell flags used in the examples</a></li>
+    <li><a href="#tournament-setup">Tournament setup</a></li>
+    <li><a href="#how-to-read-the-commands">How to read the commands</a></li>
+    <li><a href="#start-from-the-challenge">Start from the challenge</a></li>
+    <li><a href="#all-39-tool-notes">All 39 tool notes</a></li>
+    <li><a href="#before-working-on-an-artifact">Before working on an artifact</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

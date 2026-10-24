@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: static disassembly, decompilation and validation logic.
+Run in: WSL GUI per the supplied list. Listed version: 12.1.4.
+Launch the supplied installation # Run from the installed Ghidra directory ./ghidraRunWalkthrough: find the input check File → New Project → Non-Shared Project. Import the binary, inspect the detected format/architecture, then open it. Accept auto analysis. Search → For Strings; search for success/failure text. Follow a string’s references to its caller. Read the Decompiler alongside the assembly listing. Identify input, transformations, constants and comparison length. Rename functions/variables and save the project. Useful navigation Action Common key/control Go to address G Rename selected symbol L References to selected item Right click → References Follow function Double click Inspect imports/functions Symbol Tree Show raw bytes Bytes field / Byte Viewer CTF notes Translate the validation loop into Python and reproduce it on known input. Check array sizes, signedness and endianness in assembly. An entry function is not always main; follow startup calls. Apply meaningful names as you learn what a value does. Gotchas Decompiled C is an approximation; verify surprising logic in assembly. A wrong architecture or image base gives misleading results. Packed/encrypted code may need runtime analysis in gdb/x64dbg. CTF: work backward from a success string Search for a distinctive success or rejection string. List every cross-reference; one string can have several callers. Find the branch deciding which message is printed. Trace the compared buffer/value backward to its producer. Record preprocessing: newline stripping, length checks, XOR, encoding or hashing. Reproduce the exact operations in Python. Confirm the generated candidate follows the binary’s full success path. CTF: translate a byte validation loop // Example logic recovered during analysis for (i = 0; i &lt; length; i&#43;&#43;) { if ((input[i] ^ 0x23) != expected[i]) return 0; }The inverse is input[i] = expected[i] ^ 0x23. Export the actual array bytes, preserve the iteration count, and test the inverse by reapplying the forward transform.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/ghidra/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Ghidra">
+  <meta property="og:description" content="Use for: static disassembly, decompilation and validation logic.
+Run in: WSL GUI per the supplied list. Listed version: 12.1.4.
+Launch the supplied installation # Run from the installed Ghidra directory ./ghidraRunWalkthrough: find the input check File → New Project → Non-Shared Project. Import the binary, inspect the detected format/architecture, then open it. Accept auto analysis. Search → For Strings; search for success/failure text. Follow a string’s references to its caller. Read the Decompiler alongside the assembly listing. Identify input, transformations, constants and comparison length. Rename functions/variables and save the project. Useful navigation Action Common key/control Go to address G Rename selected symbol L References to selected item Right click → References Follow function Double click Inspect imports/functions Symbol Tree Show raw bytes Bytes field / Byte Viewer CTF notes Translate the validation loop into Python and reproduce it on known input. Check array sizes, signedness and endianness in assembly. An entry function is not always main; follow startup calls. Apply meaningful names as you learn what a value does. Gotchas Decompiled C is an approximation; verify surprising logic in assembly. A wrong architecture or image base gives misleading results. Packed/encrypted code may need runtime analysis in gdb/x64dbg. CTF: work backward from a success string Search for a distinctive success or rejection string. List every cross-reference; one string can have several callers. Find the branch deciding which message is printed. Trace the compared buffer/value backward to its producer. Record preprocessing: newline stripping, length checks, XOR, encoding or hashing. Reproduce the exact operations in Python. Confirm the generated candidate follows the binary’s full success path. CTF: translate a byte validation loop // Example logic recovered during analysis for (i = 0; i &lt; length; i&#43;&#43;) { if ((input[i] ^ 0x23) != expected[i]) return 0; }The inverse is input[i] = expected[i] ^ 0x23. Export the actual array bytes, preserve the iteration count, and test the inverse by reapplying the forward transform.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Ghidra">
+  <meta itemprop="description" content="Use for: static disassembly, decompilation and validation logic.
+Run in: WSL GUI per the supplied list. Listed version: 12.1.4.
+Launch the supplied installation # Run from the installed Ghidra directory ./ghidraRunWalkthrough: find the input check File → New Project → Non-Shared Project. Import the binary, inspect the detected format/architecture, then open it. Accept auto analysis. Search → For Strings; search for success/failure text. Follow a string’s references to its caller. Read the Decompiler alongside the assembly listing. Identify input, transformations, constants and comparison length. Rename functions/variables and save the project. Useful navigation Action Common key/control Go to address G Rename selected symbol L References to selected item Right click → References Follow function Double click Inspect imports/functions Symbol Tree Show raw bytes Bytes field / Byte Viewer CTF notes Translate the validation loop into Python and reproduce it on known input. Check array sizes, signedness and endianness in assembly. An entry function is not always main; follow startup calls. Apply meaningful names as you learn what a value does. Gotchas Decompiled C is an approximation; verify surprising logic in assembly. A wrong architecture or image base gives misleading results. Packed/encrypted code may need runtime analysis in gdb/x64dbg. CTF: work backward from a success string Search for a distinctive success or rejection string. List every cross-reference; one string can have several callers. Find the branch deciding which message is printed. Trace the compared buffer/value backward to its producer. Record preprocessing: newline stripping, length checks, XOR, encoding or hashing. Reproduce the exact operations in Python. Confirm the generated candidate follows the binary’s full success path. CTF: translate a byte validation loop // Example logic recovered during analysis for (i = 0; i &lt; length; i&#43;&#43;) { if ((input[i] ^ 0x23) != expected[i]) return 0; }The inverse is input[i] = expected[i] ^ 0x23. Export the actual array bytes, preserve the iteration count, and test the inverse by reapplying the forward transform.">
+  <meta itemprop="wordCount" content="595">
+
+<title>Ghidra • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/ghidra/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="active" aria-current="page">Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Ghidra</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#launch-the-supplied-installation">Launch the supplied installation</a></li>
+    <li><a href="#walkthrough-find-the-input-check">Walkthrough: find the input check</a></li>
+    <li><a href="#useful-navigation">Useful navigation</a></li>
+    <li><a href="#ctf-notes">CTF notes</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-work-backward-from-a-success-string">CTF: work backward from a success string</a></li>
+    <li><a href="#ctf-translate-a-byte-validation-loop">CTF: translate a byte validation loop</a></li>
+    <li><a href="#fix-the-analysis-model">Fix the analysis model</a></li>
+    <li><a href="#ctf-inspect-an-embedded-resource">CTF: inspect an embedded resource</a></li>
+    <li><a href="#use-the-function-graph-for-branch-heavy-checks">Use the Function Graph for branch-heavy checks</a></li>
+    <li><a href="#gui-versus-cli">GUI versus CLI</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Ghidra</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> static disassembly, decompilation and validation logic.<br>
+<strong>Run in:</strong> WSL GUI per the supplied list. <strong>Listed version:</strong> 12.1.4.</p>
+<h2 id="launch-the-supplied-installation">Launch the supplied installation<a class="anchor" href="#launch-the-supplied-installation"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Run from the installed Ghidra directory</span>
+</span></span><span style="display:flex;"><span>./ghidraRun</span></span></code></pre></div><h2 id="walkthrough-find-the-input-check">Walkthrough: find the input check<a class="anchor" href="#walkthrough-find-the-input-check"></a></h2>
+<ol>
+<li><strong>File → New Project → Non-Shared Project</strong>.</li>
+<li>Import the binary, inspect the detected format/architecture, then open it.</li>
+<li>Accept auto analysis.</li>
+<li><strong>Search → For Strings</strong>; search for success/failure text.</li>
+<li>Follow a string’s references to its caller.</li>
+<li>Read the <strong>Decompiler</strong> alongside the assembly listing.</li>
+<li>Identify input, transformations, constants and comparison length.</li>
+<li>Rename functions/variables and save the project.</li>
+</ol>
+<h2 id="useful-navigation">Useful navigation<a class="anchor" href="#useful-navigation"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Action</th>
+          <th>Common key/control</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Go to address</td>
+          <td>G</td>
+      </tr>
+      <tr>
+          <td>Rename selected symbol</td>
+          <td>L</td>
+      </tr>
+      <tr>
+          <td>References to selected item</td>
+          <td>Right click → References</td>
+      </tr>
+      <tr>
+          <td>Follow function</td>
+          <td>Double click</td>
+      </tr>
+      <tr>
+          <td>Inspect imports/functions</td>
+          <td>Symbol Tree</td>
+      </tr>
+      <tr>
+          <td>Show raw bytes</td>
+          <td>Bytes field / Byte Viewer</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ctf-notes">CTF notes<a class="anchor" href="#ctf-notes"></a></h2>
+<ul>
+<li>Translate the validation loop into Python and reproduce it on known input.</li>
+<li>Check array sizes, signedness and endianness in assembly.</li>
+<li>An entry function is not always <code>main</code>; follow startup calls.</li>
+<li>Apply meaningful names as you learn what a value does.</li>
+</ul>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Decompiled C is an approximation; verify surprising logic in assembly.</li>
+<li>A wrong architecture or image base gives misleading results.</li>
+<li>Packed/encrypted code may need runtime analysis in gdb/x64dbg.</li>
+</ul>
+<h2 id="ctf-work-backward-from-a-success-string">CTF: work backward from a success string<a class="anchor" href="#ctf-work-backward-from-a-success-string"></a></h2>
+<ol>
+<li>Search for a distinctive success or rejection string.</li>
+<li>List every cross-reference; one string can have several callers.</li>
+<li>Find the branch deciding which message is printed.</li>
+<li>Trace the compared buffer/value backward to its producer.</li>
+<li>Record preprocessing: newline stripping, length checks, XOR, encoding or hashing.</li>
+<li>Reproduce the exact operations in Python.</li>
+<li>Confirm the generated candidate follows the binary’s full success path.</li>
+</ol>
+<h2 id="ctf-translate-a-byte-validation-loop">CTF: translate a byte validation loop<a class="anchor" href="#ctf-translate-a-byte-validation-loop"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">// Example logic recovered during analysis
+</span></span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">for</span> <span style="color:#eceff4">(</span>i <span style="color:#81a1c1">=</span> <span style="color:#b48ead">0</span><span style="color:#eceff4">;</span> i <span style="color:#81a1c1">&lt;</span> length<span style="color:#eceff4">;</span> i<span style="color:#81a1c1">++</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#eceff4">((</span>input<span style="color:#eceff4">[</span>i<span style="color:#eceff4">]</span> <span style="color:#81a1c1">^</span> <span style="color:#b48ead">0x23</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">!=</span> expected<span style="color:#eceff4">[</span>i<span style="color:#eceff4">])</span> <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#b48ead">0</span><span style="color:#eceff4">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>The inverse is <code>input[i] = expected[i] ^ 0x23</code>. Export the actual array bytes, preserve the iteration count, and test the inverse by reapplying the forward transform.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>expected <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;454f42445847464e4c5e&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>candidate <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>b <span style="color:#81a1c1">^</span> <span style="color:#b48ead">0x23</span> <span style="color:#81a1c1;font-weight:bold">for</span> b <span style="color:#81a1c1;font-weight:bold">in</span> expected<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>b <span style="color:#81a1c1">^</span> <span style="color:#b48ead">0x23</span> <span style="color:#81a1c1;font-weight:bold">for</span> b <span style="color:#81a1c1;font-weight:bold">in</span> candidate<span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> expected
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>candidate<span style="color:#eceff4">)</span></span></span></code></pre></div><p>This produces the worked example <code>flag{demo}</code>. Real challenges can combine operations whose inverse order matters.</p>
+<h2 id="fix-the-analysis-model">Fix the analysis model<a class="anchor" href="#fix-the-analysis-model"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Symptom</th>
+          <th>Useful correction</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Bytes displayed as undefined data</td>
+          <td>Define data/code only after confirming the region</td>
+      </tr>
+      <tr>
+          <td>Buffer shown as scalar integers</td>
+          <td>Apply an array or pointer type</td>
+      </tr>
+      <tr>
+          <td>Function prototype looks wrong</td>
+          <td>Inspect calling convention and call sites</td>
+      </tr>
+      <tr>
+          <td>Missing string</td>
+          <td>Try encoded/wide strings or inspect raw data</td>
+      </tr>
+      <tr>
+          <td>Indirect call unresolved</td>
+          <td>Trace function pointer/table and verify at runtime</td>
+      </tr>
+  </tbody>
+</table>
+<p>Renaming and retyping improves readability, but a plausible type can hide a wrong assumption. Check the assembly at boundaries and casts.</p>
+<h2 id="ctf-inspect-an-embedded-resource">CTF: inspect an embedded resource<a class="anchor" href="#ctf-inspect-an-embedded-resource"></a></h2>
+<p>Find resource/section references, identify the length and extraction point, then export exactly that range. If the buffer is decrypted only at runtime, use gdb/x64dbg to dump it after the transformation. Static ciphertext will not decompile as the eventual payload.</p>
+<h2 id="use-the-function-graph-for-branch-heavy-checks">Use the Function Graph for branch-heavy checks<a class="anchor" href="#use-the-function-graph-for-branch-heavy-checks"></a></h2>
+<p>Open the graph for the validation function, mark the blocks leading to rejection, and inspect the conditions connecting them. Track constraints in a small table: input index, operation, constant and comparison. This is more reliable than reading a large decompiler expression as one sentence.</p>
+<h2 id="gui-versus-cli">GUI versus CLI<a class="anchor" href="#gui-versus-cli"></a></h2>
+<p><code>./ghidraRun</code> is the GUI launcher. <code>./</code> means execute a file in the current directory; it is not an analysis flag. Headless analysis has a separate launcher and project/script arguments. For an interactive tournament solve, the GUI flow above preserves labels, types and references in a saved project.</p>
+<p>Reference: <a href="https://ghidra.re/ghidra_docs/GhidraClass/Beginner/Introduction_to_Ghidra_Student_Guide.html">Ghidra beginner guide</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../reversing-expl/ghidra-cheatsheet/">Deep Ghidra cheatsheet</a></li>
+<li><a href="../../reversing-expl/ghidra-plugins/">Built-ins and optional extensions</a></li>
+<li><a href="../../reversing-expl/static-analysis/">Static analysis</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/jq/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>jq</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="flex align-center">
+        <span>The Sleuth Kit</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#launch-the-supplied-installation">Launch the supplied installation</a></li>
+    <li><a href="#walkthrough-find-the-input-check">Walkthrough: find the input check</a></li>
+    <li><a href="#useful-navigation">Useful navigation</a></li>
+    <li><a href="#ctf-notes">CTF notes</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-work-backward-from-a-success-string">CTF: work backward from a success string</a></li>
+    <li><a href="#ctf-translate-a-byte-validation-loop">CTF: translate a byte validation loop</a></li>
+    <li><a href="#fix-the-analysis-model">Fix the analysis model</a></li>
+    <li><a href="#ctf-inspect-an-embedded-resource">CTF: inspect an embedded resource</a></li>
+    <li><a href="#use-the-function-graph-for-branch-heavy-checks">Use the Function Graph for branch-heavy checks</a></li>
+    <li><a href="#gui-versus-cli">GUI versus CLI</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

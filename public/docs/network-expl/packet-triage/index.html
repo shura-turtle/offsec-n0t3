@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Packet Triage Flow: capture health → protocol hierarchy → conversations → candidate stream → exported evidence.
+Tools: Wireshark, TShark, Zeek, Python.
+1. Preserve the input and establish scale from pathlib import Path import hashlib p = Path(&#39;traffic.pcapng&#39;) h = hashlib.sha256() with p.open(&#39;rb&#39;) as source: for chunk in iter(lambda: source.read(1024 * 1024), b&#39;&#39;): h.update(chunk) print(p.name, p.stat().st_size, h.hexdigest())Do not hash text output from tshark; hash the actual input bytes.
+In Wireshark, open Statistics → Capture File Properties. Note interfaces, encapsulation, capture length, time range, and packet count. A snap length that cuts off application data limits extraction even if TCP headers are present.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/network-expl/packet-triage/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="01 · Packet Triage">
+  <meta property="og:description" content="Packet Triage Flow: capture health → protocol hierarchy → conversations → candidate stream → exported evidence.
+Tools: Wireshark, TShark, Zeek, Python.
+1. Preserve the input and establish scale from pathlib import Path import hashlib p = Path(&#39;traffic.pcapng&#39;) h = hashlib.sha256() with p.open(&#39;rb&#39;) as source: for chunk in iter(lambda: source.read(1024 * 1024), b&#39;&#39;): h.update(chunk) print(p.name, p.stat().st_size, h.hexdigest())Do not hash text output from tshark; hash the actual input bytes.
+In Wireshark, open Statistics → Capture File Properties. Note interfaces, encapsulation, capture length, time range, and packet count. A snap length that cuts off application data limits extraction even if TCP headers are present.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="01 · Packet Triage">
+  <meta itemprop="description" content="Packet Triage Flow: capture health → protocol hierarchy → conversations → candidate stream → exported evidence.
+Tools: Wireshark, TShark, Zeek, Python.
+1. Preserve the input and establish scale from pathlib import Path import hashlib p = Path(&#39;traffic.pcapng&#39;) h = hashlib.sha256() with p.open(&#39;rb&#39;) as source: for chunk in iter(lambda: source.read(1024 * 1024), b&#39;&#39;): h.update(chunk) print(p.name, p.stat().st_size, h.hexdigest())Do not hash text output from tshark; hash the actual input bytes.
+In Wireshark, open Statistics → Capture File Properties. Note interfaces, encapsulation, capture length, time range, and packet count. A snap length that cuts off application data limits extraction even if TCP headers are present.">
+  <meta itemprop="wordCount" content="656">
+
+<title>01 · Packet Triage • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/network-expl/packet-triage/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details open>
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="active" aria-current="page">01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>01 · Packet Triage</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-preserve-the-input-and-establish-scale">1. Preserve the input and establish scale</a></li>
+    <li><a href="#2-inventory-protocols-and-conversations">2. Inventory protocols and conversations</a></li>
+    <li><a href="#3-look-for-evidence-bearing-protocols">3. Look for evidence-bearing protocols</a></li>
+    <li><a href="#4-export-a-compact-timeline">4. Export a compact timeline</a></li>
+    <li><a href="#5-inspect-one-stream">5. Inspect one stream</a></li>
+    <li><a href="#6-search-carefully">6. Search carefully</a></li>
+    <li><a href="#7-use-zeek-for-a-second-view">7. Use Zeek for a second view</a></li>
+    <li><a href="#8-health-checks-before-trusting-extraction">8. Health checks before trusting extraction</a></li>
+    <li><a href="#decision-checkpoint">Decision checkpoint</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="network"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/network-expl/">Network Exploitation</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="packet-triage">Packet Triage<a class="anchor" href="#packet-triage"></a></h1>
+<p><strong>Flow:</strong> capture health → protocol hierarchy → conversations → candidate stream → exported evidence.</p>
+<p><strong>Tools:</strong> <a href="../../ajcbbc_allow_tools/wireshark/">Wireshark</a>, <a href="../../ajcbbc_allow_tools/tshark/">TShark</a>, <a href="../../ajcbbc_allow_tools/zeek/">Zeek</a>, <a href="../../ajcbbc_allow_tools/python3/">Python</a>.</p>
+<h2 id="1-preserve-the-input-and-establish-scale">1. Preserve the input and establish scale<a class="anchor" href="#1-preserve-the-input-and-establish-scale"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">hashlib</span>
+</span></span><span style="display:flex;"><span>p <span style="color:#81a1c1">=</span> Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;traffic.pcapng&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>h <span style="color:#81a1c1">=</span> hashlib<span style="color:#81a1c1">.</span>sha256<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">with</span> p<span style="color:#81a1c1">.</span>open<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;rb&#39;</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">as</span> source<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">for</span> chunk <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">iter</span><span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">lambda</span><span style="color:#eceff4">:</span> source<span style="color:#81a1c1">.</span>read<span style="color:#eceff4">(</span><span style="color:#b48ead">1024</span> <span style="color:#81a1c1">*</span> <span style="color:#b48ead">1024</span><span style="color:#eceff4">),</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#39;&#39;</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>        h<span style="color:#81a1c1">.</span>update<span style="color:#eceff4">(</span>chunk<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>p<span style="color:#81a1c1">.</span>name<span style="color:#eceff4">,</span> p<span style="color:#81a1c1">.</span>stat<span style="color:#eceff4">()</span><span style="color:#81a1c1">.</span>st_size<span style="color:#eceff4">,</span> h<span style="color:#81a1c1">.</span>hexdigest<span style="color:#eceff4">())</span></span></span></code></pre></div><p>Do not hash text output from <code>tshark</code>; hash the actual input bytes.</p>
+<p>In Wireshark, open <strong>Statistics → Capture File Properties</strong>. Note interfaces, encapsulation, capture length, time range, and packet count. A snap length that cuts off application data limits extraction even if TCP headers are present.</p>
+<h2 id="2-inventory-protocols-and-conversations">2. Inventory protocols and conversations<a class="anchor" href="#2-inventory-protocols-and-conversations"></a></h2>
+<p>Commands below use a shell with TShark on PATH. The <a href="../../ajcbbc_allow_tools/tshark/">Windows tool page</a> shows the full executable path.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tshark -r traffic.pcapng -q -z io,phs
+</span></span><span style="display:flex;"><span>tshark -r traffic.pcapng -q -z conv,tcp
+</span></span><span style="display:flex;"><span>tshark -r traffic.pcapng -q -z conv,udp
+</span></span><span style="display:flex;"><span>tshark -r traffic.pcapng -q -z endpoints,ip</span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>Output</th>
+          <th>What to prioritize</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>A rare protocol</td>
+          <td>Inspect decoded fields before assuming a tunnel</td>
+      </tr>
+      <tr>
+          <td>One very large TCP flow</td>
+          <td>File transfer, video, encrypted bulk traffic</td>
+      </tr>
+      <tr>
+          <td>Many small DNS queries</td>
+          <td>DNS label content, retries, TXT answers</td>
+      </tr>
+      <tr>
+          <td>Short repeated connections</td>
+          <td>Polling, retries, authentication, application heartbeats</td>
+      </tr>
+      <tr>
+          <td>UDP with changing binary fields</td>
+          <td>Datagram framing / custom telemetry</td>
+      </tr>
+  </tbody>
+</table>
+<p>Large traffic volume does not guarantee relevance. A small request can contain the only password.</p>
+<h2 id="3-look-for-evidence-bearing-protocols">3. Look for evidence-bearing protocols<a class="anchor" href="#3-look-for-evidence-bearing-protocols"></a></h2>
+<p>Wireshark display filters:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>http.request
+</span></span><span style="display:flex;"><span>http.response
+</span></span><span style="display:flex;"><span>dns
+</span></span><span style="display:flex;"><span>ftp || ftp-data
+</span></span><span style="display:flex;"><span>smtp || imap || pop
+</span></span><span style="display:flex;"><span>smb2
+</span></span><span style="display:flex;"><span>icmp || icmpv6
+</span></span><span style="display:flex;"><span>tls.handshake
+</span></span><span style="display:flex;"><span>ssh</span></span></code></pre></div><p>If a field or protocol name is rejected, use the installed display-filter autocomplete or packet tree. Dissector field names can differ between versions.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tshark -G protocols
+</span></span><span style="display:flex;"><span>tshark -G fields</span></span></code></pre></div><p>These enumerate local capabilities; they do not read the challenge capture.</p>
+<h2 id="4-export-a-compact-timeline">4. Export a compact timeline<a class="anchor" href="#4-export-a-compact-timeline"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tshark -r traffic.pcapng -T fields -E header<span style="color:#81a1c1">=</span>y -E separator<span style="color:#81a1c1">=</span>/t <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -e frame.number -e frame.time_relative <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -e ip.src -e ipv6.src -e tcp.srcport -e udp.srcport <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -e ip.dst -e ipv6.dst -e tcp.dstport -e udp.dstport <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -e _ws.col.Protocol -e _ws.col.Info &gt; timeline.tsv</span></span></code></pre></div><p><code>-r</code> reads a capture; <code>-T fields</code> exports selected decoded fields; <code>-e</code> selects one field; <code>-E</code> controls text output. <code>separator=/t</code> requests a tab separator.</p>
+<p>Do not treat an exported field table as a packet capture. It can omit payloads, retransmissions, repeated field values, and interface metadata.</p>
+<h2 id="5-inspect-one-stream">5. Inspect one stream<a class="anchor" href="#5-inspect-one-stream"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ip.addr == 192.0.2.10
+</span></span><span style="display:flex;"><span>tcp.stream eq 7
+</span></span><span style="display:flex;"><span>udp.stream eq 2</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tshark -r traffic.pcapng -q -z follow,tcp,ascii,7
+</span></span><span style="display:flex;"><span>tshark -r traffic.pcapng -Y <span style="color:#a3be8c">&#39;tcp.stream eq 7&#39;</span> -w stream7.pcapng</span></span></code></pre></div><p>The first command prints a human-readable followed stream. The second saves selected packets as a new capture. Neither is automatically a clean application file.</p>
+<p>For an exact binary object, use protocol export or the correct directional <strong>Follow Stream → Show data as Raw → Save As</strong> workflow. Keep framing bytes in mind.</p>
+<h2 id="6-search-carefully">6. Search carefully<a class="anchor" href="#6-search-carefully"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>frame contains &#34;flag&#34;
+</span></span><span style="display:flex;"><span>tcp contains &#34;password&#34;
+</span></span><span style="display:flex;"><span>http.request.uri contains &#34;download&#34;
+</span></span><span style="display:flex;"><span>dns.qry.name contains &#34;challenge&#34;</span></span></code></pre></div><p>A packet-byte search can miss strings split across packets, compressed content, or encrypted records. Compare it with stream follow and object export. Check headers, cookies, URLs, request bodies, response bodies, filenames, and metadata.</p>
+<p>A literal flag-like string can be a decoy or an example. Trace it to the actual challenge objective.</p>
+<h2 id="7-use-zeek-for-a-second-view">7. Use Zeek for a second view<a class="anchor" href="#7-use-zeek-for-a-second-view"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>zeek -r traffic.pcapng</span></span></code></pre></div><p>Run in a separate output directory: Zeek writes logs into the working directory. Inspect <code>conn.log</code>, then protocol logs actually produced, such as <code>http.log</code> or <code>dns.log</code>. Absent logs can mean encryption, missing handshake, unsupported encapsulation, or a missing analyzer.</p>
+<p>Zeek summaries and Wireshark dissections can disagree because they reconstruct and classify traffic differently. Return to the packets to resolve the discrepancy.</p>
+<h2 id="8-health-checks-before-trusting-extraction">8. Health checks before trusting extraction<a class="anchor" href="#8-health-checks-before-trusting-extraction"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>frame.cap_len &lt; frame.len
+</span></span><span style="display:flex;"><span>tcp.analysis.retransmission
+</span></span><span style="display:flex;"><span>tcp.analysis.lost_segment
+</span></span><span style="display:flex;"><span>tcp.analysis.out_of_order</span></span></code></pre></div><p>These are investigation clues. Outbound checksum failures can be capture-offload artifacts; a “previous segment not captured” warning can arise from starting midstream. Do not discard a stream solely because Expert Information reports a warning.</p>
+<h2 id="decision-checkpoint">Decision checkpoint<a class="anchor" href="#decision-checkpoint"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Result</th>
+          <th>Next page</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Web object / request</td>
+          <td><a href="../http-streams/">HTTP</a></td>
+      </tr>
+      <tr>
+          <td>Suspicious DNS names</td>
+          <td><a href="../dns/">DNS</a></td>
+      </tr>
+      <tr>
+          <td>Encrypted traffic</td>
+          <td><a href="../tls-ssh/">TLS/SSH</a></td>
+      </tr>
+      <tr>
+          <td>Unknown binary/text stream</td>
+          <td><a href="../tcp-udp/">TCP/UDP</a></td>
+      </tr>
+      <tr>
+          <td>Mail/file-share/ping</td>
+          <td><a href="../protocols/">Protocols</a></td>
+      </tr>
+  </tbody>
+</table>
+<p>Reference: <a href="https://www.wireshark.org/docs/man-pages/tshark.html">TShark manual</a> for local field and statistics options.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/network-expl/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Network Exploitation</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/network-expl/http-streams/" class="flex align-center">
+        <span>02 · HTTP / File Streams</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-preserve-the-input-and-establish-scale">1. Preserve the input and establish scale</a></li>
+    <li><a href="#2-inventory-protocols-and-conversations">2. Inventory protocols and conversations</a></li>
+    <li><a href="#3-look-for-evidence-bearing-protocols">3. Look for evidence-bearing protocols</a></li>
+    <li><a href="#4-export-a-compact-timeline">4. Export a compact timeline</a></li>
+    <li><a href="#5-inspect-one-stream">5. Inspect one stream</a></li>
+    <li><a href="#6-search-carefully">6. Search carefully</a></li>
+    <li><a href="#7-use-zeek-for-a-second-view">7. Use Zeek for a second view</a></li>
+    <li><a href="#8-health-checks-before-trusting-extraction">8. Health checks before trusting extraction</a></li>
+    <li><a href="#decision-checkpoint">Decision checkpoint</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

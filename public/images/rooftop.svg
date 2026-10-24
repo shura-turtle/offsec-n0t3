@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="360" viewBox="0 0 230 180" shape-rendering="crispEdges">
+<rect width="230" height="180" fill="#39335d"/><path d="M0 145h230v35H0z" fill="#64507d"/>
+<path d="M0 25h230M0 55h230M0 85h230M0 115h230M20 0v180M50 0v180M80 0v180M110 0v180M140 0v180M170 0v180M200 0v180" stroke="#453d69" stroke-width=".5"/>
+<path d="M159 22h28v4h8v8h4v28h-4v8h-8v4h-28v-4h-8v-8h-4V34h4v-8h8z" fill="#f5c85e"/><path d="M147 49h52v4h-52zm4 12h44v3h-44z" fill="#e9a75b"/>
+<path d="M13 24h2v2h-2zm51-9h2v2h-2zm48 20h2v2h-2zm101-21h2v2h-2zm-80 66h2v2h-2zm-97-9h2v2h-2z" fill="#f2e4b8"/>
+<path d="M0 110h14V83h17v44h8V97h20v31h10v-17h19v35h13V97h13v-8h14v44h12V99h23v38h13v-25h13V90h15v39h13v-23h13v74H0z" fill="#546c9d"/>
+<path d="M17 91h4v7h-4zm8 12h3v7h-3zm20 1h4v5h-4zm9 10h3v5h-3zm52-9h4v4h-4zm12-8h4v4h-4zm30 12h5v4h-5zm43-11h4v5h-4zm31 16h4v5h-4z" fill="#a5d9dc"/>
+<path d="M0 147h23v-26h29v20h11v-7h20v46H0zm164-6h12v-17h29v20h25v36h-66z" fill="#ad6a78"/>
+<path d="M29 129h4v6h-4zm10 0h4v6h-4zm143 3h5v4h-5zm12 0h5v4h-5z" fill="#f7d784"/>
+<path d="M55 153h126v6H55zm-6 6h138v8H49zm10 8h117v13H59z" fill="#24263e"/><path d="M49 159h138v2H49z" fill="#b77c8f"/>
+<!-- Original rooftop shinobi sprite. -->
+<path d="M99 78h22v5h6v24h-5v11h-22v-7h-6V86h5z" fill="#26283d"/>
+<path d="M102 73h16v5h-16zm-8 13h33v9H94z" fill="#797aaf"/>
+<path d="M99 88h23v5H99z" fill="#f7d784"/><path d="M102 88h4v3h-4zm13 0h4v3h-4z" fill="#39335d"/>
+<path d="M101 109h21l8 17-4 13h-11v-13h-7v13H94l-2-12z" fill="#25273d"/><path d="M96 130h11v17h-6v8H85v-5h10zm20 0h10l9 19v6h-15v-7h-4z" fill="#25273d"/>
+<path d="M97 105h27v7H97zm27 0h15v6h-15zm15 4h14v6h-14zm14 3h11v5h-11z" fill="#f18c83"/>
+<path d="M99 118h22v4H99z" fill="#797aaf"/><path d="M121 107l19-40 3 2-19 40z" fill="#a2d6e0"/><path d="M134 78l8 4-2 3-8-4z" fill="#e2d4ec"/>
+<path d="M27 161v19m170-19v19" stroke="#cb9ca0"/><path d="M15 157h12v3H15zm182 0h12v3h-12z" fill="#f7d784"/>
+</svg>

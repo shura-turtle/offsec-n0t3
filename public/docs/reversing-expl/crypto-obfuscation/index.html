@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Crypto and obfuscation in reversing Identify the actual operation from code and constants. A familiar constant is a clue; a complete state update and data flow make the identification credible.
+1. Quick recognition Pattern Candidate What to record XOR same byte / periodic table Single/repeating XOR Key bytes, starting offset, period Add/subtract index Position-dependent transform Truncation width, index origin Rotate &#43; XOR/add Custom byte/word mixing Width, count, order 0x811c9dc5, multiply 0x01000193 FNV-1a 32-bit candidate XOR-before-multiply vs after, width, seed 0x9e3779b9 with paired word rounds TEA/XTEA-like candidate Exact round equations and endian 256-element permutation &#43; swaps RC4-like state KSA/PRGA, drop count, key expand 32-byte k &#43; add/xor/rotate ChaCha/Salsa family Variant, nonce/counter layout S-box/table rounds AES or custom substitution Match full structure, mode/key/IV Dispatch loop and bytecode PC Custom VM Opcode widths, state, semantics Standard crypto can also be hidden behind library calls. Inspect call arguments before reimplementing it. The Python cookbook covers library-backed crypto where permitted; the downloads here use stdlib byte transforms.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/reversing-expl/crypto-obfuscation/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Crypto & Obfuscation · Identify, Model, Verify">
+  <meta property="og:description" content="Crypto and obfuscation in reversing Identify the actual operation from code and constants. A familiar constant is a clue; a complete state update and data flow make the identification credible.
+1. Quick recognition Pattern Candidate What to record XOR same byte / periodic table Single/repeating XOR Key bytes, starting offset, period Add/subtract index Position-dependent transform Truncation width, index origin Rotate &#43; XOR/add Custom byte/word mixing Width, count, order 0x811c9dc5, multiply 0x01000193 FNV-1a 32-bit candidate XOR-before-multiply vs after, width, seed 0x9e3779b9 with paired word rounds TEA/XTEA-like candidate Exact round equations and endian 256-element permutation &#43; swaps RC4-like state KSA/PRGA, drop count, key expand 32-byte k &#43; add/xor/rotate ChaCha/Salsa family Variant, nonce/counter layout S-box/table rounds AES or custom substitution Match full structure, mode/key/IV Dispatch loop and bytecode PC Custom VM Opcode widths, state, semantics Standard crypto can also be hidden behind library calls. Inspect call arguments before reimplementing it. The Python cookbook covers library-backed crypto where permitted; the downloads here use stdlib byte transforms.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Crypto & Obfuscation · Identify, Model, Verify">
+  <meta itemprop="description" content="Crypto and obfuscation in reversing Identify the actual operation from code and constants. A familiar constant is a clue; a complete state update and data flow make the identification credible.
+1. Quick recognition Pattern Candidate What to record XOR same byte / periodic table Single/repeating XOR Key bytes, starting offset, period Add/subtract index Position-dependent transform Truncation width, index origin Rotate &#43; XOR/add Custom byte/word mixing Width, count, order 0x811c9dc5, multiply 0x01000193 FNV-1a 32-bit candidate XOR-before-multiply vs after, width, seed 0x9e3779b9 with paired word rounds TEA/XTEA-like candidate Exact round equations and endian 256-element permutation &#43; swaps RC4-like state KSA/PRGA, drop count, key expand 32-byte k &#43; add/xor/rotate ChaCha/Salsa family Variant, nonce/counter layout S-box/table rounds AES or custom substitution Match full structure, mode/key/IV Dispatch loop and bytecode PC Custom VM Opcode widths, state, semantics Standard crypto can also be hidden behind library calls. Inspect call arguments before reimplementing it. The Python cookbook covers library-backed crypto where permitted; the downloads here use stdlib byte transforms.">
+  <meta itemprop="wordCount" content="736">
+
+<title>Crypto &amp; Obfuscation · Identify, Model, Verify • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/reversing-expl/crypto-obfuscation/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details open>
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="active" aria-current="page">Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Crypto &amp; Obfuscation · Identify, Model, Verify</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-quick-recognition">1. Quick recognition</a></li>
+    <li><a href="#2-reversible-byte-transforms">2. Reversible byte transforms</a></li>
+    <li><a href="#3-multiplication-modulo-a-power-of-two">3. Multiplication modulo a power of two</a></li>
+    <li><a href="#4-hashes-and-checksums">4. Hashes and checksums</a></li>
+    <li><a href="#5-genuine-encryption">5. Genuine encryption</a></li>
+    <li><a href="#6-stateful-flag-computation">6. Stateful flag computation</a></li>
+    <li><a href="#7-vm-and-control-flow-obfuscation">7. VM and control-flow obfuscation</a></li>
+    <li><a href="#8-constraints-vs-direct-inversion">8. Constraints vs direct inversion</a></li>
+    <li><a href="#finish">Finish</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="reversing"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/reversing-expl/">Reverse Engineering</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="crypto-and-obfuscation-in-reversing">Crypto and obfuscation in reversing<a class="anchor" href="#crypto-and-obfuscation-in-reversing"></a></h1>
+<p><strong>Identify the actual operation from code and constants.</strong> A familiar constant is a clue; a complete state update and data flow make the identification credible.</p>
+<h2 id="1-quick-recognition">1. Quick recognition<a class="anchor" href="#1-quick-recognition"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Pattern</th>
+          <th>Candidate</th>
+          <th>What to record</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>XOR same byte / periodic table</td>
+          <td>Single/repeating XOR</td>
+          <td>Key bytes, starting offset, period</td>
+      </tr>
+      <tr>
+          <td>Add/subtract index</td>
+          <td>Position-dependent transform</td>
+          <td>Truncation width, index origin</td>
+      </tr>
+      <tr>
+          <td>Rotate + XOR/add</td>
+          <td>Custom byte/word mixing</td>
+          <td>Width, count, order</td>
+      </tr>
+      <tr>
+          <td><code>0x811c9dc5</code>, multiply <code>0x01000193</code></td>
+          <td>FNV-1a 32-bit candidate</td>
+          <td>XOR-before-multiply vs after, width, seed</td>
+      </tr>
+      <tr>
+          <td><code>0x9e3779b9</code> with paired word rounds</td>
+          <td>TEA/XTEA-like candidate</td>
+          <td>Exact round equations and endian</td>
+      </tr>
+      <tr>
+          <td>256-element permutation + swaps</td>
+          <td>RC4-like state</td>
+          <td>KSA/PRGA, drop count, key</td>
+      </tr>
+      <tr>
+          <td><code>expand 32-byte k</code> + add/xor/rotate</td>
+          <td>ChaCha/Salsa family</td>
+          <td>Variant, nonce/counter layout</td>
+      </tr>
+      <tr>
+          <td>S-box/table rounds</td>
+          <td>AES or custom substitution</td>
+          <td>Match full structure, mode/key/IV</td>
+      </tr>
+      <tr>
+          <td>Dispatch loop and bytecode PC</td>
+          <td>Custom VM</td>
+          <td>Opcode widths, state, semantics</td>
+      </tr>
+  </tbody>
+</table>
+<p>Standard crypto can also be hidden behind library calls. Inspect call arguments before reimplementing it. The <a href="../../ajcbbc_allow_tools/python3/">Python cookbook</a> covers library-backed crypto where permitted; the downloads here use stdlib byte transforms.</p>
+<h2 id="2-reversible-byte-transforms">2. Reversible byte transforms<a class="anchor" href="#2-reversible-byte-transforms"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">rol8</span><span style="color:#eceff4">(</span>x<span style="color:#eceff4">,</span>n<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    n <span style="color:#81a1c1">%=</span> <span style="color:#b48ead">8</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#eceff4">((</span>x <span style="color:#81a1c1">&lt;&lt;</span> n<span style="color:#eceff4">)</span> <span style="color:#81a1c1">|</span> <span style="color:#eceff4">(</span>x <span style="color:#81a1c1">&gt;&gt;</span> <span style="color:#eceff4">((</span><span style="color:#b48ead">8</span><span style="color:#81a1c1">-</span>n<span style="color:#eceff4">)</span><span style="color:#81a1c1">%</span><span style="color:#b48ead">8</span><span style="color:#eceff4">)))</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">255</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">encode</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">,</span>key<span style="color:#81a1c1">=</span><span style="color:#b48ead">0x23</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>rol8<span style="color:#eceff4">(((</span>b <span style="color:#81a1c1">^</span> key<span style="color:#eceff4">)</span><span style="color:#81a1c1">+</span>i<span style="color:#eceff4">)</span><span style="color:#81a1c1">&amp;</span><span style="color:#b48ead">255</span><span style="color:#eceff4">,</span><span style="color:#b48ead">3</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">for</span> i<span style="color:#eceff4">,</span>b <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">enumerate</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">decode</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">,</span>key<span style="color:#81a1c1">=</span><span style="color:#b48ead">0x23</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(((</span>rol8<span style="color:#eceff4">(</span>b<span style="color:#eceff4">,</span><span style="color:#81a1c1">-</span><span style="color:#b48ead">3</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">-</span>i<span style="color:#eceff4">)</span><span style="color:#81a1c1">&amp;</span><span style="color:#b48ead">255</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">^</span>key <span style="color:#81a1c1;font-weight:bold">for</span> i<span style="color:#eceff4">,</span>b <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">enumerate</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> decode<span style="color:#eceff4">(</span>encode<span style="color:#eceff4">(</span><span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#39;flag</span><span style="color:#a3be8c">{demo}</span><span style="color:#a3be8c">&#39;</span><span style="color:#eceff4">))</span> <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#39;flag</span><span style="color:#a3be8c">{demo}</span><span style="color:#a3be8c">&#39;</span></span></span></code></pre></div><p>Addition/subtraction invert modulo 256. XOR is self-inverse. Rotation inverts by rotating the other direction with the same width. Byte reversal and swapping each word are different operations.</p>
+<h2 id="3-multiplication-modulo-a-power-of-two">3. Multiplication modulo a power of two<a class="anchor" href="#3-multiplication-modulo-a-power-of-two"></a></h2>
+<p>For <code>y = a*x + b mod 256</code>, an inverse exists for all bytes only when <code>a</code> is odd:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>a<span style="color:#eceff4">,</span>b <span style="color:#81a1c1">=</span> <span style="color:#b48ead">7</span><span style="color:#eceff4">,</span><span style="color:#b48ead">19</span>
+</span></span><span style="display:flex;"><span>ainv <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">pow</span><span style="color:#eceff4">(</span>a<span style="color:#eceff4">,</span><span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span><span style="color:#b48ead">256</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>y <span style="color:#81a1c1">=</span> <span style="color:#eceff4">(</span>a<span style="color:#81a1c1">*</span><span style="color:#b48ead">123</span><span style="color:#81a1c1">+</span>b<span style="color:#eceff4">)</span><span style="color:#81a1c1">&amp;</span><span style="color:#b48ead">255</span>
+</span></span><span style="display:flex;"><span>x <span style="color:#81a1c1">=</span> <span style="color:#eceff4">((</span>y<span style="color:#81a1c1">-</span>b<span style="color:#eceff4">)</span><span style="color:#81a1c1">*</span>ainv<span style="color:#eceff4">)</span><span style="color:#81a1c1">&amp;</span><span style="color:#b48ead">255</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> x <span style="color:#81a1c1">==</span> <span style="color:#b48ead">123</span></span></span></code></pre></div><p>If <code>a</code> is even, information may be lost; enumerate the 256 possible byte values or solve constraints. Python&rsquo;s modular inverse raises an error when gcd is not 1.</p>
+<h2 id="4-hashes-and-checksums">4. Hashes and checksums<a class="anchor" href="#4-hashes-and-checksums"></a></h2>
+<p>FNV-1a example, after identifying this exact variant:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">fnv1a32</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    h<span style="color:#81a1c1">=</span><span style="color:#b48ead">0x811c9dc5</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">for</span> b <span style="color:#81a1c1;font-weight:bold">in</span> data<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        h<span style="color:#81a1c1">=</span><span style="color:#eceff4">((</span>h<span style="color:#81a1c1">^</span>b<span style="color:#eceff4">)</span><span style="color:#81a1c1">*</span><span style="color:#b48ead">0x01000193</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">&amp;</span><span style="color:#b48ead">0xffffffff</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> h</span></span></code></pre></div><p>A known final hash does not identify a unique string. Length/alphabet/prefix constraints determine whether bounded search is feasible. A small checksum can have many collisions, but a collision accepted by one gate may fail other checks or produce a different decryption key.</p>
+<p>For a known final byte and reversible odd multiplier, a rolling step can be inverted. For many unknown bytes, meet-in-the-middle can reduce a finite search at the cost of memory. Do not describe arbitrary SHA-256 recovery as decryption.</p>
+<h2 id="5-genuine-encryption">5. Genuine encryption<a class="anchor" href="#5-genuine-encryption"></a></h2>
+<p>Before decrypting, obtain:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Algorithm and exact variant:
+</span></span><span style="display:flex;"><span>Key bytes / derivation inputs:
+</span></span><span style="display:flex;"><span>Mode:
+</span></span><span style="display:flex;"><span>IV or nonce:
+</span></span><span style="display:flex;"><span>Counter layout/start:
+</span></span><span style="display:flex;"><span>Ciphertext range:
+</span></span><span style="display:flex;"><span>Padding:
+</span></span><span style="display:flex;"><span>Authentication tag / associated data:
+</span></span><span style="display:flex;"><span>Byte order and text encoding:</span></span></code></pre></div><p>Correct AES key plus wrong mode/IV can produce misleading partial output. Authentication failure means the inputs/format/model need investigation; ignoring the tag is not a valid verified decryption. CBC padding success alone is also weak evidence.</p>
+<h2 id="6-stateful-flag-computation">6. Stateful flag computation<a class="anchor" href="#6-stateful-flag-computation"></a></h2>
+<p>A game or sequence challenge may hash every action and use that hash to decrypt a final blob. Map state transitions explicitly:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Action</th>
+          <th>State effect</th>
+          <th>Evidence</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>talk(text)</code></td>
+          <td>Adds length and updates rolling hash</td>
+          <td>Loop and length check</td>
+      </tr>
+      <tr>
+          <td><code>move(id)</code></td>
+          <td>Updates sequence tag</td>
+          <td>Switch/transition table</td>
+      </tr>
+      <tr>
+          <td><code>finish()</code></td>
+          <td>Checks counters and decrypts</td>
+          <td>Success branch</td>
+      </tr>
+  </tbody>
+</table>
+<p>Patching only <code>finish()</code> may leave the wrong key. Reach the correct state or reproduce all state-dependent key derivation in the model.</p>
+<h2 id="7-vm-and-control-flow-obfuscation">7. VM and control-flow obfuscation<a class="anchor" href="#7-vm-and-control-flow-obfuscation"></a></h2>
+<p>Separate dispatcher noise from opcode semantics. Recover one opcode at a time with a tiny trace. Record stack underflow behavior, integer widths, signed branches, operand endianness and PC updates. A generic <code>eval</code> of unknown bytecode is not a VM implementation.</p>
+<p>Opaque predicates and flattened control flow can be simplified after identifying the state variable and transitions. Confirm any assumed invariant dynamically at multiple inputs before discarding a branch as unreachable.</p>
+<h2 id="8-constraints-vs-direct-inversion">8. Constraints vs direct inversion<a class="anchor" href="#8-constraints-vs-direct-inversion"></a></h2>
+<p>Use direct inversion for bijective independent byte transforms. Use bounded enumeration for a tiny finite key. Use an optional constraint solver when cross-byte equations, carries and branches make manual inversion awkward.</p>
+<p>Z3 bitvectors model wraparound, but signed comparisons and arithmetic shift differ from unsigned comparison/logical shift. Use <code>ULT/ULE/UGT/UGE</code> and <code>LShR</code> when the native operation is unsigned. See <a href="../python-snippets/">downloadable model</a> for an explicit small example and its dependency boundary.</p>
+<h2 id="finish">Finish<a class="anchor" href="#finish"></a></h2>
+<p>Compare forward-model bytes with a known debugger trace, recover a candidate, then run it through the original unpatched validator. Save intermediate states so a one-byte discrepancy can be located rather than guessed away.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://docs.python.org/3/library/functions.html#pow">Python modular pow</a>, <a href="https://z3prover.github.io/api/html/namespacez3py.html">Z3 Python API</a>, <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel instruction references</a>, <a href="https://csrc.nist.gov/pubs/fips/197/final">NIST AES specification</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/reversing-expl/strings-encodings/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Strings &amp; Encodings · Preserve the Bytes</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/reversing-expl/dotnet/" class="flex align-center">
+        <span>.NET · dnSpyEx, Resources &amp; IL</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-quick-recognition">1. Quick recognition</a></li>
+    <li><a href="#2-reversible-byte-transforms">2. Reversible byte transforms</a></li>
+    <li><a href="#3-multiplication-modulo-a-power-of-two">3. Multiplication modulo a power of two</a></li>
+    <li><a href="#4-hashes-and-checksums">4. Hashes and checksums</a></li>
+    <li><a href="#5-genuine-encryption">5. Genuine encryption</a></li>
+    <li><a href="#6-stateful-flag-computation">6. Stateful flag computation</a></li>
+    <li><a href="#7-vm-and-control-flow-obfuscation">7. VM and control-flow obfuscation</a></li>
+    <li><a href="#8-constraints-vs-direct-inversion">8. Constraints vs direct inversion</a></li>
+    <li><a href="#finish">Finish</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

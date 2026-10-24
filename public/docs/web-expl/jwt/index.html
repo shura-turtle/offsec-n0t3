@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="JWT attacks Decode → identify consumer → test signature enforcement → inspect key selection → check claims. Base64url decoding reveals data; it does not recover the signing key.
+1. Recognize the format A common signed compact token has three dot-separated parts:
+BASE64URL(header).BASE64URL(payload).BASE64URL(signature)A five-part token may be encrypted JWE; do not apply three-part JWS edits blindly. Opaque random session strings are a different format.
+Example decoded data:
+{&#34;alg&#34;:&#34;HS256&#34;,&#34;typ&#34;:&#34;JWT&#34;}{&#34;sub&#34;:&#34;12&#34;,&#34;role&#34;:&#34;user&#34;,&#34;iss&#34;:&#34;ctf-app&#34;,&#34;aud&#34;:&#34;web&#34;,&#34;exp&#34;:1900000000}Use an available offline Base64url/JWT inspector. Ordinary base64 uses &#43;/ while base64url uses -_; padding is commonly omitted. JSON formatting changes signed bytes. Do not upload live challenge tokens to public decoding websites.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/jwt/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="JWT · Claims, Algorithms & Keys">
+  <meta property="og:description" content="JWT attacks Decode → identify consumer → test signature enforcement → inspect key selection → check claims. Base64url decoding reveals data; it does not recover the signing key.
+1. Recognize the format A common signed compact token has three dot-separated parts:
+BASE64URL(header).BASE64URL(payload).BASE64URL(signature)A five-part token may be encrypted JWE; do not apply three-part JWS edits blindly. Opaque random session strings are a different format.
+Example decoded data:
+{&#34;alg&#34;:&#34;HS256&#34;,&#34;typ&#34;:&#34;JWT&#34;}{&#34;sub&#34;:&#34;12&#34;,&#34;role&#34;:&#34;user&#34;,&#34;iss&#34;:&#34;ctf-app&#34;,&#34;aud&#34;:&#34;web&#34;,&#34;exp&#34;:1900000000}Use an available offline Base64url/JWT inspector. Ordinary base64 uses &#43;/ while base64url uses -_; padding is commonly omitted. JSON formatting changes signed bytes. Do not upload live challenge tokens to public decoding websites.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="JWT · Claims, Algorithms & Keys">
+  <meta itemprop="description" content="JWT attacks Decode → identify consumer → test signature enforcement → inspect key selection → check claims. Base64url decoding reveals data; it does not recover the signing key.
+1. Recognize the format A common signed compact token has three dot-separated parts:
+BASE64URL(header).BASE64URL(payload).BASE64URL(signature)A five-part token may be encrypted JWE; do not apply three-part JWS edits blindly. Opaque random session strings are a different format.
+Example decoded data:
+{&#34;alg&#34;:&#34;HS256&#34;,&#34;typ&#34;:&#34;JWT&#34;}{&#34;sub&#34;:&#34;12&#34;,&#34;role&#34;:&#34;user&#34;,&#34;iss&#34;:&#34;ctf-app&#34;,&#34;aud&#34;:&#34;web&#34;,&#34;exp&#34;:1900000000}Use an available offline Base64url/JWT inspector. Ordinary base64 uses &#43;/ while base64url uses -_; padding is commonly omitted. JSON formatting changes signed bytes. Do not upload live challenge tokens to public decoding websites.">
+  <meta itemprop="wordCount" content="852">
+
+<title>JWT · Claims, Algorithms &amp; Keys • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/jwt/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="active" aria-current="page">JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>JWT · Claims, Algorithms &amp; Keys</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-recognize-the-format">1. Recognize the format</a></li>
+    <li><a href="#2-baseline-and-first-controlled-edit">2. Baseline and first controlled edit</a></li>
+    <li><a href="#3-unsigned-alg-none">3. Unsigned <code>alg: none</code></a></li>
+    <li><a href="#4-hs256-weak-or-exposed-secret">4. HS256 weak or exposed secret</a></li>
+    <li><a href="#5-rsa--hmac-algorithm-confusion">5. RSA → HMAC algorithm confusion</a></li>
+    <li><a href="#6-kid-untrusted-key-lookup">6. <code>kid</code>: untrusted key lookup</a></li>
+    <li><a href="#7-embeddedremote-key-headers">7. Embedded/remote key headers</a></li>
+    <li><a href="#8-claim-validation-token-confusion-and-revocation">8. Claim validation, token confusion and revocation</a></li>
+    <li><a href="#9-completion-evidence">9. Completion evidence</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="jwt-attacks">JWT attacks<a class="anchor" href="#jwt-attacks"></a></h1>
+<p><strong>Decode → identify consumer → test signature enforcement → inspect key selection → check claims.</strong> Base64url decoding reveals data; it does not recover the signing key.</p>
+<h2 id="1-recognize-the-format">1. Recognize the format<a class="anchor" href="#1-recognize-the-format"></a></h2>
+<p>A common signed compact token has three dot-separated parts:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>BASE64URL(header).BASE64URL(payload).BASE64URL(signature)</span></span></code></pre></div><p>A five-part token may be encrypted JWE; do not apply three-part JWS edits blindly. Opaque random session strings are a different format.</p>
+<p>Example decoded data:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;HS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;typ&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;JWT&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;sub&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;12&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;role&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;user&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;iss&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-app&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;aud&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;web&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;exp&#34;</span><span style="color:#eceff4">:</span><span style="color:#b48ead">1900000000</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Use an available offline Base64url/JWT inspector. Ordinary base64 uses <code>+/</code> while base64url uses <code>-_</code>; padding is commonly omitted. JSON formatting changes signed bytes. Do not upload live challenge tokens to public decoding websites.</p>
+<h2 id="2-baseline-and-first-controlled-edit">2. Baseline and first controlled edit<a class="anchor" href="#2-baseline-and-first-controlled-edit"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">GET</span> <span style="color:#8fbcbb">/api/me</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Authorization<span style="color:#81a1c1">:</span> Bearer ORIGINAL_TOKEN</span></span></code></pre></div><p>Edit <strong>one claim</strong> (for example <code>role</code>) without recomputing the signature, then send the same request and a protected admin route. If accepted as admin, the consumer may decode without verification. Check a signature-bit-flipped token too. A frontend displaying the changed role is not enough.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Result</th>
+          <th>Next move</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Modified payload accepted</td>
+          <td>Verify backend resource and identify which consumer fails validation</td>
+      </tr>
+      <tr>
+          <td>Invalid signature rejected</td>
+          <td>Expected; inspect key/algorithm selection</td>
+      </tr>
+      <tr>
+          <td>All tokens return same data</td>
+          <td>Session cookie may override bearer token; remove conflicting credentials</td>
+      </tr>
+      <tr>
+          <td>Token rejected before signature</td>
+          <td>Bad Base64url, JSON, expiry, issuer or audience</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="3-unsigned-alg-none">3. Unsigned <code>alg: none</code><a class="anchor" href="#3-unsigned-alg-none"></a></h2>
+<p>Decoded header candidate:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;none&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;typ&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;JWT&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Encoded header:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0</span></span></code></pre></div><p>Token shape after editing your payload:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.EDITED_PAYLOAD_BASE64URL.</span></span></code></pre></div><p>The trailing dot denotes an empty signature segment. This tests an implementation that accepts unsecured tokens. Correctly configured verifiers reject it. Trying case variations is only relevant to a demonstrably inconsistent parser; it is not an expected library feature.</p>
+<h2 id="4-hs256-weak-or-exposed-secret">4. HS256 weak or exposed secret<a class="anchor" href="#4-hs256-weak-or-exposed-secret"></a></h2>
+<p>HMAC uses the same secret for signing and verification. Inspect challenge source, environment examples, backups, framework defaults and provided config for the <strong>actual</strong> secret. A public RSA key is not an HMAC secret unless algorithm confusion exists.</p>
+<p>Signing input is exactly the ASCII bytes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>BASE64URL(header) + &#34;.&#34; + BASE64URL(payload)</span></span></code></pre></div><p>Signature is <code>BASE64URL(HMAC-SHA256(secret, signing_input))</code>. Use a permitted offline token editor&rsquo;s signing feature when available. Do not guess hundreds of secrets manually without a hint. Weak-secret recovery is an offline attack, distinct from the server accepting unsigned tokens.</p>
+<h2 id="5-rsa--hmac-algorithm-confusion">5. RSA → HMAC algorithm confusion<a class="anchor" href="#5-rsa--hmac-algorithm-confusion"></a></h2>
+<p>Prerequisites:</p>
+<ol>
+<li>Original token uses an asymmetric algorithm such as RS256.</li>
+<li>Its verification public key is available (often a published JWKS).</li>
+<li>The verifier accepts HS256 while reusing that public-key material as an HMAC key.</li>
+<li>Your signing tool can sign HS256 using the <strong>exact expected key bytes</strong>.</li>
+</ol>
+<p>Candidate decoded header:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;HS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;typ&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;JWT&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;kid&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;current-key&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Sign the edited payload with public-key bytes as HMAC secret. PEM headers, line endings and a trailing newline affect the bytes. A JWK object, DER key and PEM key are different representations. Modern libraries usually separate key types and allowed algorithms; a published public key by itself is normal and not a vulnerability.</p>
+<h2 id="6-kid-untrusted-key-lookup">6. <code>kid</code>: untrusted key lookup<a class="anchor" href="#6-kid-untrusted-key-lookup"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;HS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;kid&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;test-key&#34;</span><span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;HS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;kid&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;../../dev/null&#34;</span><span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;HS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;kid&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;known-empty-file&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>The traversal candidate requires a file-based lookup that concatenates <code>kid</code> into a path and reads it as secret bytes. A nonexistent file usually causes rejection. <code>/dev/null</code> only helps if the implementation accepts the resulting empty key; many libraries reject it.</p>
+<p>If source shows SQL lookup by concatenation, <code>kid</code> may be SQLi; use the actual query context from <a href="../sqli/">SQLi</a>. If it selects from an in-memory map, path traversal and SQLi do not apply. Observe a controlled lookup difference before constructing a forged token.</p>
+<h2 id="7-embeddedremote-key-headers">7. Embedded/remote key headers<a class="anchor" href="#7-embeddedremote-key-headers"></a></h2>
+<p>Header examples to inspect, not complete tokens:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;RS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;jku&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;https://YOUR-LAB-HOST/jwks.json&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;kid&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-key&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;alg&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;RS256&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;jwk&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;kty&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;RSA&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;kid&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-key&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;n&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;YOUR_MODULUS&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;e&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;AQAB&#34;</span><span style="color:#eceff4">}}</span></span></span></code></pre></div><p>A verifier that trusts an attacker-supplied <code>jwk</code> can verify a token signed by your corresponding private key. A verifier fetching an arbitrary <code>jku</code> may trust your hosted JWKS or introduce SSRF. Neither works simply by adding the header; key selection must consume it. Certificates through <code>x5c</code> have similar trust requirements.</p>
+<p>JWT header <code>jku</code> is not automatically used by ordinary middleware. A fixed issuer/JWKS configuration may ignore it completely. Any callback host must be allowed by the challenge.</p>
+<h2 id="8-claim-validation-token-confusion-and-revocation">8. Claim validation, token confusion and revocation<a class="anchor" href="#8-claim-validation-token-confusion-and-revocation"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Claim/condition</th>
+          <th>Manual check</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>exp</code></td>
+          <td>An actually expired signed token should be rejected after allowed clock skew</td>
+      </tr>
+      <tr>
+          <td><code>nbf</code></td>
+          <td>A valid signed future token should not work before its activation time</td>
+      </tr>
+      <tr>
+          <td><code>iss</code></td>
+          <td>A token from your second test issuer should not be accepted accidentally</td>
+      </tr>
+      <tr>
+          <td><code>aud</code></td>
+          <td>Token for a different service should not authorize this API</td>
+      </tr>
+      <tr>
+          <td><code>sub</code></td>
+          <td>Role/identity must bind to server state as intended</td>
+      </tr>
+      <tr>
+          <td>Token type</td>
+          <td>Password-reset / email-verification token should not work as an API token</td>
+      </tr>
+      <tr>
+          <td>Logout/password change</td>
+          <td>Replay your own old token; distinguish expected stateless behavior</td>
+      </tr>
+  </tbody>
+</table>
+<p>You cannot test arbitrary <code>exp</code> changes with an invalid signature and conclude time validation works or fails. A different valid token or signing capability is needed. Unix timestamps are usually seconds, not milliseconds.</p>
+<h2 id="9-completion-evidence">9. Completion evidence<a class="anchor" href="#9-completion-evidence"></a></h2>
+<p>Record original algorithm, verification behavior, key source, edited claims and the protected resource returned. A decoded token, a new UI badge or a <code>200</code> error envelope does not prove privilege. Avoid storing real account tokens in shared notes.</p>
+<h2 id="tool-workflow">Tool workflow<a class="anchor" href="#tool-workflow"></a></h2>
+<p>Use <a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community Repeater</a> for paired manual requests. Keep the baseline in one tab and change one input in another. Browser-only behavior such as XSS, cookies and CORS still needs a real browser proof.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://www.rfc-editor.org/rfc/rfc8725">JWT best current practices — RFC 8725</a>, <a href="https://www.rfc-editor.org/rfc/rfc7515">JWS compact format — RFC 7515</a>, <a href="https://portswigger.net/web-security/jwt">PortSwigger JWT attacks</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/auth-idor/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Auth &amp; IDOR · Compare Two Accounts</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/oauth/" class="flex align-center">
+        <span>OAuth / Account Linking</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-recognize-the-format">1. Recognize the format</a></li>
+    <li><a href="#2-baseline-and-first-controlled-edit">2. Baseline and first controlled edit</a></li>
+    <li><a href="#3-unsigned-alg-none">3. Unsigned <code>alg: none</code></a></li>
+    <li><a href="#4-hs256-weak-or-exposed-secret">4. HS256 weak or exposed secret</a></li>
+    <li><a href="#5-rsa--hmac-algorithm-confusion">5. RSA → HMAC algorithm confusion</a></li>
+    <li><a href="#6-kid-untrusted-key-lookup">6. <code>kid</code>: untrusted key lookup</a></li>
+    <li><a href="#7-embeddedremote-key-headers">7. Embedded/remote key headers</a></li>
+    <li><a href="#8-claim-validation-token-confusion-and-revocation">8. Claim validation, token confusion and revocation</a></li>
+    <li><a href="#9-completion-evidence">9. Completion evidence</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

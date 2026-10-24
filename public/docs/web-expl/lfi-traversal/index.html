@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Path traversal and local file inclusion Prove a file read before trying code execution. A download function may only read bytes; a PHP include also interprets PHP code. Those are different capabilities.
+1. First probes Candidate parameters: file, filename, path, page, template, lang, image/download IDs that contain paths.
+Raw value Control Evidence ../../../../etc/passwd Same traversal to etc/ctf-does-not-exist Recognizable account file vs missing-file response /etc/passwd /etc/ctf-does-not-exist Absolute path accepted by the file operation ..\..\..\Windows\win.ini Missing .ini path Windows path traversal, if its contents return ../../../../proc/self/cmdline Missing proc path Linux process arguments, possibly NUL-separated Start with one ../, then add depth while retaining the filename. A 200 OK page containing a fixed error is a negative result. Match real file contents and compare a nonexistent path.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/lfi-traversal/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Traversal & LFI">
+  <meta property="og:description" content="Path traversal and local file inclusion Prove a file read before trying code execution. A download function may only read bytes; a PHP include also interprets PHP code. Those are different capabilities.
+1. First probes Candidate parameters: file, filename, path, page, template, lang, image/download IDs that contain paths.
+Raw value Control Evidence ../../../../etc/passwd Same traversal to etc/ctf-does-not-exist Recognizable account file vs missing-file response /etc/passwd /etc/ctf-does-not-exist Absolute path accepted by the file operation ..\..\..\Windows\win.ini Missing .ini path Windows path traversal, if its contents return ../../../../proc/self/cmdline Missing proc path Linux process arguments, possibly NUL-separated Start with one ../, then add depth while retaining the filename. A 200 OK page containing a fixed error is a negative result. Match real file contents and compare a nonexistent path.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Traversal & LFI">
+  <meta itemprop="description" content="Path traversal and local file inclusion Prove a file read before trying code execution. A download function may only read bytes; a PHP include also interprets PHP code. Those are different capabilities.
+1. First probes Candidate parameters: file, filename, path, page, template, lang, image/download IDs that contain paths.
+Raw value Control Evidence ../../../../etc/passwd Same traversal to etc/ctf-does-not-exist Recognizable account file vs missing-file response /etc/passwd /etc/ctf-does-not-exist Absolute path accepted by the file operation ..\..\..\Windows\win.ini Missing .ini path Windows path traversal, if its contents return ../../../../proc/self/cmdline Missing proc path Linux process arguments, possibly NUL-separated Start with one ../, then add depth while retaining the filename. A 200 OK page containing a fixed error is a negative result. Match real file contents and compare a nonexistent path.">
+  <meta itemprop="wordCount" content="638">
+
+<title>Traversal &amp; LFI • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/lfi-traversal/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="active" aria-current="page">Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Traversal &amp; LFI</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-first-probes">1. First probes</a></li>
+    <li><a href="#2-bypass-according-to-observed-path-handling">2. Bypass according to observed path handling</a></li>
+    <li><a href="#3-once-arbitrary-read-works">3. Once arbitrary read works</a></li>
+    <li><a href="#4-php-source-disclosure-with-filters">4. PHP source disclosure with filters</a></li>
+    <li><a href="#5-include-only-execution-paths">5. Include-only execution paths</a></li>
+    <li><a href="#6-things-that-often-waste-time">6. Things that often waste time</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>3 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="path-traversal-and-local-file-inclusion">Path traversal and local file inclusion<a class="anchor" href="#path-traversal-and-local-file-inclusion"></a></h1>
+<p><strong>Prove a file read before trying code execution.</strong> A download function may only read bytes; a PHP <code>include</code> also interprets PHP code. Those are different capabilities.</p>
+<h2 id="1-first-probes">1. First probes<a class="anchor" href="#1-first-probes"></a></h2>
+<p>Candidate parameters: <code>file</code>, <code>filename</code>, <code>path</code>, <code>page</code>, <code>template</code>, <code>lang</code>, image/download IDs that contain paths.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Raw value</th>
+          <th>Control</th>
+          <th>Evidence</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>../../../../etc/passwd</code></td>
+          <td>Same traversal to <code>etc/ctf-does-not-exist</code></td>
+          <td>Recognizable account file vs missing-file response</td>
+      </tr>
+      <tr>
+          <td><code>/etc/passwd</code></td>
+          <td><code>/etc/ctf-does-not-exist</code></td>
+          <td>Absolute path accepted by the file operation</td>
+      </tr>
+      <tr>
+          <td><code>..\..\..\Windows\win.ini</code></td>
+          <td>Missing <code>.ini</code> path</td>
+          <td>Windows path traversal, if its contents return</td>
+      </tr>
+      <tr>
+          <td><code>../../../../proc/self/cmdline</code></td>
+          <td>Missing proc path</td>
+          <td>Linux process arguments, possibly NUL-separated</td>
+      </tr>
+  </tbody>
+</table>
+<p>Start with one <code>../</code>, then add depth while retaining the filename. A <code>200 OK</code> page containing a fixed error is a negative result. Match real file contents and compare a nonexistent path.</p>
+<h2 id="2-bypass-according-to-observed-path-handling">2. Bypass according to observed path handling<a class="anchor" href="#2-bypass-according-to-observed-path-handling"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>../etc/passwd
+</span></span><span style="display:flex;"><span>../../../../etc/passwd
+</span></span><span style="display:flex;"><span>....//....//....//etc/passwd
+</span></span><span style="display:flex;"><span>..%2f..%2f..%2fetc/passwd
+</span></span><span style="display:flex;"><span>%2e%2e%2f%2e%2e%2fetc/passwd
+</span></span><span style="display:flex;"><span>%252e%252e%252f%252e%252e%252fetc/passwd
+</span></span><span style="display:flex;"><span>..\..\..\Windows\win.ini</span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>Variant</th>
+          <th>Required mistake</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>....//</code></td>
+          <td>A single nonrecursive removal of <code>../</code> leaves <code>../</code> behind</td>
+      </tr>
+      <tr>
+          <td><code>%2e</code> / <code>%2f</code></td>
+          <td>Decoding occurs after the relevant validation</td>
+      </tr>
+      <tr>
+          <td><code>%252e</code> / <code>%252f</code></td>
+          <td>Two decoding stages occur in the path to the sink</td>
+      </tr>
+      <tr>
+          <td>Backslashes</td>
+          <td>Downstream OS/library treats <code>\</code> as a separator</td>
+      </tr>
+      <tr>
+          <td>Absolute path</td>
+          <td>Join operation permits replacing the intended base path</td>
+      </tr>
+  </tbody>
+</table>
+<p>Do not infer double decoding merely because a payload contains <code>%25</code>. Observe a decoding difference or inspect source. URI routing and filesystem normalization happen at different layers.</p>
+<h2 id="3-once-arbitrary-read-works">3. Once arbitrary read works<a class="anchor" href="#3-once-arbitrary-read-works"></a></h2>
+<p>Use the process and source clues to locate the challenge:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/etc/passwd
+</span></span><span style="display:flex;"><span>/proc/self/cmdline
+</span></span><span style="display:flex;"><span>/proc/self/environ
+</span></span><span style="display:flex;"><span>/proc/self/cwd/app.py
+</span></span><span style="display:flex;"><span>/proc/self/cwd/package.json
+</span></span><span style="display:flex;"><span>/proc/self/cwd/.env
+</span></span><span style="display:flex;"><span>/var/www/html/index.php
+</span></span><span style="display:flex;"><span>/flag.txt</span></span></code></pre></div><p>These are candidates, not guaranteed locations. <code>/proc/self</code> refers to the process performing the read. Environment data may contain NUL separators, lack expected variables, or be access-restricted. An empty environment response is not proof no secret exists.</p>
+<p>Read routing code → imports/config → actual file/DB locations. A read primitive does not list directories unless the vulnerable endpoint supports directory listing.</p>
+<h2 id="4-php-source-disclosure-with-filters">4. PHP source disclosure with filters<a class="anchor" href="#4-php-source-disclosure-with-filters"></a></h2>
+<p>If the sink accepts PHP stream wrappers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>php://filter/read=convert.base64-encode/resource=index.php
+</span></span><span style="display:flex;"><span>php://filter/convert.base64-encode/resource=/var/www/html/config.php
+</span></span><span style="display:flex;"><span>php://filter/read=convert.base64-encode/resource=/flag.txt</span></span></code></pre></div><p>Decode the returned Base64 using your permitted local decoder. Wrapping PHP source prevents <code>include</code> from executing it and returns encoded source instead. <code>resource=</code> belongs at the end; paths are resolved under the process&rsquo;s permissions and working directory. <a href="https://www.php.net/manual/en/wrappers.php.php">PHP documents the wrapper and its filter order</a>.</p>
+<p>If the application appends <code>.php</code>, your resource becomes <code>index.php.php</code> unless the payload accounts for the suffix. First read the source and find exactly where concatenation happens.</p>
+<h2 id="5-include-only-execution-paths">5. Include-only execution paths<a class="anchor" href="#5-include-only-execution-paths"></a></h2>
+<p>These need an actual include/evaluation sink. <code>file_get_contents()</code> alone returns bytes.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Candidate</th>
+          <th>Preconditions</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Include an uploaded PHP-bearing file</td>
+          <td>Know its local path; contents remain intact</td>
+      </tr>
+      <tr>
+          <td>Include an application log</td>
+          <td>Control a logged field; know log path; log readable</td>
+      </tr>
+      <tr>
+          <td>Include a session file</td>
+          <td>PHP session storage is file-based; session data is controllable and path known</td>
+      </tr>
+      <tr>
+          <td><code>data://text/plain,...</code></td>
+          <td>Wrapper accepted and required URL include settings enabled</td>
+      </tr>
+      <tr>
+          <td><code>php://input</code></td>
+          <td>Body reaches the sink and wrapper/include configuration allows it</td>
+      </tr>
+      <tr>
+          <td>Archive wrapper</td>
+          <td>Relevant extension exists and exact archive/member path is known</td>
+      </tr>
+  </tbody>
+</table>
+<p>For a lab file you control, use a fixed marker rather than a general command endpoint:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#81a1c1">&lt;?</span>php <span style="color:#81a1c1;font-weight:bold">echo</span> <span style="color:#a3be8c">&#34;CTF_INCLUDE_71&#34;</span><span style="color:#eceff4">;</span> <span style="color:#5e81ac;font-style:italic">?&gt;</span><span style="color:#bf616a">
+</span></span></span></code></pre></div><p>The marker must execute, not merely appear as source. For inclusion chains, the uploaded extension may be irrelevant: <code>include</code> interprets PHP tags inside the selected file.</p>
+<p>Remote URL inclusion depends on PHP configuration and wrapper support; successful local traversal does not establish RFI. See <a href="https://www.php.net/manual/en/function.include.php">PHP include behavior</a>.</p>
+<h2 id="6-things-that-often-waste-time">6. Things that often waste time<a class="anchor" href="#6-things-that-often-waste-time"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Symptom</th>
+          <th>Check</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>/etc/passwd</code> works, source does not</td>
+          <td>Wrong path, suffix concatenation or permissions</td>
+      </tr>
+      <tr>
+          <td>Traversal returns an image error</td>
+          <td>App may decode/rescale the file after reading</td>
+      </tr>
+      <tr>
+          <td>Source appears blank</td>
+          <td>PHP may have executed; try Base64 filter disclosure</td>
+      </tr>
+      <tr>
+          <td>Base64 output is wrapped in HTML</td>
+          <td>Decode only the actual encoded data</td>
+      </tr>
+      <tr>
+          <td>Old <code>%00</code> payload fails</td>
+          <td>Modern PHP path APIs reject NUL; old truncation recipes are not a default</td>
+      </tr>
+      <tr>
+          <td><code>phar://</code> reads a member but no effect</td>
+          <td>Archive access does not guarantee metadata deserialization; PHP/version and API matter</td>
+      </tr>
+  </tbody>
+</table>
+<p>Related: <a href="../file-upload/">uploads</a>, <a href="../xxe/">XXE</a>, <a href="../encoding-filters/">encoding</a>.</p>
+<p>References: <a href="https://portswigger.net/web-security/file-path-traversal">path traversal</a>, <a href="https://www.php.net/manual/en/filters.convert.php">PHP conversion filters</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/command-injection/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Command Injection</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/ssrf/" class="flex align-center">
+        <span>SSRF</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-first-probes">1. First probes</a></li>
+    <li><a href="#2-bypass-according-to-observed-path-handling">2. Bypass according to observed path handling</a></li>
+    <li><a href="#3-once-arbitrary-read-works">3. Once arbitrary read works</a></li>
+    <li><a href="#4-php-source-disclosure-with-filters">4. PHP source disclosure with filters</a></li>
+    <li><a href="#5-include-only-execution-paths">5. Include-only execution paths</a></li>
+    <li><a href="#6-things-that-often-waste-time">6. Things that often waste time</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

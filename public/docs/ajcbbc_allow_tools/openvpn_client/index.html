@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: connecting the competition PC to the challenge network.
+Run in: Windows OpenVPN client. These steps describe OpenVPN Connect.
+Connect Get the organizer’s .ovpn profile and any supplied credentials. Open OpenVPN Connect → import a profile from a file. Select the .ovpn, enter required credentials and connect. Confirm the client reports Connected. Open a supplied challenge endpoint in Chrome. Check Windows connectivity ipconfig route print # Replace with the assigned challenge host and port Test-NetConnection 192.0.2.10 -Port 443If Windows works but WSL does not # WSL: inspect addresses and route selection ip addr ip route ip route get 192.0.2.10Check the same endpoint from Windows and WSL. VPN routing and DNS can differ between them. Share that distinction with competition support if the provided setup fails.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/openvpn_client/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="OpenVPN Client">
+  <meta property="og:description" content="Use for: connecting the competition PC to the challenge network.
+Run in: Windows OpenVPN client. These steps describe OpenVPN Connect.
+Connect Get the organizer’s .ovpn profile and any supplied credentials. Open OpenVPN Connect → import a profile from a file. Select the .ovpn, enter required credentials and connect. Confirm the client reports Connected. Open a supplied challenge endpoint in Chrome. Check Windows connectivity ipconfig route print # Replace with the assigned challenge host and port Test-NetConnection 192.0.2.10 -Port 443If Windows works but WSL does not # WSL: inspect addresses and route selection ip addr ip route ip route get 192.0.2.10Check the same endpoint from Windows and WSL. VPN routing and DNS can differ between them. Share that distinction with competition support if the provided setup fails.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="OpenVPN Client">
+  <meta itemprop="description" content="Use for: connecting the competition PC to the challenge network.
+Run in: Windows OpenVPN client. These steps describe OpenVPN Connect.
+Connect Get the organizer’s .ovpn profile and any supplied credentials. Open OpenVPN Connect → import a profile from a file. Select the .ovpn, enter required credentials and connect. Confirm the client reports Connected. Open a supplied challenge endpoint in Chrome. Check Windows connectivity ipconfig route print # Replace with the assigned challenge host and port Test-NetConnection 192.0.2.10 -Port 443If Windows works but WSL does not # WSL: inspect addresses and route selection ip addr ip route ip route get 192.0.2.10Check the same endpoint from Windows and WSL. VPN routing and DNS can differ between them. Share that distinction with competition support if the provided setup fails.">
+  <meta itemprop="wordCount" content="496">
+
+<title>OpenVPN Client • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/openvpn_client/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="active" aria-current="page">OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>OpenVPN Client</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#connect">Connect</a></li>
+    <li><a href="#check-windows-connectivity">Check Windows connectivity</a></li>
+    <li><a href="#if-windows-works-but-wsl-does-not">If Windows works but WSL does not</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#supporting-command-parameters-explained">Supporting command parameters explained</a></li>
+    <li><a href="#ctf-diagnose-a-challenge-endpoint-in-layers">CTF: diagnose a challenge endpoint in layers</a></li>
+    <li><a href="#read-client-errors-by-category">Read client errors by category</a></li>
+    <li><a href="#keep-stateful-solves-alive">Keep stateful solves alive</a></li>
+    <li><a href="#endpoint-rotation-workflow">Endpoint rotation workflow</a></li>
+    <li><a href="#useful-support-record">Useful support record</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">OpenVPN Client</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> connecting the competition PC to the challenge network.<br>
+<strong>Run in:</strong> Windows OpenVPN client. These steps describe OpenVPN Connect.</p>
+<h2 id="connect">Connect<a class="anchor" href="#connect"></a></h2>
+<ol>
+<li>Get the organizer’s <code>.ovpn</code> profile and any supplied credentials.</li>
+<li>Open OpenVPN Connect → import a profile from a file.</li>
+<li>Select the <code>.ovpn</code>, enter required credentials and connect.</li>
+<li>Confirm the client reports <strong>Connected</strong>.</li>
+<li>Open a supplied challenge endpoint in Chrome.</li>
+</ol>
+<h2 id="check-windows-connectivity">Check Windows connectivity<a class="anchor" href="#check-windows-connectivity"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>ipconfig
+</span></span><span style="display:flex;"><span>route print
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Replace with the assigned challenge host and port</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Test-NetConnection</span> <span style="color:#b48ead">192.0</span><span style="color:#eceff4">.</span><span style="color:#8fbcbb">2</span><span style="color:#eceff4">.</span><span style="color:#8fbcbb">10</span> -Port <span style="color:#b48ead">443</span></span></span></code></pre></div><h2 id="if-windows-works-but-wsl-does-not">If Windows works but WSL does not<a class="anchor" href="#if-windows-works-but-wsl-does-not"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># WSL: inspect addresses and route selection</span>
+</span></span><span style="display:flex;"><span>ip addr
+</span></span><span style="display:flex;"><span>ip route
+</span></span><span style="display:flex;"><span>ip route get 192.0.2.10</span></span></code></pre></div><p>Check the same endpoint from Windows and WSL. VPN routing and DNS can differ between them. Share that distinction with competition support if the provided setup fails.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>A failed ping does not prove the endpoint is down; ICMP may be blocked.</li>
+<li>Authentication failure, TLS/profile failure and a missing route are different problems.</li>
+<li>Keep the client connected while working on VPN endpoints.</li>
+<li>OpenVPN GUI and OpenVPN Connect have different menus; use the installed client’s import control.</li>
+</ul>
+<h2 id="supporting-command-parameters-explained">Supporting command parameters explained<a class="anchor" href="#supporting-command-parameters-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Command / parameter</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>Test-NetConnection HOST</code></td>
+          <td>Diagnose connectivity to the selected host</td>
+      </tr>
+      <tr>
+          <td><code>-Port N</code></td>
+          <td>Test TCP connection to port N</td>
+      </tr>
+      <tr>
+          <td><code>-InformationLevel Detailed</code></td>
+          <td>Show additional diagnostic fields</td>
+      </tr>
+      <tr>
+          <td><code>route print</code></td>
+          <td>Display Windows routing tables</td>
+      </tr>
+      <tr>
+          <td><code>ip route get HOST</code> in WSL</td>
+          <td>Show the route selected for that destination</td>
+      </tr>
+  </tbody>
+</table>
+<p>These commands diagnose the network. OpenVPN Connect itself is controlled through its imported profile and GUI in this workflow.</p>
+<h2 id="ctf-diagnose-a-challenge-endpoint-in-layers">CTF: diagnose a challenge endpoint in layers<a class="anchor" href="#ctf-diagnose-a-challenge-endpoint-in-layers"></a></h2>
+<ol>
+<li>Confirm the VPN client reports a connected tunnel.</li>
+<li>Check the challenge IP/hostname is the latest assigned endpoint.</li>
+<li>Inspect the Windows route and DNS result where relevant.</li>
+<li>Test the actual TCP service port.</li>
+<li>Repeat the same check inside WSL if the solver runs there.</li>
+<li>Only debug the solver payload after endpoint availability is established.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Hostname lookup, then TCP reachability</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Resolve-DnsName</span> challenge<span style="color:#eceff4">.</span><span style="color:#8fbcbb">example</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Test-NetConnection</span> <span style="color:#b48ead">192.0</span><span style="color:#eceff4">.</span><span style="color:#8fbcbb">2</span><span style="color:#eceff4">.</span><span style="color:#8fbcbb">10</span> -Port <span style="color:#b48ead">8080</span> -InformationLevel Detailed</span></span></code></pre></div><p>Replace both placeholders. A TLS/HTTP application can reject a request even after TCP succeeds; keep those outcomes separate.</p>
+<h2 id="read-client-errors-by-category">Read client errors by category<a class="anchor" href="#read-client-errors-by-category"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Message category</th>
+          <th>Investigate</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Authentication failure</td>
+          <td>Supplied username/password or profile credentials</td>
+      </tr>
+      <tr>
+          <td>Certificate/time validation</td>
+          <td>Correct profile, certificate validity and PC time</td>
+      </tr>
+      <tr>
+          <td>Tunnel connected but host unreachable</td>
+          <td>Route, endpoint availability or firewall</td>
+      </tr>
+      <tr>
+          <td>IP works, hostname fails</td>
+          <td>DNS configuration</td>
+      </tr>
+      <tr>
+          <td>Windows works, WSL fails</td>
+          <td>WSL routing/DNS interaction with the VPN</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="keep-stateful-solves-alive">Keep stateful solves alive<a class="anchor" href="#keep-stateful-solves-alive"></a></h2>
+<p>Do not disconnect/reimport a working profile during an active protocol challenge without preserving session evidence. A VPN reconnect can close the underlying TCP/UDP state and invalidate a partially completed sequence.</p>
+<h2 id="endpoint-rotation-workflow">Endpoint rotation workflow<a class="anchor" href="#endpoint-rotation-workflow"></a></h2>
+<p>When a supplied solver receives no data, distinguish connection refusal, timeout and EOF. Do one minimal liveness check. If the instance expired, retry the unchanged solver on the refreshed endpoint before changing payload assumptions.</p>
+<h2 id="useful-support-record">Useful support record<a class="anchor" href="#useful-support-record"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>VPN client: &lt;Connect/GUI and installed build&gt;
+</span></span><span style="display:flex;"><span>tunnel status: &lt;connected/error text&gt;
+</span></span><span style="display:flex;"><span>assigned endpoint: &lt;host:port&gt;
+</span></span><span style="display:flex;"><span>Windows test: &lt;TCP outcome&gt;
+</span></span><span style="display:flex;"><span>WSL test: &lt;TCP outcome&gt;
+</span></span><span style="display:flex;"><span>time of test: &lt;timezone included&gt;</span></span></code></pre></div><p>Reference: <a href="https://openvpn.net/connect-docs/import-profile.html">OpenVPN Connect profile import</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../network-expl/">Network starting workflow</a></li>
+<li><a href="../../network-expl/tcp-udp/">Persistent TCP/UDP sessions</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>PDF Viewer</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/google_chrome/" class="flex align-center">
+        <span>Google Chrome</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#connect">Connect</a></li>
+    <li><a href="#check-windows-connectivity">Check Windows connectivity</a></li>
+    <li><a href="#if-windows-works-but-wsl-does-not">If Windows works but WSL does not</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#supporting-command-parameters-explained">Supporting command parameters explained</a></li>
+    <li><a href="#ctf-diagnose-a-challenge-endpoint-in-layers">CTF: diagnose a challenge endpoint in layers</a></li>
+    <li><a href="#read-client-errors-by-category">Read client errors by category</a></li>
+    <li><a href="#keep-stateful-solves-alive">Keep stateful solves alive</a></li>
+    <li><a href="#endpoint-rotation-workflow">Endpoint rotation workflow</a></li>
+    <li><a href="#useful-support-record">Useful support record</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

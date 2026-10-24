@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TCP and UDP: Framing, State, and Exact Bytes Flow: establish liveness → identify framing → read banner → send exact message → interpret reply → keep the session through success.
+Tools: Wireshark, TShark, Python, HxD.
+1. Separate transport failure from payload failure Observation Meaning Next action Connection refused No listener / explicit rejection on that address Verify current endpoint Connect timeout Routing/filtering/unresponsive endpoint One minimal liveness check TCP connected, no bytes May be waiting for client message Read protocol/source before sending recv() returns b&#39;&#39; TCP peer closed its sending side Preserve bytes already read; classify EOF Socket timeout No bytes within the chosen deadline Not equivalent to EOF or malformed payload UDP receive timeout No datagram observed No proof of open/closed port or valid message If the user supplies a complete solver and a current endpoint, run that artifact before re-deriving it. If an instance expired, retry unchanged against the refreshed endpoint before changing the protocol assumptions.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/network-expl/tcp-udp/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="05 · TCP / UDP Sessions">
+  <meta property="og:description" content="TCP and UDP: Framing, State, and Exact Bytes Flow: establish liveness → identify framing → read banner → send exact message → interpret reply → keep the session through success.
+Tools: Wireshark, TShark, Python, HxD.
+1. Separate transport failure from payload failure Observation Meaning Next action Connection refused No listener / explicit rejection on that address Verify current endpoint Connect timeout Routing/filtering/unresponsive endpoint One minimal liveness check TCP connected, no bytes May be waiting for client message Read protocol/source before sending recv() returns b&#39;&#39; TCP peer closed its sending side Preserve bytes already read; classify EOF Socket timeout No bytes within the chosen deadline Not equivalent to EOF or malformed payload UDP receive timeout No datagram observed No proof of open/closed port or valid message If the user supplies a complete solver and a current endpoint, run that artifact before re-deriving it. If an instance expired, retry unchanged against the refreshed endpoint before changing the protocol assumptions.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="05 · TCP / UDP Sessions">
+  <meta itemprop="description" content="TCP and UDP: Framing, State, and Exact Bytes Flow: establish liveness → identify framing → read banner → send exact message → interpret reply → keep the session through success.
+Tools: Wireshark, TShark, Python, HxD.
+1. Separate transport failure from payload failure Observation Meaning Next action Connection refused No listener / explicit rejection on that address Verify current endpoint Connect timeout Routing/filtering/unresponsive endpoint One minimal liveness check TCP connected, no bytes May be waiting for client message Read protocol/source before sending recv() returns b&#39;&#39; TCP peer closed its sending side Preserve bytes already read; classify EOF Socket timeout No bytes within the chosen deadline Not equivalent to EOF or malformed payload UDP receive timeout No datagram observed No proof of open/closed port or valid message If the user supplies a complete solver and a current endpoint, run that artifact before re-deriving it. If an instance expired, retry unchanged against the refreshed endpoint before changing the protocol assumptions.">
+  <meta itemprop="wordCount" content="740">
+
+<title>05 · TCP / UDP Sessions • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/network-expl/tcp-udp/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details open>
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="active" aria-current="page">05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>05 · TCP / UDP Sessions</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-separate-transport-failure-from-payload-failure">1. Separate transport failure from payload failure</a></li>
+    <li><a href="#2-tcp-is-a-byte-stream">2. TCP is a byte stream</a></li>
+    <li><a href="#3-minimal-exact-length-reader">3. Minimal exact-length reader</a></li>
+    <li><a href="#4-reuse-one-connection-for-the-whole-protocol">4. Reuse one connection for the whole protocol</a></li>
+    <li><a href="#5-ack-is-an-intermediate-event">5. ACK is an intermediate event</a></li>
+    <li><a href="#6-analyze-recorded-tcp-correctly">6. Analyze recorded TCP correctly</a></li>
+    <li><a href="#7-udp-preserves-datagrams-not-reliability">7. UDP preserves datagrams, not reliability</a></li>
+    <li><a href="#final-check">Final check</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="network"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/network-expl/">Network Exploitation</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="tcp-and-udp-framing-state-and-exact-bytes">TCP and UDP: Framing, State, and Exact Bytes<a class="anchor" href="#tcp-and-udp-framing-state-and-exact-bytes"></a></h1>
+<p><strong>Flow:</strong> establish liveness → identify framing → read banner → send exact message → interpret reply → keep the session through success.</p>
+<p><strong>Tools:</strong> <a href="../../ajcbbc_allow_tools/wireshark/">Wireshark</a>, <a href="../../ajcbbc_allow_tools/tshark/">TShark</a>, <a href="../../ajcbbc_allow_tools/python3/">Python</a>, <a href="../../ajcbbc_allow_tools/hxd/">HxD</a>.</p>
+<h2 id="1-separate-transport-failure-from-payload-failure">1. Separate transport failure from payload failure<a class="anchor" href="#1-separate-transport-failure-from-payload-failure"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Meaning</th>
+          <th>Next action</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Connection refused</td>
+          <td>No listener / explicit rejection on that address</td>
+          <td>Verify current endpoint</td>
+      </tr>
+      <tr>
+          <td>Connect timeout</td>
+          <td>Routing/filtering/unresponsive endpoint</td>
+          <td>One minimal liveness check</td>
+      </tr>
+      <tr>
+          <td>TCP connected, no bytes</td>
+          <td>May be waiting for client message</td>
+          <td>Read protocol/source before sending</td>
+      </tr>
+      <tr>
+          <td><code>recv()</code> returns <code>b''</code></td>
+          <td>TCP peer closed its sending side</td>
+          <td>Preserve bytes already read; classify EOF</td>
+      </tr>
+      <tr>
+          <td>Socket timeout</td>
+          <td>No bytes within the chosen deadline</td>
+          <td>Not equivalent to EOF or malformed payload</td>
+      </tr>
+      <tr>
+          <td>UDP receive timeout</td>
+          <td>No datagram observed</td>
+          <td>No proof of open/closed port or valid message</td>
+      </tr>
+  </tbody>
+</table>
+<p>If the user supplies a complete solver and a current endpoint, run that artifact before re-deriving it. If an instance expired, retry unchanged against the refreshed endpoint before changing the protocol assumptions.</p>
+<h2 id="2-tcp-is-a-byte-stream">2. TCP is a byte stream<a class="anchor" href="#2-tcp-is-a-byte-stream"></a></h2>
+<p>One <code>sendall()</code> can arrive in several reads. Several sends can arrive in one read. Do not assume <code>recv(1024)</code> returns a whole message.</p>
+<p>Common framing:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Protocol shape</th>
+          <th>Correct receive strategy</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Newline-delimited text</td>
+          <td>Buffer until the exact line delimiter</td>
+      </tr>
+      <tr>
+          <td>Prompt ending <code>&gt; </code></td>
+          <td>Buffer until those bytes; retain any surplus</td>
+      </tr>
+      <tr>
+          <td>Fixed-size header</td>
+          <td>Read exactly the header length, then parse</td>
+      </tr>
+      <tr>
+          <td>Length prefix</td>
+          <td>Parse length with correct width/endianness; read that many bytes</td>
+      </tr>
+      <tr>
+          <td>Connection-close body</td>
+          <td>Read until EOF; timeout is a separate state</td>
+      </tr>
+      <tr>
+          <td>Stateful binary protocol</td>
+          <td>Parse message ID/length/checksum according to the dialect</td>
+      </tr>
+  </tbody>
+</table>
+<p>Use <code>sendall</code>, bytes literals, explicit delimiters, and bounded reads. If the service expects CRLF, <code>b'\n'</code> alone may fail.</p>
+<h2 id="3-minimal-exact-length-reader">3. Minimal exact-length reader<a class="anchor" href="#3-minimal-exact-length-reader"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">time</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">read_exact</span><span style="color:#eceff4">(</span>sock<span style="color:#eceff4">,</span> size<span style="color:#eceff4">,</span> timeout<span style="color:#81a1c1">=</span><span style="color:#b48ead">5</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    deadline <span style="color:#81a1c1">=</span> time<span style="color:#81a1c1">.</span>monotonic<span style="color:#eceff4">()</span> <span style="color:#81a1c1">+</span> timeout
+</span></span><span style="display:flex;"><span>    data <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytearray</span><span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">while</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span> <span style="color:#81a1c1">&lt;</span> size<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        remaining <span style="color:#81a1c1">=</span> deadline <span style="color:#81a1c1">-</span> time<span style="color:#81a1c1">.</span>monotonic<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">if</span> remaining <span style="color:#81a1c1">&lt;=</span> <span style="color:#b48ead">0</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">TimeoutError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#39;</span><span style="color:#a3be8c">{</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span><span style="color:#a3be8c">}</span><span style="color:#a3be8c">/</span><span style="color:#a3be8c">{</span>size<span style="color:#a3be8c">}</span><span style="color:#a3be8c"> bytes before deadline&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        sock<span style="color:#81a1c1">.</span>settimeout<span style="color:#eceff4">(</span>remaining<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        part <span style="color:#81a1c1">=</span> sock<span style="color:#81a1c1">.</span>recv<span style="color:#eceff4">(</span>size <span style="color:#81a1c1">-</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1;font-weight:bold">not</span> part<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">EOFError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#39;</span><span style="color:#a3be8c">{</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span><span style="color:#a3be8c">}</span><span style="color:#a3be8c">/</span><span style="color:#a3be8c">{</span>size<span style="color:#a3be8c">}</span><span style="color:#a3be8c"> bytes before EOF&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        data<span style="color:#81a1c1">.</span>extend<span style="color:#eceff4">(</span>part<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span></span></span></code></pre></div><p>A per-read timeout alone can allow a peer to keep you waiting indefinitely by sending one byte before each timeout. The absolute deadline bounds the entire operation.</p>
+<p>For a 32-bit network-order length header:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">struct</span>
+</span></span><span style="display:flex;"><span>length<span style="color:#eceff4">,</span> <span style="color:#81a1c1">=</span> struct<span style="color:#81a1c1">.</span>unpack<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;!I&#39;</span><span style="color:#eceff4">,</span> read_exact<span style="color:#eceff4">(</span>sock<span style="color:#eceff4">,</span> <span style="color:#b48ead">4</span><span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">if</span> length <span style="color:#81a1c1">&gt;</span> <span style="color:#b48ead">8</span> <span style="color:#81a1c1">*</span> <span style="color:#b48ead">1024</span> <span style="color:#81a1c1">*</span> <span style="color:#b48ead">1024</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;unexpected message size&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>body <span style="color:#81a1c1">=</span> read_exact<span style="color:#eceff4">(</span>sock<span style="color:#eceff4">,</span> length<span style="color:#eceff4">)</span></span></span></code></pre></div><p>Only use this layout when the protocol defines it. Little-endian is <code>&lt;I</code>; network order is big-endian.</p>
+<h2 id="4-reuse-one-connection-for-the-whole-protocol">4. Reuse one connection for the whole protocol<a class="anchor" href="#4-reuse-one-connection-for-the-whole-protocol"></a></h2>
+<p>Download <a href="/snippets/network/session_client.py">session_client.py</a>. It preserves delimiter over-read bytes and emits a byte-exact JSONL transcript.</p>
+<p>Example <code>plan.json</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">[</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;read_until_hex&#34;</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;3e20&#34;</span><span style="color:#eceff4">},</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;send_text&#34;</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;STATUS\r\n&#34;</span><span style="color:#eceff4">},</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;read_until_hex&#34;</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;3e20&#34;</span><span style="color:#eceff4">},</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;send_hex&#34;</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;50494e470d0a&#34;</span><span style="color:#eceff4">},</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;read_for&#34;</span><span style="color:#eceff4">:</span> <span style="color:#b48ead">3</span><span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">]</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 session_client.py 192.0.2.10 <span style="color:#b48ead">31337</span> plan.json <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --timeout <span style="color:#b48ead">5</span> --transcript session.jsonl</span></span></code></pre></div><p><code>3e20</code> is <code>&gt; </code>; <code>50494e470d0a</code> is <code>PING\r\n</code>. These are illustrative commands, not a universal challenge protocol. Replace them with documented messages.</p>
+<p>For binary payload files, use <code>{&quot;send_file&quot;:&quot;payload.bin&quot;}</code>. Relative payload paths are resolved beside the plan file. No newline is added automatically.</p>
+<h2 id="5-ack-is-an-intermediate-event">5. ACK is an intermediate event<a class="anchor" href="#5-ack-is-an-intermediate-event"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>read initial state
+</span></span><span style="display:flex;"><span>-&gt; set required mode
+</span></span><span style="display:flex;"><span>-&gt; authenticate / arm / enable if protocol requires it
+</span></span><span style="display:flex;"><span>-&gt; send objective command
+</span></span><span style="display:flex;"><span>-&gt; parse ACK
+</span></span><span style="display:flex;"><span>-&gt; keep reading asynchronous telemetry / status
+</span></span><span style="display:flex;"><span>-&gt; verify objective or final flag</span></span></code></pre></div><p>Decode numeric command IDs before naming them. A transport ACK only confirms receipt; an application ACK may confirm acceptance but still precede a delayed state transition.</p>
+<p>Keep required heartbeats/tunnel processes running. The generic plan helper does not automatically synthesize heartbeat messages or interpret binary message IDs; use the actual protocol definition.</p>
+<h2 id="6-analyze-recorded-tcp-correctly">6. Analyze recorded TCP correctly<a class="anchor" href="#6-analyze-recorded-tcp-correctly"></a></h2>
+<p>Wireshark <strong>Follow TCP Stream</strong> handles sequencing more appropriately than concatenating <code>tcp.payload</code> in frame order. Retransmissions and overlapping segments can otherwise duplicate bytes; out-of-order arrival can scramble them.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>tcp.stream eq 7
+</span></span><span style="display:flex;"><span>tcp.analysis.retransmission
+</span></span><span style="display:flex;"><span>tcp.analysis.out_of_order
+</span></span><span style="display:flex;"><span>tcp.analysis.lost_segment</span></span></code></pre></div><p>A followed stream can still be incomplete. Check capture truncation and gaps. Separate client and server directions before treating bytes as a file.</p>
+<h2 id="7-udp-preserves-datagrams-not-reliability">7. UDP preserves datagrams, not reliability<a class="anchor" href="#7-udp-preserves-datagrams-not-reliability"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">socket</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">with</span> socket<span style="color:#81a1c1">.</span>socket<span style="color:#eceff4">(</span>socket<span style="color:#81a1c1">.</span>AF_INET<span style="color:#eceff4">,</span> socket<span style="color:#81a1c1">.</span>SOCK_DGRAM<span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">as</span> sock<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    sock<span style="color:#81a1c1">.</span>settimeout<span style="color:#eceff4">(</span><span style="color:#b48ead">3</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    sock<span style="color:#81a1c1">.</span>sendto<span style="color:#eceff4">(</span><span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;01020304&#39;</span><span style="color:#eceff4">),</span> <span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;192.0.2.10&#39;</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">20000</span><span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">try</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        payload<span style="color:#eceff4">,</span> sender <span style="color:#81a1c1">=</span> sock<span style="color:#81a1c1">.</span>recvfrom<span style="color:#eceff4">(</span><span style="color:#b48ead">65535</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>sender<span style="color:#eceff4">,</span> payload<span style="color:#81a1c1">.</span>hex<span style="color:#eceff4">())</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">except</span> socket<span style="color:#81a1c1">.</span>timeout<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;no datagram within 3 seconds&#39;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>Use the service&rsquo;s expected local binding and transaction ID where required. The first datagram received may be unsolicited or belong to a different request. UDP can lose, duplicate, and reorder messages; match source, sequence, and protocol state.</p>
+<h2 id="final-check">Final check<a class="anchor" href="#final-check"></a></h2>
+<p>Record exact transmitted bytes, response bytes, connection lifetime, timeout/EOF distinction, and the service&rsquo;s final outcome. Do not reopen a new connection in the middle of a protocol unless the specification says sessions are stateless.</p>
+<p>Reference: <a href="https://docs.python.org/3/library/socket.html">Python socket documentation</a> for send/receive and timeout semantics.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/network-expl/tls-ssh/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>04 · TLS / SSH</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/network-expl/wifi/" class="flex align-center">
+        <span>06 · Wi-Fi Capture Analysis</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-separate-transport-failure-from-payload-failure">1. Separate transport failure from payload failure</a></li>
+    <li><a href="#2-tcp-is-a-byte-stream">2. TCP is a byte stream</a></li>
+    <li><a href="#3-minimal-exact-length-reader">3. Minimal exact-length reader</a></li>
+    <li><a href="#4-reuse-one-connection-for-the-whole-protocol">4. Reuse one connection for the whole protocol</a></li>
+    <li><a href="#5-ack-is-an-intermediate-event">5. ACK is an intermediate event</a></li>
+    <li><a href="#6-analyze-recorded-tcp-correctly">6. Analyze recorded TCP correctly</a></li>
+    <li><a href="#7-udp-preserves-datagrams-not-reliability">7. UDP preserves datagrams, not reliability</a></li>
+    <li><a href="#final-check">Final check</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

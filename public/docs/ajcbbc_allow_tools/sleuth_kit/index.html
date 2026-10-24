@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: disk partitions, filesystem records and deleted file recovery.
+Run in: WSL. Autopsy provides a Windows GUI workflow.
+Locate the filesystem # Find partition start sectors mmls disk.img # Example start sector: replace 2048 with YOUR partition&#39;s start fsstat -o 2048 disk.img-o is a sector offset, not a byte offset. For a filesystem-only image, omit -o. Confirm sector size from the image/tool output; -b can specify it when needed.
+List current and deleted entries fls -r -p -o 2048 disk.img &gt; file_listing.txt fls -r -d -p -o 2048 disk.img &gt; deleted_listing.txt grep -niE &#39;flag|secret|password&#39; file_listing.txtRecover a selected entry # Replace 12345 with the metadata address printed by fls istat -o 2048 disk.img 12345 icat -o 2048 disk.img 12345 &gt; recovered.bin # Attempt deleted-file recovery using its listed metadata address icat -r -o 2048 disk.img 12345 &gt; recovered_deleted.binOn NTFS, a listed address can include attribute components such as 12345-128-1; preserve the complete address.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/sleuth_kit/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="The Sleuth Kit">
+  <meta property="og:description" content="Use for: disk partitions, filesystem records and deleted file recovery.
+Run in: WSL. Autopsy provides a Windows GUI workflow.
+Locate the filesystem # Find partition start sectors mmls disk.img # Example start sector: replace 2048 with YOUR partition&#39;s start fsstat -o 2048 disk.img-o is a sector offset, not a byte offset. For a filesystem-only image, omit -o. Confirm sector size from the image/tool output; -b can specify it when needed.
+List current and deleted entries fls -r -p -o 2048 disk.img &gt; file_listing.txt fls -r -d -p -o 2048 disk.img &gt; deleted_listing.txt grep -niE &#39;flag|secret|password&#39; file_listing.txtRecover a selected entry # Replace 12345 with the metadata address printed by fls istat -o 2048 disk.img 12345 icat -o 2048 disk.img 12345 &gt; recovered.bin # Attempt deleted-file recovery using its listed metadata address icat -r -o 2048 disk.img 12345 &gt; recovered_deleted.binOn NTFS, a listed address can include attribute components such as 12345-128-1; preserve the complete address.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="The Sleuth Kit">
+  <meta itemprop="description" content="Use for: disk partitions, filesystem records and deleted file recovery.
+Run in: WSL. Autopsy provides a Windows GUI workflow.
+Locate the filesystem # Find partition start sectors mmls disk.img # Example start sector: replace 2048 with YOUR partition&#39;s start fsstat -o 2048 disk.img-o is a sector offset, not a byte offset. For a filesystem-only image, omit -o. Confirm sector size from the image/tool output; -b can specify it when needed.
+List current and deleted entries fls -r -p -o 2048 disk.img &gt; file_listing.txt fls -r -d -p -o 2048 disk.img &gt; deleted_listing.txt grep -niE &#39;flag|secret|password&#39; file_listing.txtRecover a selected entry # Replace 12345 with the metadata address printed by fls istat -o 2048 disk.img 12345 icat -o 2048 disk.img 12345 &gt; recovered.bin # Attempt deleted-file recovery using its listed metadata address icat -r -o 2048 disk.img 12345 &gt; recovered_deleted.binOn NTFS, a listed address can include attribute components such as 12345-128-1; preserve the complete address.">
+  <meta itemprop="wordCount" content="559">
+
+<title>The Sleuth Kit • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/sleuth_kit/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="active" aria-current="page">The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>The Sleuth Kit</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#locate-the-filesystem">Locate the filesystem</a></li>
+    <li><a href="#list-current-and-deleted-entries">List current and deleted entries</a></li>
+    <li><a href="#recover-a-selected-entry">Recover a selected entry</a></li>
+    <li><a href="#build-a-filesystem-timeline">Build a filesystem timeline</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained-by-command">Flags explained by command</a></li>
+    <li><a href="#ctf-filesystem-only-versus-whole-disk-image">CTF: filesystem-only versus whole-disk image</a></li>
+    <li><a href="#ctf-recover-all-available-files-into-a-new-directory">CTF: recover all available files into a new directory</a></li>
+    <li><a href="#ctf-inspect-an-ntfs-alternate-stream">CTF: inspect an NTFS alternate stream</a></li>
+    <li><a href="#ctf-produce-a-timeline-and-filter-a-time-window">CTF: produce a timeline and filter a time window</a></li>
+    <li><a href="#interpret-directory-listing-evidence">Interpret directory listing evidence</a></li>
+    <li><a href="#recovery-record">Recovery record</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">The Sleuth Kit</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> disk partitions, filesystem records and deleted file recovery.<br>
+<strong>Run in:</strong> WSL. <a href="../autopsy/">Autopsy</a> provides a Windows GUI workflow.</p>
+<h2 id="locate-the-filesystem">Locate the filesystem<a class="anchor" href="#locate-the-filesystem"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Find partition start sectors</span>
+</span></span><span style="display:flex;"><span>mmls disk.img
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Example start sector: replace 2048 with YOUR partition&#39;s start</span>
+</span></span><span style="display:flex;"><span>fsstat -o <span style="color:#b48ead">2048</span> disk.img</span></span></code></pre></div><p><code>-o</code> is a sector offset, not a byte offset. For a filesystem-only image, omit <code>-o</code>. Confirm sector size from the image/tool output; <code>-b</code> can specify it when needed.</p>
+<h2 id="list-current-and-deleted-entries">List current and deleted entries<a class="anchor" href="#list-current-and-deleted-entries"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fls -r -p -o <span style="color:#b48ead">2048</span> disk.img &gt; file_listing.txt
+</span></span><span style="display:flex;"><span>fls -r -d -p -o <span style="color:#b48ead">2048</span> disk.img &gt; deleted_listing.txt
+</span></span><span style="display:flex;"><span>grep -niE <span style="color:#a3be8c">&#39;flag|secret|password&#39;</span> file_listing.txt</span></span></code></pre></div><h2 id="recover-a-selected-entry">Recover a selected entry<a class="anchor" href="#recover-a-selected-entry"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Replace 12345 with the metadata address printed by fls</span>
+</span></span><span style="display:flex;"><span>istat -o <span style="color:#b48ead">2048</span> disk.img <span style="color:#b48ead">12345</span>
+</span></span><span style="display:flex;"><span>icat -o <span style="color:#b48ead">2048</span> disk.img <span style="color:#b48ead">12345</span> &gt; recovered.bin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Attempt deleted-file recovery using its listed metadata address</span>
+</span></span><span style="display:flex;"><span>icat -r -o <span style="color:#b48ead">2048</span> disk.img <span style="color:#b48ead">12345</span> &gt; recovered_deleted.bin</span></span></code></pre></div><p>On NTFS, a listed address can include attribute components such as <code>12345-128-1</code>; preserve the complete address.</p>
+<h2 id="build-a-filesystem-timeline">Build a filesystem timeline<a class="anchor" href="#build-a-filesystem-timeline"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fls -r -m / -o <span style="color:#b48ead">2048</span> disk.img &gt; bodyfile.txt
+</span></span><span style="display:flex;"><span>mactime -b bodyfile.txt -d &gt; timeline.csv</span></span></code></pre></div><h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Wrong partition offset produces misleading errors.</li>
+<li>Deleted content may be overwritten or incomplete.</li>
+<li>Extract evidence into a separate output directory.</li>
+</ul>
+<h2 id="flags-explained-by-command">Flags explained by command<a class="anchor" href="#flags-explained-by-command"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool / option</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>fls -r</code></td>
+          <td>Recurse through directories; deleted directories have recovery limitations</td>
+      </tr>
+      <tr>
+          <td><code>fls -p</code></td>
+          <td>Show full paths</td>
+      </tr>
+      <tr>
+          <td><code>fls -d</code></td>
+          <td>Show deleted entries only</td>
+      </tr>
+      <tr>
+          <td><code>fls -m /</code></td>
+          <td>Emit bodyfile timeline records using <code>/</code> as the mount-point prefix</td>
+      </tr>
+      <tr>
+          <td><code>-o N</code> on fls/icat/fsstat/istat</td>
+          <td>Filesystem starts at sector N</td>
+      </tr>
+      <tr>
+          <td><code>-b N</code> on supporting tools</td>
+          <td>Device sector size in bytes</td>
+      </tr>
+      <tr>
+          <td><code>icat -r</code></td>
+          <td>Attempt deleted-file recovery</td>
+      </tr>
+      <tr>
+          <td><code>mactime -b FILE</code></td>
+          <td>Read a bodyfile; here <code>-b</code> does NOT mean sector size</td>
+      </tr>
+      <tr>
+          <td><code>mactime -d</code></td>
+          <td>Write comma-delimited output</td>
+      </tr>
+      <tr>
+          <td><code>tsk_recover -e</code></td>
+          <td>Export allocated and unallocated files</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ctf-filesystem-only-versus-whole-disk-image">CTF: filesystem-only versus whole-disk image<a class="anchor" href="#ctf-filesystem-only-versus-whole-disk-image"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mmls disk.img
+</span></span><span style="display:flex;"><span>fsstat filesystem.img
+</span></span><span style="display:flex;"><span>fsstat -o <span style="color:#b48ead">2048</span> disk.img</span></span></code></pre></div><p>Choose the latter offset from the partition listing, not from a copied example. A filesystem-only image can be valid even if <code>mmls</code> finds no partition table.</p>
+<h2 id="ctf-recover-all-available-files-into-a-new-directory">CTF: recover all available files into a new directory<a class="anchor" href="#ctf-recover-all-available-files-into-a-new-directory"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p recovered_all
+</span></span><span style="display:flex;"><span>tsk_recover -e -o <span style="color:#b48ead">2048</span> disk.img recovered_all/</span></span></code></pre></div><p>Without <code>-e</code>, tsk_recover normally focuses on unallocated files. Broad extraction can be large; use <code>fls</code>/<code>icat</code> for a targeted candidate when time or space is limited.</p>
+<h2 id="ctf-inspect-an-ntfs-alternate-stream">CTF: inspect an NTFS alternate stream<a class="anchor" href="#ctf-inspect-an-ntfs-alternate-stream"></a></h2>
+<p>Read the full metadata/attribute address from <code>fls</code>; do not keep only the first numeric component.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Example NTFS attribute address from a listing</span>
+</span></span><span style="display:flex;"><span>icat -o <span style="color:#b48ead">2048</span> disk.img 42-128-3 &gt; named_stream.bin</span></span></code></pre></div><p>The address is specific to the image. Verify name, type and length with <code>istat</code> and the directory listing.</p>
+<h2 id="ctf-produce-a-timeline-and-filter-a-time-window">CTF: produce a timeline and filter a time window<a class="anchor" href="#ctf-produce-a-timeline-and-filter-a-time-window"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fls -r -m / -o <span style="color:#b48ead">2048</span> disk.img &gt; bodyfile.txt
+</span></span><span style="display:flex;"><span>mactime -b bodyfile.txt -d &gt; timeline.csv
+</span></span><span style="display:flex;"><span>grep -iE <span style="color:#a3be8c">&#39;flag|secret|Downloads|Desktop&#39;</span> timeline.csv</span></span></code></pre></div><p>Understand the filesystem’s timestamp semantics and selected timezone before comparing with event logs or packet timestamps. A changed filename does not necessarily imply the file’s contents changed at the same time.</p>
+<h2 id="interpret-directory-listing-evidence">Interpret directory listing evidence<a class="anchor" href="#interpret-directory-listing-evidence"></a></h2>
+<p>The metadata address identifies the file record/attribute used for extraction. A deleted marker indicates directory-entry status, not guaranteed recoverable data. If clusters were reused, a successful <code>icat</code> can still return unrelated or partially overwritten content.</p>
+<h2 id="recovery-record">Recovery record<a class="anchor" href="#recovery-record"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>image hash: &lt;sha256&gt;
+</span></span><span style="display:flex;"><span>partition start / sector size: &lt;N&gt; / &lt;bytes&gt;
+</span></span><span style="display:flex;"><span>filesystem: &lt;type&gt;
+</span></span><span style="display:flex;"><span>source path: &lt;path from fls&gt;
+</span></span><span style="display:flex;"><span>metadata address: &lt;complete address&gt;
+</span></span><span style="display:flex;"><span>command: &lt;exact icat/tsk_recover invocation&gt;
+</span></span><span style="display:flex;"><span>output hash and validation: &lt;values&gt;</span></span></code></pre></div><p>References: <a href="https://www.sleuthkit.org/sleuthkit/man/fls.html">fls</a>, <a href="https://www.sleuthkit.org/sleuthkit/man/icat.html">icat</a>, <a href="https://www.sleuthkit.org/sleuthkit/man/tsk_recover.html">tsk_recover</a>, <a href="https://www.sleuthkit.org/sleuthkit/man/mactime.html">mactime</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../steganograph-expl/archives-carving/">File signatures and bounded carving</a></li>
+<li><a href="../../steganograph-expl/triage/">Artifact triage</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/ghidra/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Ghidra</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/openssl/" class="flex align-center">
+        <span>OpenSSL</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#locate-the-filesystem">Locate the filesystem</a></li>
+    <li><a href="#list-current-and-deleted-entries">List current and deleted entries</a></li>
+    <li><a href="#recover-a-selected-entry">Recover a selected entry</a></li>
+    <li><a href="#build-a-filesystem-timeline">Build a filesystem timeline</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained-by-command">Flags explained by command</a></li>
+    <li><a href="#ctf-filesystem-only-versus-whole-disk-image">CTF: filesystem-only versus whole-disk image</a></li>
+    <li><a href="#ctf-recover-all-available-files-into-a-new-directory">CTF: recover all available files into a new directory</a></li>
+    <li><a href="#ctf-inspect-an-ntfs-alternate-stream">CTF: inspect an NTFS alternate stream</a></li>
+    <li><a href="#ctf-produce-a-timeline-and-filter-a-time-window">CTF: produce a timeline and filter a time window</a></li>
+    <li><a href="#interpret-directory-listing-evidence">Interpret directory listing evidence</a></li>
+    <li><a href="#recovery-record">Recovery record</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

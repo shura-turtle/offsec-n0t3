@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: headers, sections, imports, symbols and disassembly.
+Run in: WSL; supplied by GNU Binutils.
+Quick commands objdump -f challenge objdump -h challenge objdump -t challenge objdump -T challenge objdump -p challenge objdump -d -M intel challenge &gt; disassembly.txt objdump -s -j .rodata challenge Option Meaning -f File/architecture headers -h Section headers -t / -T Symbols / dynamic symbols -p Format specific headers, including PE import information -d Disassemble code sections -s -j NAME Dump a selected section Walkthrough: find validation logic objdump -d -M intel --disassemble=main challenge objdump -d -M intel challenge &gt; disassembly.txt grep -n -E &#39;strcmp|memcmp|scanf|fgets&#39; disassembly.txtRead the surrounding calls, branches and referenced constants. Move into Ghidra or gdb for data flow and runtime values.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/objdump/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="objdump">
+  <meta property="og:description" content="Use for: headers, sections, imports, symbols and disassembly.
+Run in: WSL; supplied by GNU Binutils.
+Quick commands objdump -f challenge objdump -h challenge objdump -t challenge objdump -T challenge objdump -p challenge objdump -d -M intel challenge &gt; disassembly.txt objdump -s -j .rodata challenge Option Meaning -f File/architecture headers -h Section headers -t / -T Symbols / dynamic symbols -p Format specific headers, including PE import information -d Disassemble code sections -s -j NAME Dump a selected section Walkthrough: find validation logic objdump -d -M intel --disassemble=main challenge objdump -d -M intel challenge &gt; disassembly.txt grep -n -E &#39;strcmp|memcmp|scanf|fgets&#39; disassembly.txtRead the surrounding calls, branches and referenced constants. Move into Ghidra or gdb for data flow and runtime values.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="objdump">
+  <meta itemprop="description" content="Use for: headers, sections, imports, symbols and disassembly.
+Run in: WSL; supplied by GNU Binutils.
+Quick commands objdump -f challenge objdump -h challenge objdump -t challenge objdump -T challenge objdump -p challenge objdump -d -M intel challenge &gt; disassembly.txt objdump -s -j .rodata challenge Option Meaning -f File/architecture headers -h Section headers -t / -T Symbols / dynamic symbols -p Format specific headers, including PE import information -d Disassemble code sections -s -j NAME Dump a selected section Walkthrough: find validation logic objdump -d -M intel --disassemble=main challenge objdump -d -M intel challenge &gt; disassembly.txt grep -n -E &#39;strcmp|memcmp|scanf|fgets&#39; disassembly.txtRead the surrounding calls, branches and referenced constants. Move into Ghidra or gdb for data flow and runtime values.">
+  <meta itemprop="wordCount" content="495">
+
+<title>objdump • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/objdump/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="active" aria-current="page">objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>objdump</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#quick-commands">Quick commands</a></li>
+    <li><a href="#walkthrough-find-validation-logic">Walkthrough: find validation logic</a></li>
+    <li><a href="#raw-x86-64-bytes">Raw x86-64 bytes</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#additional-flags-explained">Additional flags explained</a></li>
+    <li><a href="#ctf-inspect-only-a-suspect-code-range">CTF: inspect only a suspect code range</a></li>
+    <li><a href="#ctf-inspect-read-only-data-and-initialized-globals">CTF: inspect read-only data and initialized globals</a></li>
+    <li><a href="#convert-section-addresses-to-file-offsets">Convert section addresses to file offsets</a></li>
+    <li><a href="#ctf-locate-imported-windows-apis">CTF: locate imported Windows APIs</a></li>
+    <li><a href="#recognize-common-validation-patterns">Recognize common validation patterns</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">objdump</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> headers, sections, imports, symbols and disassembly.<br>
+<strong>Run in:</strong> WSL; supplied by GNU Binutils.</p>
+<h2 id="quick-commands">Quick commands<a class="anchor" href="#quick-commands"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -f challenge
+</span></span><span style="display:flex;"><span>objdump -h challenge
+</span></span><span style="display:flex;"><span>objdump -t challenge
+</span></span><span style="display:flex;"><span>objdump -T challenge
+</span></span><span style="display:flex;"><span>objdump -p challenge
+</span></span><span style="display:flex;"><span>objdump -d -M intel challenge &gt; disassembly.txt
+</span></span><span style="display:flex;"><span>objdump -s -j .rodata challenge</span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>Option</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-f</code></td>
+          <td>File/architecture headers</td>
+      </tr>
+      <tr>
+          <td><code>-h</code></td>
+          <td>Section headers</td>
+      </tr>
+      <tr>
+          <td><code>-t</code> / <code>-T</code></td>
+          <td>Symbols / dynamic symbols</td>
+      </tr>
+      <tr>
+          <td><code>-p</code></td>
+          <td>Format specific headers, including PE import information</td>
+      </tr>
+      <tr>
+          <td><code>-d</code></td>
+          <td>Disassemble code sections</td>
+      </tr>
+      <tr>
+          <td><code>-s -j NAME</code></td>
+          <td>Dump a selected section</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="walkthrough-find-validation-logic">Walkthrough: find validation logic<a class="anchor" href="#walkthrough-find-validation-logic"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -d -M intel --disassemble<span style="color:#81a1c1">=</span>main challenge
+</span></span><span style="display:flex;"><span>objdump -d -M intel challenge &gt; disassembly.txt
+</span></span><span style="display:flex;"><span>grep -n -E <span style="color:#a3be8c">&#39;strcmp|memcmp|scanf|fgets&#39;</span> disassembly.txt</span></span></code></pre></div><p>Read the surrounding calls, branches and referenced constants. Move into Ghidra or gdb for data flow and runtime values.</p>
+<h2 id="raw-x86-64-bytes">Raw x86-64 bytes<a class="anchor" href="#raw-x86-64-bytes"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -D -b binary -m i386:x86-64 -M intel code.bin</span></span></code></pre></div><h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>File offsets and virtual addresses are different.</li>
+<li><code>-D</code> can decode data as instructions; plausible assembly is not proof of code.</li>
+<li><code>-M intel</code> is relevant to x86 targets.</li>
+<li>Supported architectures/formats depend on the installed Binutils build; inspect <code>objdump -i</code>.</li>
+</ul>
+<h2 id="additional-flags-explained">Additional flags explained<a class="anchor" href="#additional-flags-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Flag</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-D</code></td>
+          <td>Disassemble all sections, including sections that may be data</td>
+      </tr>
+      <tr>
+          <td><code>-M intel</code></td>
+          <td>Use Intel syntax for x86 disassembly</td>
+      </tr>
+      <tr>
+          <td><code>-j NAME</code></td>
+          <td>Select a named section</td>
+      </tr>
+      <tr>
+          <td><code>--disassemble=NAME</code></td>
+          <td>Disassemble a particular symbol</td>
+      </tr>
+      <tr>
+          <td><code>--start-address=ADDR</code></td>
+          <td>Begin output at a virtual/section address</td>
+      </tr>
+      <tr>
+          <td><code>--stop-address=ADDR</code></td>
+          <td>Stop at the specified address</td>
+      </tr>
+      <tr>
+          <td><code>-b binary</code></td>
+          <td>Treat input as a raw binary blob</td>
+      </tr>
+      <tr>
+          <td><code>-m ARCH</code></td>
+          <td>Select a machine architecture</td>
+      </tr>
+      <tr>
+          <td><code>-i</code></td>
+          <td>List supported formats and architectures</td>
+      </tr>
+  </tbody>
+</table>
+<p><code>--start-address</code> is not a byte seek into the file. For raw blobs you choose the address model; for ELF/PE input follow its section addressing.</p>
+<h2 id="ctf-inspect-only-a-suspect-code-range">CTF: inspect only a suspect code range<a class="anchor" href="#ctf-inspect-only-a-suspect-code-range"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Example addresses from an analysis session; replace them</span>
+</span></span><span style="display:flex;"><span>objdump -d -M intel --start-address<span style="color:#81a1c1">=</span>0x401100 <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --stop-address<span style="color:#81a1c1">=</span>0x401180 challenge</span></span></code></pre></div><p>Read callers, constants and branch conditions around the comparison. Do not infer the expected input from one instruction without following the data flow.</p>
+<h2 id="ctf-inspect-read-only-data-and-initialized-globals">CTF: inspect read-only data and initialized globals<a class="anchor" href="#ctf-inspect-read-only-data-and-initialized-globals"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -h challenge
+</span></span><span style="display:flex;"><span>objdump -s -j .rodata challenge
+</span></span><span style="display:flex;"><span>objdump -s -j .data challenge</span></span></code></pre></div><p>Section names are not universal; PE often uses <code>.rdata</code> rather than <code>.rodata</code>. Use the names printed by <code>-h</code>.</p>
+<h2 id="convert-section-addresses-to-file-offsets">Convert section addresses to file offsets<a class="anchor" href="#convert-section-addresses-to-file-offsets"></a></h2>
+<p>If a section has VMA <code>0x402000</code>, file offset <code>0x2000</code>, and a referenced address is <code>0x402123</code>, the corresponding file offset is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>file offset = 0x2000 + (0x402123 - 0x402000) = 0x2123</span></span></code></pre></div><p>Apply this only inside that section’s file-backed range. Zero-initialized storage may have no equivalent input bytes. PIE runtime addresses require subtracting the correct load bias first.</p>
+<h2 id="ctf-locate-imported-windows-apis">CTF: locate imported Windows APIs<a class="anchor" href="#ctf-locate-imported-windows-apis"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -p challenge.exe &gt; pe_headers.txt
+</span></span><span style="display:flex;"><span>grep -niE <span style="color:#a3be8c">&#39;DLL Name|GetProcAddress|LoadLibrary|VirtualAlloc&#39;</span> pe_headers.txt</span></span></code></pre></div><p>Imports help choose investigation points. Their presence alone does not establish which execution path uses them.</p>
+<h2 id="recognize-common-validation-patterns">Recognize common validation patterns<a class="anchor" href="#recognize-common-validation-patterns"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Pattern</th>
+          <th>What to trace</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>XOR/add/rotate inside a byte loop</td>
+          <td>Key, iteration count and output compare</td>
+      </tr>
+      <tr>
+          <td>Call to strcmp/memcmp</td>
+          <td>Both arguments and exact length</td>
+      </tr>
+      <tr>
+          <td>Length test before a loop</td>
+          <td>Required input bytes, newline handling</td>
+      </tr>
+      <tr>
+          <td>Table lookup</td>
+          <td>Index width and signedness</td>
+      </tr>
+      <tr>
+          <td>Several arithmetic checks</td>
+          <td>Constraints shared across input positions</td>
+      </tr>
+  </tbody>
+</table>
+<p>Reference: <a href="https://sourceware.org/binutils/docs/binutils/objdump.html">GNU objdump manual</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../reversing-expl/triage/">Binary triage</a></li>
+<li><a href="../../reversing-expl/static-analysis/">Static analysis</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/gdb/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>gdb</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/strings/" class="flex align-center">
+        <span>strings</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#quick-commands">Quick commands</a></li>
+    <li><a href="#walkthrough-find-validation-logic">Walkthrough: find validation logic</a></li>
+    <li><a href="#raw-x86-64-bytes">Raw x86-64 bytes</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#additional-flags-explained">Additional flags explained</a></li>
+    <li><a href="#ctf-inspect-only-a-suspect-code-range">CTF: inspect only a suspect code range</a></li>
+    <li><a href="#ctf-inspect-read-only-data-and-initialized-globals">CTF: inspect read-only data and initialized globals</a></li>
+    <li><a href="#convert-section-addresses-to-file-offsets">Convert section addresses to file offsets</a></li>
+    <li><a href="#ctf-locate-imported-windows-apis">CTF: locate imported Windows APIs</a></li>
+    <li><a href="#recognize-common-validation-patterns">Recognize common validation patterns</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

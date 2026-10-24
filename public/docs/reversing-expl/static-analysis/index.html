@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Static analysis Recover the exact computation, not just a readable-looking decompiler listing. The details that usually decide a solve are length, integer width, signedness, byte order and the order of transformations.
+1. Work backward from the decisive check Success message ← deciding branch ← comparison / aggregate result ← transformed input / expected table ← preprocessing and original input sourceTrace all callers when preprocessing occurs outside the validator. fgets may preserve a newline; scanf(&#34;%s&#34;) stops at whitespace; read returns bytes and may not append NUL. A length check can reject an otherwise correct decoded string.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/reversing-expl/static-analysis/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Static Analysis · Bytes, Types & Control Flow">
+  <meta property="og:description" content="Static analysis Recover the exact computation, not just a readable-looking decompiler listing. The details that usually decide a solve are length, integer width, signedness, byte order and the order of transformations.
+1. Work backward from the decisive check Success message ← deciding branch ← comparison / aggregate result ← transformed input / expected table ← preprocessing and original input sourceTrace all callers when preprocessing occurs outside the validator. fgets may preserve a newline; scanf(&#34;%s&#34;) stops at whitespace; read returns bytes and may not append NUL. A length check can reject an otherwise correct decoded string.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Static Analysis · Bytes, Types & Control Flow">
+  <meta itemprop="description" content="Static analysis Recover the exact computation, not just a readable-looking decompiler listing. The details that usually decide a solve are length, integer width, signedness, byte order and the order of transformations.
+1. Work backward from the decisive check Success message ← deciding branch ← comparison / aggregate result ← transformed input / expected table ← preprocessing and original input sourceTrace all callers when preprocessing occurs outside the validator. fgets may preserve a newline; scanf(&#34;%s&#34;) stops at whitespace; read returns bytes and may not append NUL. A length check can reject an otherwise correct decoded string.">
+  <meta itemprop="wordCount" content="759">
+
+<title>Static Analysis · Bytes, Types &amp; Control Flow • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/reversing-expl/static-analysis/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details open>
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="active" aria-current="page">Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Static Analysis · Bytes, Types &amp; Control Flow</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-work-backward-from-the-decisive-check">1. Work backward from the decisive check</a></li>
+    <li><a href="#2-native-calling-convention-quick-map">2. Native calling convention quick map</a></li>
+    <li><a href="#3-common-assembly-meanings">3. Common assembly meanings</a></li>
+    <li><a href="#4-fixed-width-python-translation">4. Fixed-width Python translation</a></li>
+    <li><a href="#5-invert-in-reverse-order">5. Invert in reverse order</a></li>
+    <li><a href="#6-compare-length-and-data-representation">6. Compare length and data representation</a></li>
+    <li><a href="#7-structures-and-state-machines">7. Structures and state machines</a></li>
+    <li><a href="#8-switch-tables-and-custom-vms">8. Switch tables and custom VMs</a></li>
+    <li><a href="#9-know-when-to-switch-to-runtime">9. Know when to switch to runtime</a></li>
+    <li><a href="#tools-and-references">Tools and references</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="reversing"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/reversing-expl/">Reverse Engineering</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="static-analysis">Static analysis<a class="anchor" href="#static-analysis"></a></h1>
+<p><strong>Recover the exact computation, not just a readable-looking decompiler listing.</strong> The details that usually decide a solve are length, integer width, signedness, byte order and the order of transformations.</p>
+<h2 id="1-work-backward-from-the-decisive-check">1. Work backward from the decisive check<a class="anchor" href="#1-work-backward-from-the-decisive-check"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Success message
+</span></span><span style="display:flex;"><span>  ← deciding branch
+</span></span><span style="display:flex;"><span>  ← comparison / aggregate result
+</span></span><span style="display:flex;"><span>  ← transformed input / expected table
+</span></span><span style="display:flex;"><span>  ← preprocessing and original input source</span></span></code></pre></div><p>Trace all callers when preprocessing occurs outside the validator. <code>fgets</code> may preserve a newline; <code>scanf(&quot;%s&quot;)</code> stops at whitespace; <code>read</code> returns bytes and may not append NUL. A length check can reject an otherwise correct decoded string.</p>
+<h2 id="2-native-calling-convention-quick-map">2. Native calling convention quick map<a class="anchor" href="#2-native-calling-convention-quick-map"></a></h2>
+<p>At a real function entry, before its prologue changes argument registers:</p>
+<table>
+  <thead>
+      <tr>
+          <th>ABI</th>
+          <th>First integer/pointer arguments</th>
+          <th>Return</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Linux/macOS x86-64 SysV</td>
+          <td>RDI, RSI, RDX, RCX, R8, R9</td>
+          <td>RAX</td>
+      </tr>
+      <tr>
+          <td>Windows x64</td>
+          <td>RCX, RDX, R8, R9; further args on stack</td>
+          <td>RAX</td>
+      </tr>
+      <tr>
+          <td>x86 common cdecl</td>
+          <td>Stack, usually right-to-left at caller</td>
+          <td>EAX</td>
+      </tr>
+      <tr>
+          <td>ARM64 common AAPCS64</td>
+          <td>X0–X7; width-specific W registers</td>
+          <td>X0/W0</td>
+      </tr>
+  </tbody>
+</table>
+<p>Floating/vector arguments and varargs have additional rules. Windows x64 has shadow space. Apple ARM64 varargs differ from a simplistic “all args in X registers” model. Verify ABI against imports and call sites.</p>
+<h2 id="3-common-assembly-meanings">3. Common assembly meanings<a class="anchor" href="#3-common-assembly-meanings"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Instruction pattern</th>
+          <th>Important interpretation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>movzx eax, byte ptr [...]</code></td>
+          <td>Zero-extend an unsigned byte</td>
+      </tr>
+      <tr>
+          <td><code>movsx eax, byte ptr [...]</code></td>
+          <td>Sign-extend an 8-bit value</td>
+      </tr>
+      <tr>
+          <td><code>xor eax,eax</code></td>
+          <td>Zero a register; not evidence of encrypted data</td>
+      </tr>
+      <tr>
+          <td><code>lea eax,[...]</code></td>
+          <td>Address/arithmetic calculation without memory read</td>
+      </tr>
+      <tr>
+          <td><code>test eax,eax</code></td>
+          <td>Set flags from value; often zero/nonzero branch</td>
+      </tr>
+      <tr>
+          <td><code>cmp a,b</code> + conditional jump</td>
+          <td>Compare widths and signed/unsigned jump</td>
+      </tr>
+      <tr>
+          <td><code>ja/jb</code></td>
+          <td>Unsigned comparisons</td>
+      </tr>
+      <tr>
+          <td><code>jg/jl</code></td>
+          <td>Signed comparisons</td>
+      </tr>
+      <tr>
+          <td><code>shr</code></td>
+          <td>Logical right shift</td>
+      </tr>
+      <tr>
+          <td><code>sar</code></td>
+          <td>Arithmetic right shift; sign propagation</td>
+      </tr>
+      <tr>
+          <td><code>rol/ror</code></td>
+          <td>Fixed-width bit rotation</td>
+      </tr>
+  </tbody>
+</table>
+<p>On x86-64, writing a 32-bit general-purpose register clears the high 32 bits of the corresponding 64-bit register. A one-byte write does not do that.</p>
+<h2 id="4-fixed-width-python-translation">4. Fixed-width Python translation<a class="anchor" href="#4-fixed-width-python-translation"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">u8</span><span style="color:#eceff4">(</span>x<span style="color:#eceff4">):</span> <span style="color:#81a1c1;font-weight:bold">return</span> x <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xff</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">u32</span><span style="color:#eceff4">(</span>x<span style="color:#eceff4">):</span> <span style="color:#81a1c1;font-weight:bold">return</span> x <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffffffff</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">s8</span><span style="color:#eceff4">(</span>x<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    x <span style="color:#81a1c1">&amp;=</span> <span style="color:#b48ead">0xff</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> x <span style="color:#81a1c1">-</span> <span style="color:#b48ead">0x100</span> <span style="color:#81a1c1;font-weight:bold">if</span> x <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0x80</span> <span style="color:#81a1c1;font-weight:bold">else</span> x
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">rol8</span><span style="color:#eceff4">(</span>x<span style="color:#eceff4">,</span> n<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    n <span style="color:#81a1c1">%=</span> <span style="color:#b48ead">8</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#eceff4">((</span>x <span style="color:#81a1c1">&lt;&lt;</span> n<span style="color:#eceff4">)</span> <span style="color:#81a1c1">|</span> <span style="color:#eceff4">(</span>x <span style="color:#81a1c1">&gt;&gt;</span> <span style="color:#eceff4">((</span><span style="color:#b48ead">8</span><span style="color:#81a1c1">-</span>n<span style="color:#eceff4">)</span> <span style="color:#81a1c1">%</span> <span style="color:#b48ead">8</span><span style="color:#eceff4">)))</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xff</span></span></span></code></pre></div><p>If native code stores a byte after addition, mask at that point. If it sign-extends before comparison, model the sign conversion. Do not mask every intermediate expression arbitrarily; use the recovered operand/storage width.</p>
+<h2 id="5-invert-in-reverse-order">5. Invert in reverse order<a class="anchor" href="#5-invert-in-reverse-order"></a></h2>
+<p>Recovered transform:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>out<span style="color:#eceff4">[</span>i<span style="color:#eceff4">]</span> <span style="color:#81a1c1">=</span> <span style="color:#88c0d0">rol8</span><span style="color:#eceff4">((</span>input<span style="color:#eceff4">[</span>i<span style="color:#eceff4">]</span> <span style="color:#81a1c1">^</span> <span style="color:#b48ead">0x23</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">+</span> i<span style="color:#eceff4">,</span> <span style="color:#b48ead">3</span><span style="color:#eceff4">);</span></span></span></code></pre></div><p>For a byte-valued intermediate, inverse:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">ror8</span><span style="color:#eceff4">(</span>x<span style="color:#eceff4">,</span> n<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> rol8<span style="color:#eceff4">(</span>x<span style="color:#eceff4">,</span> <span style="color:#81a1c1">-</span>n<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>answer <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(((</span>ror8<span style="color:#eceff4">(</span>y<span style="color:#eceff4">,</span><span style="color:#b48ead">3</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">-</span> i<span style="color:#eceff4">)</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">255</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">^</span> <span style="color:#b48ead">0x23</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#81a1c1;font-weight:bold">for</span> i<span style="color:#eceff4">,</span>y <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">enumerate</span><span style="color:#eceff4">(</span>expected<span style="color:#eceff4">))</span></span></span></code></pre></div><p>You must undo rotate, then index addition, then XOR. Reapplying forward transform to the recovered candidate is a necessary check. The supplied <a href="../python-snippets/">constraint example</a> implements and verifies this exact model.</p>
+<h2 id="6-compare-length-and-data-representation">6. Compare length and data representation<a class="anchor" href="#6-compare-length-and-data-representation"></a></h2>
+<p><code>memcmp(a,b,n)</code> compares exactly n bytes, including NULs. <code>strcmp</code> compares until NUL. <code>strncmp</code> is NUL-sensitive and bounded; it is not identical to memcmp. A function name guessed from similarity may be wrong: inspect behavior/call arguments if the comparison seems inconsistent.</p>
+<p>Expected arrays may be bytes, 16-bit words, 32-bit words, pointer tables, or signed integers. If a decompiler shows <code>0x67616c66</code>, little-endian memory bytes are <code>66 6c 61 67</code> (<code>flag</code>). Do not reverse the entire array when only each 32-bit word is little-endian.</p>
+<h2 id="7-structures-and-state-machines">7. Structures and state machines<a class="anchor" href="#7-structures-and-state-machines"></a></h2>
+<p>For repeated field offsets, record a tentative structure:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>+0x00 score: uint32
+</span></span><span style="display:flex;"><span>+0x04 step: uint32
+</span></span><span style="display:flex;"><span>+0x08 hash: uint32
+</span></span><span style="display:flex;"><span>+0x10 buffer pointer: architecture-sized</span></span></code></pre></div><p>Offsets alone do not establish types; verify access widths. In stateful/game checks, map each action to changes in score, counters, rolling hash and sequence state. A valid final score may still fail an independent ordering constraint.</p>
+<h2 id="8-switch-tables-and-custom-vms">8. Switch tables and custom VMs<a class="anchor" href="#8-switch-tables-and-custom-vms"></a></h2>
+<p>For indirect dispatch:</p>
+<ol>
+<li>Identify opcode fetch width and program-counter increments.</li>
+<li>Find bounds checks and dispatch table entry encoding.</li>
+<li>Record each opcode&rsquo;s operand width, stack effect and branch semantics.</li>
+<li>Trace one tiny known sequence by hand before writing an interpreter.</li>
+<li>Compare interpreter state at the same checkpoints as the original.</li>
+</ol>
+<p>Relative dispatch entries must be added to the correct base. A table of signed 32-bit offsets is not a table of 64-bit absolute pointers.</p>
+<h2 id="9-know-when-to-switch-to-runtime">9. Know when to switch to runtime<a class="anchor" href="#9-know-when-to-switch-to-runtime"></a></h2>
+<p>Static analysis is enough when the data and check are readable. Switch to <a href="../dynamic-debugging/">dynamic debugging</a> when a key/table is initialized dynamically, code is unpacked, a call target is unresolved, or an anti-debug branch depends on environment.</p>
+<p>Use a precise question: “What are the 16 bytes at the second comparison argument after initialization?” This leads to a useful breakpoint. “Run until something interesting” usually does not.</p>
+<h2 id="tools-and-references">Tools and references<a class="anchor" href="#tools-and-references"></a></h2>
+<p><a href="../../ajcbbc_allow_tools/ghidra/">Ghidra</a>, <a href="../../ajcbbc_allow_tools/objdump/">objdump</a>, <a href="../../ajcbbc_allow_tools/llvm_mc/">LLVM MC</a>, <a href="../../ajcbbc_allow_tools/hxd/">HxD</a>. ABI sources: <a href="https://learn.microsoft.com/en-us/cpp/build/x64-calling-convention">Microsoft x64 calling convention</a>, <a href="https://github.com/ARM-software/abi-aa">Arm ABI specifications</a>, <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel architecture manuals</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/reversing-expl/ghidra-plugins/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Ghidra Plugins · Built-ins &amp; Offline Extras</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/reversing-expl/dynamic-debugging/" class="flex align-center">
+        <span>Dynamic Debugging · Break, Inspect, Dump</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-work-backward-from-the-decisive-check">1. Work backward from the decisive check</a></li>
+    <li><a href="#2-native-calling-convention-quick-map">2. Native calling convention quick map</a></li>
+    <li><a href="#3-common-assembly-meanings">3. Common assembly meanings</a></li>
+    <li><a href="#4-fixed-width-python-translation">4. Fixed-width Python translation</a></li>
+    <li><a href="#5-invert-in-reverse-order">5. Invert in reverse order</a></li>
+    <li><a href="#6-compare-length-and-data-representation">6. Compare length and data representation</a></li>
+    <li><a href="#7-structures-and-state-machines">7. Structures and state machines</a></li>
+    <li><a href="#8-switch-tables-and-custom-vms">8. Switch tables and custom VMs</a></li>
+    <li><a href="#9-know-when-to-switch-to-runtime">9. Know when to switch to runtime</a></li>
+    <li><a href="#tools-and-references">Tools and references</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

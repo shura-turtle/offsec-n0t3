@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: native Windows executable debugging, comparisons and runtime decoding.
+Run in: Windows portable build. Use x64dbg for 64-bit, x32dbg for 32-bit targets.
+Launch with a target # Run from the extracted debugger folder; adjust the actual location .\x64dbg.exe &#39;C:\CTF\challenge.exe&#39;Useful controls Action Default key Open executable F3 Run / continue F9 Toggle breakpoint at selection F2 Step into F7 Step over F8 Execute until return Ctrl&#43;F9 Restart Ctrl&#43;F2 Walkthrough: find the check Open the executable and run to its relevant code. In the CPU disassembly, search the current module for string references. Find the failure/success message and follow its references. Set a breakpoint near the input comparison and run with a test value. Inspect registers, stack and pointed-to memory. Follow decoded strings or buffers in the dump view. Record the transformation and reproduce it in Python. Debugger command bar examples bp kernel32.GetProcAddress bp kernel32.LoadLibraryAThese help locate dynamically resolved APIs when the relevant exports are loaded and resolvable.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/x64dbg/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="x64dbg">
+  <meta property="og:description" content="Use for: native Windows executable debugging, comparisons and runtime decoding.
+Run in: Windows portable build. Use x64dbg for 64-bit, x32dbg for 32-bit targets.
+Launch with a target # Run from the extracted debugger folder; adjust the actual location .\x64dbg.exe &#39;C:\CTF\challenge.exe&#39;Useful controls Action Default key Open executable F3 Run / continue F9 Toggle breakpoint at selection F2 Step into F7 Step over F8 Execute until return Ctrl&#43;F9 Restart Ctrl&#43;F2 Walkthrough: find the check Open the executable and run to its relevant code. In the CPU disassembly, search the current module for string references. Find the failure/success message and follow its references. Set a breakpoint near the input comparison and run with a test value. Inspect registers, stack and pointed-to memory. Follow decoded strings or buffers in the dump view. Record the transformation and reproduce it in Python. Debugger command bar examples bp kernel32.GetProcAddress bp kernel32.LoadLibraryAThese help locate dynamically resolved APIs when the relevant exports are loaded and resolvable.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="x64dbg">
+  <meta itemprop="description" content="Use for: native Windows executable debugging, comparisons and runtime decoding.
+Run in: Windows portable build. Use x64dbg for 64-bit, x32dbg for 32-bit targets.
+Launch with a target # Run from the extracted debugger folder; adjust the actual location .\x64dbg.exe &#39;C:\CTF\challenge.exe&#39;Useful controls Action Default key Open executable F3 Run / continue F9 Toggle breakpoint at selection F2 Step into F7 Step over F8 Execute until return Ctrl&#43;F9 Restart Ctrl&#43;F2 Walkthrough: find the check Open the executable and run to its relevant code. In the CPU disassembly, search the current module for string references. Find the failure/success message and follow its references. Set a breakpoint near the input comparison and run with a test value. Inspect registers, stack and pointed-to memory. Follow decoded strings or buffers in the dump view. Record the transformation and reproduce it in Python. Debugger command bar examples bp kernel32.GetProcAddress bp kernel32.LoadLibraryAThese help locate dynamically resolved APIs when the relevant exports are loaded and resolvable.">
+  <meta itemprop="wordCount" content="666">
+
+<title>x64dbg • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/x64dbg/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="active" aria-current="page">x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>x64dbg</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#launch-with-a-target">Launch with a target</a></li>
+    <li><a href="#useful-controls">Useful controls</a></li>
+    <li><a href="#walkthrough-find-the-check">Walkthrough: find the check</a></li>
+    <li><a href="#debugger-command-bar-examples">Debugger command bar examples</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-break-on-a-comparison-or-decoded-buffer">CTF: break on a comparison or decoded buffer</a></li>
+    <li><a href="#debugger-commands-explained">Debugger commands explained</a></li>
+    <li><a href="#ctf-distinguish-runtime-addresses-from-patch-offsets">CTF: distinguish runtime addresses from patch offsets</a></li>
+    <li><a href="#ctf-watch-a-small-decrypted-value">CTF: watch a small decrypted value</a></li>
+    <li><a href="#ctf-export-a-decoded-region">CTF: export a decoded region</a></li>
+    <li><a href="#exceptions-and-unpacking-clues">Exceptions and unpacking clues</a></li>
+    <li><a href="#end-to-end-investigation-example">End-to-end investigation example</a></li>
+    <li><a href="#common-debugger-mistakes">Common debugger mistakes</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>4 MIN READ</span></div>
+<h1 class="page-title">x64dbg</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> native Windows executable debugging, comparisons and runtime decoding.<br>
+<strong>Run in:</strong> Windows portable build. Use x64dbg for 64-bit, x32dbg for 32-bit targets.</p>
+<h2 id="launch-with-a-target">Launch with a target<a class="anchor" href="#launch-with-a-target"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Run from the extracted debugger folder; adjust the actual location</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>x64dbg<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> <span style="color:#a3be8c">&#39;C:\CTF\challenge.exe&#39;</span></span></span></code></pre></div><h2 id="useful-controls">Useful controls<a class="anchor" href="#useful-controls"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Action</th>
+          <th>Default key</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Open executable</td>
+          <td>F3</td>
+      </tr>
+      <tr>
+          <td>Run / continue</td>
+          <td>F9</td>
+      </tr>
+      <tr>
+          <td>Toggle breakpoint at selection</td>
+          <td>F2</td>
+      </tr>
+      <tr>
+          <td>Step into</td>
+          <td>F7</td>
+      </tr>
+      <tr>
+          <td>Step over</td>
+          <td>F8</td>
+      </tr>
+      <tr>
+          <td>Execute until return</td>
+          <td>Ctrl+F9</td>
+      </tr>
+      <tr>
+          <td>Restart</td>
+          <td>Ctrl+F2</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="walkthrough-find-the-check">Walkthrough: find the check<a class="anchor" href="#walkthrough-find-the-check"></a></h2>
+<ol>
+<li>Open the executable and run to its relevant code.</li>
+<li>In the CPU disassembly, search the current module for string references.</li>
+<li>Find the failure/success message and follow its references.</li>
+<li>Set a breakpoint near the input comparison and run with a test value.</li>
+<li>Inspect registers, stack and pointed-to memory.</li>
+<li>Follow decoded strings or buffers in the dump view.</li>
+<li>Record the transformation and reproduce it in Python.</li>
+</ol>
+<h2 id="debugger-command-bar-examples">Debugger command bar examples<a class="anchor" href="#debugger-command-bar-examples"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>bp kernel32.GetProcAddress
+</span></span><span style="display:flex;"><span>bp kernel32.LoadLibraryA</span></span></code></pre></div><p>These help locate dynamically resolved APIs when the relevant exports are loaded and resolvable.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Windows x64 integer/pointer arguments normally begin in RCX, RDX, R8 and R9. Linux gdb examples often use a different ABI.</li>
+<li>A patched success branch may skip flag generation; recover the actual input/algorithm.</li>
+<li>ASLR changes runtime addresses; keep module-relative offsets.</li>
+</ul>
+<h2 id="ctf-break-on-a-comparison-or-decoded-buffer">CTF: break on a comparison or decoded buffer<a class="anchor" href="#ctf-break-on-a-comparison-or-decoded-buffer"></a></h2>
+<ol>
+<li>Find the validation function through a message reference or call trace.</li>
+<li>Stop immediately before its compare routine.</li>
+<li>Identify argument buffers using the correct calling convention.</li>
+<li>Follow each pointer in Dump and inspect both hex and text.</li>
+<li>Step across the comparison and inspect the return value/conditional branch.</li>
+<li>Trace how the expected buffer was constructed, then recover the real input.</li>
+</ol>
+<p>On Windows x64, <code>memcmp(a,b,n)</code> normally receives <code>a</code> in RCX, <code>b</code> in RDX and <code>n</code> in R8. A 32-bit target commonly passes arguments on the stack, but optimized/internal functions can differ.</p>
+<h2 id="debugger-commands-explained">Debugger commands explained<a class="anchor" href="#debugger-commands-explained"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>bp kernel32.GetProcAddress
+</span></span><span style="display:flex;"><span>bp kernel32.LoadLibraryA</span></span></code></pre></div><p><code>bp</code>/<code>bpx</code> sets a software breakpoint at an address or resolvable symbol. <code>kernel32.GetProcAddress</code> selects an exported API by module and name. The module must be loaded and the symbol must resolve; forwarded APIs can lead into another module.</p>
+<p>At a GetProcAddress breakpoint on x64, inspect RDX as a possible function-name pointer or ordinal value. Do not interpret a small ordinal as a valid string address.</p>
+<h2 id="ctf-distinguish-runtime-addresses-from-patch-offsets">CTF: distinguish runtime addresses from patch offsets<a class="anchor" href="#ctf-distinguish-runtime-addresses-from-patch-offsets"></a></h2>
+<p>Record a code location as module name plus relative virtual address (RVA). To patch the file, map that RVA to its PE section’s raw-file offset. ASLR affects the loaded base, and section virtual/raw positions can differ.</p>
+<h2 id="ctf-watch-a-small-decrypted-value">CTF: watch a small decrypted value<a class="anchor" href="#ctf-watch-a-small-decrypted-value"></a></h2>
+<p>Select a known memory location in Dump and use the breakpoint menu for a hardware write/access breakpoint when appropriate. Continue until the watched value is touched. Hardware slots and supported sizes are limited; watching an entire large heap buffer this way is not practical.</p>
+<h2 id="ctf-export-a-decoded-region">CTF: export a decoded region<a class="anchor" href="#ctf-export-a-decoded-region"></a></h2>
+<p>After the decoding routine returns, confirm the buffer pointer and length. Select that region in Dump and use its binary save control. Verify the first bytes and length in HxD. A pointer followed by a NUL does not necessarily mark the full output buffer length.</p>
+<h2 id="exceptions-and-unpacking-clues">Exceptions and unpacking clues<a class="anchor" href="#exceptions-and-unpacking-clues"></a></h2>
+<p>An exception can be deliberate control flow. Record its address/code and whether the program’s own handler continues normally. For a packed executable, follow the transition into newly decoded executable memory and rebuild your understanding from the actual code reached.</p>
+<h2 id="end-to-end-investigation-example">End-to-end investigation example<a class="anchor" href="#end-to-end-investigation-example"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Artifact: Windows PE password checker
+</span></span><span style="display:flex;"><span>Anchor: &#34;Wrong password&#34; string reference
+</span></span><span style="display:flex;"><span>Stop: comparison call before failure branch
+</span></span><span style="display:flex;"><span>Inspect: input pointer, expected pointer, compared length
+</span></span><span style="display:flex;"><span>Trace: XOR loop building the expected bytes
+</span></span><span style="display:flex;"><span>Recover: reverse loop in Python
+</span></span><span style="display:flex;"><span>Prove: enter recovered value in the unpatched application</span></span></code></pre></div><h2 id="common-debugger-mistakes">Common debugger mistakes<a class="anchor" href="#common-debugger-mistakes"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Symptom</th>
+          <th>Check</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Breakpoint belongs to another process/module</td>
+          <td>Target identity and module mapping</td>
+      </tr>
+      <tr>
+          <td>Wrong string at RCX</td>
+          <td>ABI, pointer lifetime and exact stop position</td>
+      </tr>
+      <tr>
+          <td>Patch works but no flag</td>
+          <td>Required computation was skipped</td>
+      </tr>
+      <tr>
+          <td>Data changes each run</td>
+          <td>Random seed, timestamps or session input</td>
+      </tr>
+      <tr>
+          <td>Stepping enters long library code</td>
+          <td>Use step over or a breakpoint after the call</td>
+      </tr>
+  </tbody>
+</table>
+<p>References: <a href="https://help.x64dbg.com/en/latest/gui/index.html">GUI manual</a>, <a href="https://help.x64dbg.com/en/latest/commands/breakpoint-control/SetBPX.html">bp command</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../reversing-expl/dynamic-debugging/">Native runtime debugging</a></li>
+<li><a href="../../reversing-expl/triage/">Native binary triage</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>OpenSSH-Session-Key-Recovery</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/autopsy/" class="flex align-center">
+        <span>Autopsy</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#launch-with-a-target">Launch with a target</a></li>
+    <li><a href="#useful-controls">Useful controls</a></li>
+    <li><a href="#walkthrough-find-the-check">Walkthrough: find the check</a></li>
+    <li><a href="#debugger-command-bar-examples">Debugger command bar examples</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-break-on-a-comparison-or-decoded-buffer">CTF: break on a comparison or decoded buffer</a></li>
+    <li><a href="#debugger-commands-explained">Debugger commands explained</a></li>
+    <li><a href="#ctf-distinguish-runtime-addresses-from-patch-offsets">CTF: distinguish runtime addresses from patch offsets</a></li>
+    <li><a href="#ctf-watch-a-small-decrypted-value">CTF: watch a small decrypted value</a></li>
+    <li><a href="#ctf-export-a-decoded-region">CTF: export a decoded region</a></li>
+    <li><a href="#exceptions-and-unpacking-clues">Exceptions and unpacking clues</a></li>
+    <li><a href="#end-to-end-investigation-example">End-to-end investigation example</a></li>
+    <li><a href="#common-debugger-mistakes">Common debugger mistakes</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

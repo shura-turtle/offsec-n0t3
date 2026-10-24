@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: source/log inspection, regular expression searches and small text edits.
+Run in: Windows GUI.
+Open an artifact from PowerShell # If installed in the default location &amp; &#39;C:\Program Files\Notepad&#43;&#43;\notepad&#43;&#43;.exe&#39; &#39;C:\CTF\output.txt&#39;Useful keys Action Key Find Ctrl&#43;F Replace Ctrl&#43;H Find in files Ctrl&#43;Shift&#43;F Go to line Ctrl&#43;G CTF: search a text dump Open the extracted text or source file. Ctrl&#43;F → Search Mode → Regular expression. Search a pattern below. Choose Find All in Current Document for a list of matches. flag\{[^}\r\n]&#43;\} https?://[^\s&#34;&#39;&lt;&gt;]&#43; (?i)(password|secret|token|api[_-]?key)Replace flag with the tournament’s actual prefix.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/notepad_plus_plus/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Notepad&#43;&#43;">
+  <meta property="og:description" content="Use for: source/log inspection, regular expression searches and small text edits.
+Run in: Windows GUI.
+Open an artifact from PowerShell # If installed in the default location &amp; &#39;C:\Program Files\Notepad&#43;&#43;\notepad&#43;&#43;.exe&#39; &#39;C:\CTF\output.txt&#39;Useful keys Action Key Find Ctrl&#43;F Replace Ctrl&#43;H Find in files Ctrl&#43;Shift&#43;F Go to line Ctrl&#43;G CTF: search a text dump Open the extracted text or source file. Ctrl&#43;F → Search Mode → Regular expression. Search a pattern below. Choose Find All in Current Document for a list of matches. flag\{[^}\r\n]&#43;\} https?://[^\s&#34;&#39;&lt;&gt;]&#43; (?i)(password|secret|token|api[_-]?key)Replace flag with the tournament’s actual prefix.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Notepad&#43;&#43;">
+  <meta itemprop="description" content="Use for: source/log inspection, regular expression searches and small text edits.
+Run in: Windows GUI.
+Open an artifact from PowerShell # If installed in the default location &amp; &#39;C:\Program Files\Notepad&#43;&#43;\notepad&#43;&#43;.exe&#39; &#39;C:\CTF\output.txt&#39;Useful keys Action Key Find Ctrl&#43;F Replace Ctrl&#43;H Find in files Ctrl&#43;Shift&#43;F Go to line Ctrl&#43;G CTF: search a text dump Open the extracted text or source file. Ctrl&#43;F → Search Mode → Regular expression. Search a pattern below. Choose Find All in Current Document for a list of matches. flag\{[^}\r\n]&#43;\} https?://[^\s&#34;&#39;&lt;&gt;]&#43; (?i)(password|secret|token|api[_-]?key)Replace flag with the tournament’s actual prefix.">
+  <meta itemprop="wordCount" content="530">
+
+<title>Notepad&#43;&#43; • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/notepad_plus_plus/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="active" aria-current="page">Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Notepad&#43;&#43;</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#open-an-artifact-from-powershell">Open an artifact from PowerShell</a></li>
+    <li><a href="#useful-keys">Useful keys</a></li>
+    <li><a href="#ctf-search-a-text-dump">CTF: search a text dump</a></li>
+    <li><a href="#search-many-files">Search many files</a></li>
+    <li><a href="#fix-text-representation">Fix text representation</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#understand-the-three-search-modes">Understand the three search modes</a></li>
+    <li><a href="#ctf-extract-and-label-candidate-values">CTF: extract and label candidate values</a></li>
+    <li><a href="#ctf-search-a-source-tree">CTF: search a source tree</a></li>
+    <li><a href="#ctf-clean-a-copy-of-structured-text">CTF: clean a copy of structured text</a></li>
+    <li><a href="#ctf-detect-hidden-whitespace">CTF: detect hidden whitespace</a></li>
+    <li><a href="#cli-and-parameters-on-this-page">CLI and parameters on this page</a></li>
+    <li><a href="#avoid-false-negatives">Avoid false negatives</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Notepad&#43;&#43;</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> source/log inspection, regular expression searches and small text edits.<br>
+<strong>Run in:</strong> Windows GUI.</p>
+<h2 id="open-an-artifact-from-powershell">Open an artifact from PowerShell<a class="anchor" href="#open-an-artifact-from-powershell"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># If installed in the default location</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">&amp;</span> <span style="color:#a3be8c">&#39;C:\Program Files\Notepad++\notepad++.exe&#39;</span> <span style="color:#a3be8c">&#39;C:\CTF\output.txt&#39;</span></span></span></code></pre></div><h2 id="useful-keys">Useful keys<a class="anchor" href="#useful-keys"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Action</th>
+          <th>Key</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Find</td>
+          <td>Ctrl+F</td>
+      </tr>
+      <tr>
+          <td>Replace</td>
+          <td>Ctrl+H</td>
+      </tr>
+      <tr>
+          <td>Find in files</td>
+          <td>Ctrl+Shift+F</td>
+      </tr>
+      <tr>
+          <td>Go to line</td>
+          <td>Ctrl+G</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ctf-search-a-text-dump">CTF: search a text dump<a class="anchor" href="#ctf-search-a-text-dump"></a></h2>
+<ol>
+<li>Open the extracted text or source file.</li>
+<li><strong>Ctrl+F → Search Mode → Regular expression</strong>.</li>
+<li>Search a pattern below.</li>
+<li>Choose <strong>Find All in Current Document</strong> for a list of matches.</li>
+</ol>
+<pre tabindex="0"><code class="language-regex" data-lang="regex">flag\{[^}\r\n]+\}
+https?://[^\s&#34;&#39;&lt;&gt;]+
+(?i)(password|secret|token|api[_-]?key)</code></pre><p>Replace <code>flag</code> with the tournament’s actual prefix.</p>
+<h2 id="search-many-files">Search many files<a class="anchor" href="#search-many-files"></a></h2>
+<p><strong>Ctrl+Shift+F</strong> → set the directory and a filename filter such as <code>*.py *.js *.txt</code> → enter a keyword → <strong>Find All</strong>. Open each hit with its file/line context.</p>
+<h2 id="fix-text-representation">Fix text representation<a class="anchor" href="#fix-text-representation"></a></h2>
+<p>Use <strong>View → Show Symbol</strong> for invisible whitespace, <strong>Edit → EOL Conversion</strong> for line endings, and the <strong>Encoding</strong> menu when the supplied text encoding is known.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Choose Normal, Extended or Regular expression mode deliberately.</li>
+<li>Encoding conversion changes bytes; preserve the original artifact.</li>
+<li>Use HxD/xxd for binary edits.</li>
+<li>Notepad++ plugins may not be preinstalled; these steps use built-in features.</li>
+</ul>
+<h2 id="understand-the-three-search-modes">Understand the three search modes<a class="anchor" href="#understand-the-three-search-modes"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Use</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Normal</td>
+          <td>Search literal text</td>
+      </tr>
+      <tr>
+          <td>Extended</td>
+          <td>Recognize escapes such as <code>\n</code>, <code>\r</code>, <code>\t</code></td>
+      </tr>
+      <tr>
+          <td>Regular expression</td>
+          <td>Search patterns and capture groups</td>
+      </tr>
+  </tbody>
+</table>
+<p>In regex mode, <code>.</code> means one character, <code>*</code> repeats zero or more times, <code>+</code> repeats one or more times, <code>^</code> anchors the start and <code>$</code> anchors the end. Check the “. matches newline” setting before searching across lines.</p>
+<h2 id="ctf-extract-and-label-candidate-values">CTF: extract and label candidate values<a class="anchor" href="#ctf-extract-and-label-candidate-values"></a></h2>
+<pre tabindex="0"><code class="language-regex" data-lang="regex">(?i)flag\{[^}\r\n]+\}
+[A-Za-z0-9+/]{24,}={0,2}
+\b[0-9A-Fa-f]{32,}\b</code></pre><p>The first is a flag-shaped candidate, the second a possible long Base64 string, and the third a possible hex value. The latter two deliberately overmatch; validate the candidate alphabet, length and decode result.</p>
+<h2 id="ctf-search-a-source-tree">CTF: search a source tree<a class="anchor" href="#ctf-search-a-source-tree"></a></h2>
+<p>Use Find in Files with filters such as <code>*.js *.py *.cs *.json</code>. Start with route names, visible messages, <code>secret</code>, <code>token</code> or a specific clue. A configuration example is not necessarily active configuration; inspect the caller and surrounding code.</p>
+<h2 id="ctf-clean-a-copy-of-structured-text">CTF: clean a copy of structured text<a class="anchor" href="#ctf-clean-a-copy-of-structured-text"></a></h2>
+<p>Use a regex capture group when the transformation is understood. Example: with regex mode enabled, search <code>^prefix:(.*)$</code> and replace with <code>$1</code> to keep the value after a known prefix.</p>
+<p>Preview a small sample first. Replacements on encoded/binary material can silently destroy delimiters or padding, so keep the original.</p>
+<h2 id="ctf-detect-hidden-whitespace">CTF: detect hidden whitespace<a class="anchor" href="#ctf-detect-hidden-whitespace"></a></h2>
+<p>Turn on Show Symbol and inspect tabs, spaces and line endings. If the clue suggests a whitespace encoding, count and preserve the actual bytes with Python/xxd; the visual editor can normalize line endings when saved.</p>
+<h2 id="cli-and-parameters-on-this-page">CLI and parameters on this page<a class="anchor" href="#cli-and-parameters-on-this-page"></a></h2>
+<p>The launcher’s file path is a positional argument, and <code>&amp;</code> is PowerShell’s call operator for a quoted executable path. There is no generic <code>-r</code> that makes Notepad++ recursively search; use <strong>Find in Files</strong> and its directory/filter controls.</p>
+<h2 id="avoid-false-negatives">Avoid false negatives<a class="anchor" href="#avoid-false-negatives"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Search failed because…</th>
+          <th>Fix</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Match case enabled</td>
+          <td>Disable it or use <code>(?i)</code> in regex mode</td>
+      </tr>
+      <tr>
+          <td>Only current selection searched</td>
+          <td>Clear selection-only scope</td>
+      </tr>
+      <tr>
+          <td>File type filters exclude evidence</td>
+          <td>Review filters and directory</td>
+      </tr>
+      <tr>
+          <td>Wrong encoding</td>
+          <td>Inspect bytes and reopen correctly</td>
+      </tr>
+      <tr>
+          <td>Huge/binary artifact</td>
+          <td>Extract useful text with the appropriate parser first</td>
+      </tr>
+  </tbody>
+</table>
+<p>Reference: <a href="https://github.com/notepad-plus-plus/npp-usermanual/blob/master/content/docs/searching.md">Notepad++ search manual source</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../steganograph-expl/text-unicode/">Text and Unicode</a></li>
+<li><a href="../../web-expl/source-disclosure/">Source disclosure</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/tshark/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>TShark</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/dnspyex/" class="flex align-center">
+        <span>dnSpyEx (dnSpy)</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#open-an-artifact-from-powershell">Open an artifact from PowerShell</a></li>
+    <li><a href="#useful-keys">Useful keys</a></li>
+    <li><a href="#ctf-search-a-text-dump">CTF: search a text dump</a></li>
+    <li><a href="#search-many-files">Search many files</a></li>
+    <li><a href="#fix-text-representation">Fix text representation</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#understand-the-three-search-modes">Understand the three search modes</a></li>
+    <li><a href="#ctf-extract-and-label-candidate-values">CTF: extract and label candidate values</a></li>
+    <li><a href="#ctf-search-a-source-tree">CTF: search a source tree</a></li>
+    <li><a href="#ctf-clean-a-copy-of-structured-text">CTF: clean a copy of structured text</a></li>
+    <li><a href="#ctf-detect-hidden-whitespace">CTF: detect hidden whitespace</a></li>
+    <li><a href="#cli-and-parameters-on-this-page">CLI and parameters on this page</a></li>
+    <li><a href="#avoid-false-negatives">Avoid false negatives</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

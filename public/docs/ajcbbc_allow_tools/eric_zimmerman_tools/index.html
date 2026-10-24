@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: Windows artifact parsing and forensic timelines.
+Run in: Windows PowerShell, from the directory containing the supplied executables. Available tools/builds depend on the organizer’s installation.
+Choose a parser Artifact Tool What it helps answer Prefetch .pf PECmd Program execution traces Event logs .evtx EvtxECmd Logons, process/service events NTFS $MFT / $J MFTECmd File records and filesystem changes Shortcut .lnk LECmd Target path and link metadata Jump Lists JLECmd Recently accessed application items Registry hives RECmd / Registry Explorer Configuration and user activity Generated CSV Timeline Explorer Sort/filter parsed results Parse execution and event artifacts # Replace C:\CTF\evidence with your extracted artifact folder .\PECmd.exe -d &#39;C:\CTF\evidence\Prefetch&#39; --csv &#39;C:\CTF\out\prefetch&#39; .\EvtxECmd.exe -d &#39;C:\CTF\evidence\evtx&#39; --csv &#39;C:\CTF\out\events&#39;Parse filesystem and recent-file traces # Single quotes preserve the literal $MFT name in PowerShell .\MFTECmd.exe -f &#39;C:\CTF\evidence\$MFT&#39; --csv &#39;C:\CTF\out\mft&#39; .\LECmd.exe -d &#39;C:\CTF\evidence\Recent&#39; --csv &#39;C:\CTF\out\lnk&#39; .\JLECmd.exe -d &#39;C:\CTF\evidence\AutomaticDestinations&#39; --csv &#39;C:\CTF\out\jumplists&#39;CTF walkthrough Identify the supplied artifact, then select its parser. Run TOOL.exe -h for the installed build’s options. Export CSV into a separate output folder. Open it in Timeline Explorer if supplied, or inspect it with PowerShell: Get-ChildItem &#39;C:\CTF\out&#39; -Recurse -Filter *.csv Import-Csv &#39;C:\CTF\out\events\chosen-output.csv&#39; | Select-Object -First 5Correlate timestamps, paths, users and IDs across artifacts. Prefetch presence supports execution analysis but does not alone establish who ran a program or its intent.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/eric_zimmerman_tools/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Eric Zimmerman&#39;s Tools">
+  <meta property="og:description" content="Use for: Windows artifact parsing and forensic timelines.
+Run in: Windows PowerShell, from the directory containing the supplied executables. Available tools/builds depend on the organizer’s installation.
+Choose a parser Artifact Tool What it helps answer Prefetch .pf PECmd Program execution traces Event logs .evtx EvtxECmd Logons, process/service events NTFS $MFT / $J MFTECmd File records and filesystem changes Shortcut .lnk LECmd Target path and link metadata Jump Lists JLECmd Recently accessed application items Registry hives RECmd / Registry Explorer Configuration and user activity Generated CSV Timeline Explorer Sort/filter parsed results Parse execution and event artifacts # Replace C:\CTF\evidence with your extracted artifact folder .\PECmd.exe -d &#39;C:\CTF\evidence\Prefetch&#39; --csv &#39;C:\CTF\out\prefetch&#39; .\EvtxECmd.exe -d &#39;C:\CTF\evidence\evtx&#39; --csv &#39;C:\CTF\out\events&#39;Parse filesystem and recent-file traces # Single quotes preserve the literal $MFT name in PowerShell .\MFTECmd.exe -f &#39;C:\CTF\evidence\$MFT&#39; --csv &#39;C:\CTF\out\mft&#39; .\LECmd.exe -d &#39;C:\CTF\evidence\Recent&#39; --csv &#39;C:\CTF\out\lnk&#39; .\JLECmd.exe -d &#39;C:\CTF\evidence\AutomaticDestinations&#39; --csv &#39;C:\CTF\out\jumplists&#39;CTF walkthrough Identify the supplied artifact, then select its parser. Run TOOL.exe -h for the installed build’s options. Export CSV into a separate output folder. Open it in Timeline Explorer if supplied, or inspect it with PowerShell: Get-ChildItem &#39;C:\CTF\out&#39; -Recurse -Filter *.csv Import-Csv &#39;C:\CTF\out\events\chosen-output.csv&#39; | Select-Object -First 5Correlate timestamps, paths, users and IDs across artifacts. Prefetch presence supports execution analysis but does not alone establish who ran a program or its intent.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Eric Zimmerman&#39;s Tools">
+  <meta itemprop="description" content="Use for: Windows artifact parsing and forensic timelines.
+Run in: Windows PowerShell, from the directory containing the supplied executables. Available tools/builds depend on the organizer’s installation.
+Choose a parser Artifact Tool What it helps answer Prefetch .pf PECmd Program execution traces Event logs .evtx EvtxECmd Logons, process/service events NTFS $MFT / $J MFTECmd File records and filesystem changes Shortcut .lnk LECmd Target path and link metadata Jump Lists JLECmd Recently accessed application items Registry hives RECmd / Registry Explorer Configuration and user activity Generated CSV Timeline Explorer Sort/filter parsed results Parse execution and event artifacts # Replace C:\CTF\evidence with your extracted artifact folder .\PECmd.exe -d &#39;C:\CTF\evidence\Prefetch&#39; --csv &#39;C:\CTF\out\prefetch&#39; .\EvtxECmd.exe -d &#39;C:\CTF\evidence\evtx&#39; --csv &#39;C:\CTF\out\events&#39;Parse filesystem and recent-file traces # Single quotes preserve the literal $MFT name in PowerShell .\MFTECmd.exe -f &#39;C:\CTF\evidence\$MFT&#39; --csv &#39;C:\CTF\out\mft&#39; .\LECmd.exe -d &#39;C:\CTF\evidence\Recent&#39; --csv &#39;C:\CTF\out\lnk&#39; .\JLECmd.exe -d &#39;C:\CTF\evidence\AutomaticDestinations&#39; --csv &#39;C:\CTF\out\jumplists&#39;CTF walkthrough Identify the supplied artifact, then select its parser. Run TOOL.exe -h for the installed build’s options. Export CSV into a separate output folder. Open it in Timeline Explorer if supplied, or inspect it with PowerShell: Get-ChildItem &#39;C:\CTF\out&#39; -Recurse -Filter *.csv Import-Csv &#39;C:\CTF\out\events\chosen-output.csv&#39; | Select-Object -First 5Correlate timestamps, paths, users and IDs across artifacts. Prefetch presence supports execution analysis but does not alone establish who ran a program or its intent.">
+  <meta itemprop="wordCount" content="624">
+
+<title>Eric Zimmerman&#39;s Tools • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/eric_zimmerman_tools/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="active" aria-current="page">Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Eric Zimmerman&#39;s Tools</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#choose-a-parser">Choose a parser</a></li>
+    <li><a href="#parse-execution-and-event-artifacts">Parse execution and event artifacts</a></li>
+    <li><a href="#parse-filesystem-and-recent-file-traces">Parse filesystem and recent-file traces</a></li>
+    <li><a href="#ctf-walkthrough">CTF walkthrough</a></li>
+    <li><a href="#flags-explained-by-parser">Flags explained by parser</a></li>
+    <li><a href="#ctf-program-execution-from-prefetch">CTF: program execution from Prefetch</a></li>
+    <li><a href="#ctf-filter-windows-event-results">CTF: filter Windows event results</a></li>
+    <li><a href="#ctf-search-parsed-records-by-a-clue">CTF: search parsed records by a clue</a></li>
+    <li><a href="#ctf-registry-batch-processing">CTF: registry batch processing</a></li>
+    <li><a href="#ctf-join-recent-file-traces">CTF: join recent-file traces</a></li>
+    <li><a href="#timeline-interpretation-checklist">Timeline interpretation checklist</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Eric Zimmerman&#39;s Tools</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> Windows artifact parsing and forensic timelines.<br>
+<strong>Run in:</strong> Windows PowerShell, from the directory containing the supplied executables. Available tools/builds depend on the organizer’s installation.</p>
+<h2 id="choose-a-parser">Choose a parser<a class="anchor" href="#choose-a-parser"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Artifact</th>
+          <th>Tool</th>
+          <th>What it helps answer</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Prefetch <code>.pf</code></td>
+          <td>PECmd</td>
+          <td>Program execution traces</td>
+      </tr>
+      <tr>
+          <td>Event logs <code>.evtx</code></td>
+          <td>EvtxECmd</td>
+          <td>Logons, process/service events</td>
+      </tr>
+      <tr>
+          <td>NTFS <code>$MFT</code> / <code>$J</code></td>
+          <td>MFTECmd</td>
+          <td>File records and filesystem changes</td>
+      </tr>
+      <tr>
+          <td>Shortcut <code>.lnk</code></td>
+          <td>LECmd</td>
+          <td>Target path and link metadata</td>
+      </tr>
+      <tr>
+          <td>Jump Lists</td>
+          <td>JLECmd</td>
+          <td>Recently accessed application items</td>
+      </tr>
+      <tr>
+          <td>Registry hives</td>
+          <td>RECmd / Registry Explorer</td>
+          <td>Configuration and user activity</td>
+      </tr>
+      <tr>
+          <td>Generated CSV</td>
+          <td>Timeline Explorer</td>
+          <td>Sort/filter parsed results</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="parse-execution-and-event-artifacts">Parse execution and event artifacts<a class="anchor" href="#parse-execution-and-event-artifacts"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Replace C:\CTF\evidence with your extracted artifact folder</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>PECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\Prefetch&#39;</span> <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\prefetch&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>EvtxECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\evtx&#39;</span> <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\events&#39;</span></span></span></code></pre></div><h2 id="parse-filesystem-and-recent-file-traces">Parse filesystem and recent-file traces<a class="anchor" href="#parse-filesystem-and-recent-file-traces"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Single quotes preserve the literal $MFT name in PowerShell</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>MFTECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> <span style="color:#81a1c1">-f</span> <span style="color:#a3be8c">&#39;C:\CTF\evidence\$MFT&#39;</span> <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\mft&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>LECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\Recent&#39;</span> <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\lnk&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>JLECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\AutomaticDestinations&#39;</span> <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\jumplists&#39;</span></span></span></code></pre></div><h2 id="ctf-walkthrough">CTF walkthrough<a class="anchor" href="#ctf-walkthrough"></a></h2>
+<ol>
+<li>Identify the supplied artifact, then select its parser.</li>
+<li>Run <code>TOOL.exe -h</code> for the installed build’s options.</li>
+<li>Export CSV into a separate output folder.</li>
+<li>Open it in Timeline Explorer if supplied, or inspect it with PowerShell:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#81a1c1">Get-ChildItem</span> <span style="color:#a3be8c">&#39;C:\CTF\out&#39;</span> -Recurse -Filter <span style="color:#eceff4">*.</span>csv
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Import-Csv</span> <span style="color:#a3be8c">&#39;C:\CTF\out\events\chosen-output.csv&#39;</span> <span style="color:#eceff4">|</span> <span style="color:#81a1c1">Select-Object</span> -First <span style="color:#b48ead">5</span></span></span></code></pre></div><p>Correlate timestamps, paths, users and IDs across artifacts. Prefetch presence supports execution analysis but does not alone establish who ran a program or its intent.</p>
+<h2 id="flags-explained-by-parser">Flags explained by parser<a class="anchor" href="#flags-explained-by-parser"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Option</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-f FILE</code></td>
+          <td>Parse one supplied artifact file</td>
+      </tr>
+      <tr>
+          <td><code>-d DIR</code></td>
+          <td>Parse an artifact directory where the selected parser supports it</td>
+      </tr>
+      <tr>
+          <td><code>--csv DIR</code></td>
+          <td>Write CSV output into a directory</td>
+      </tr>
+      <tr>
+          <td><code>--csvf NAME</code></td>
+          <td>Override the CSV filename where supported</td>
+      </tr>
+      <tr>
+          <td><code>--json DIR</code></td>
+          <td>Write JSON output where supported; verify format with help</td>
+      </tr>
+      <tr>
+          <td><code>-h</code></td>
+          <td>Show the selected executable&rsquo;s options</td>
+      </tr>
+      <tr>
+          <td><code>RECmd --bn FILE</code></td>
+          <td>Use a Registry batch-definition file</td>
+      </tr>
+  </tbody>
+</table>
+<p>These are separate programs. A switch supported by PECmd is not automatically supported by another parser. <code>--csv</code> normally takes a directory, not the desired complete CSV filename.</p>
+<h2 id="ctf-program-execution-from-prefetch">CTF: program execution from Prefetch<a class="anchor" href="#ctf-program-execution-from-prefetch"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#eceff4">.\</span>PECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\Prefetch&#39;</span> <span style="color:#eceff4">`</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\prefetch&#39;</span> <span style="color:#eceff4">-</span>-csvf prefetch<span style="color:#eceff4">.</span><span style="color:#8fbcbb">csv</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Import-Csv</span> <span style="color:#a3be8c">&#39;C:\CTF\out\prefetch\prefetch.csv&#39;</span> <span style="color:#eceff4">|</span> <span style="color:#81a1c1">Select-Object</span> -First <span style="color:#b48ead">5</span></span></span></code></pre></div><p>Inspect executable name/path clues, run count and available run times. Prefetch is one execution artifact; corroborate with event/process activity and file traces.</p>
+<h2 id="ctf-filter-windows-event-results">CTF: filter Windows event results<a class="anchor" href="#ctf-filter-windows-event-results"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#eceff4">.\</span>EvtxECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\evtx&#39;</span> <span style="color:#eceff4">`</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\events&#39;</span> <span style="color:#eceff4">-</span>-csvf events<span style="color:#eceff4">.</span><span style="color:#8fbcbb">csv</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$Events <span style="color:#eceff4">=</span> <span style="color:#81a1c1">Import-Csv</span> <span style="color:#a3be8c">&#39;C:\CTF\out\events\events.csv&#39;</span>
+</span></span><span style="display:flex;"><span>$Events <span style="color:#eceff4">|</span> <span style="color:#81a1c1">Select-Object</span> -First <span style="color:#b48ead">1</span> <span style="color:#eceff4">|</span> <span style="color:#81a1c1">Format-List</span> <span style="color:#eceff4">*</span>
+</span></span><span style="display:flex;"><span>$Events <span style="color:#eceff4">|</span> <span style="color:#81a1c1">Where-Object</span> <span style="color:#eceff4">{</span> $_<span style="color:#eceff4">.</span><span style="color:#8fbcbb">EventId</span> -in <span style="color:#a3be8c">&#39;4624&#39;</span><span style="color:#eceff4">,</span><span style="color:#a3be8c">&#39;4688&#39;</span><span style="color:#eceff4">,</span><span style="color:#a3be8c">&#39;7045&#39;</span> <span style="color:#eceff4">}</span></span></span></code></pre></div><p>Confirm exported column names on your installed build. Event meaning depends on provider/channel: 4624 is a Security logon event, 4688 is Security process creation when audited, and 7045 is a Service Control Manager service-install event. Missing events can reflect logging policy or incomplete collection.</p>
+<h2 id="ctf-search-parsed-records-by-a-clue">CTF: search parsed records by a clue<a class="anchor" href="#ctf-search-parsed-records-by-a-clue"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#81a1c1">Get-ChildItem</span> <span style="color:#a3be8c">&#39;C:\CTF\out&#39;</span> -Recurse -Filter <span style="color:#eceff4">*.</span>csv <span style="color:#eceff4">|</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#81a1c1">Select-String</span> -Pattern <span style="color:#a3be8c">&#39;flag\{|secret|powershell&#39;</span> <span style="color:#81a1c1">-CaseSensitive</span><span style="color:#bf616a">:</span>$false</span></span></code></pre></div><p><code>-Recurse</code> searches child folders, <code>-Filter</code> restricts filenames, and <code>Select-String -Pattern</code> searches text. A match inside CSV text is a lead; parse the corresponding record and inspect its fields.</p>
+<h2 id="ctf-registry-batch-processing">CTF: registry batch processing<a class="anchor" href="#ctf-registry-batch-processing"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Use a supplied batch definition that exists on the PC</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">.\</span>RECmd<span style="color:#eceff4">.</span><span style="color:#8fbcbb">exe</span> -d <span style="color:#a3be8c">&#39;C:\CTF\evidence\hives&#39;</span> <span style="color:#eceff4">`</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">-</span>-bn <span style="color:#a3be8c">&#39;C:\Tools\RECmd\BatchExamples\RECmd_Batch_MC.reb&#39;</span> <span style="color:#eceff4">`</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">-</span>-csv <span style="color:#a3be8c">&#39;C:\CTF\out\registry&#39;</span></span></span></code></pre></div><p>PowerShell uses a backtick for multiline continuation. Do not add whitespace after it.</p>
+<p>Choose an existing approved batch file and actual installation path. Batch output reports artifacts defined by that file; it is not a complete interpretation of every registry key.</p>
+<h2 id="ctf-join-recent-file-traces">CTF: join recent-file traces<a class="anchor" href="#ctf-join-recent-file-traces"></a></h2>
+<p>Compare LNK targets, Jump List paths, MFT entries and Prefetch execution traces around the relevant time. Several artifacts mentioning a path can support a sequence, but timestamp types and update behavior differ.</p>
+<h2 id="timeline-interpretation-checklist">Timeline interpretation checklist<a class="anchor" href="#timeline-interpretation-checklist"></a></h2>
+<p>Keep the exported timestamp field name, timezone, source artifact and record ID. Sort a copy in Timeline Explorer; do not overwrite original exports. State which artifact directly shows an action and which only provides supporting context.</p>
+<p>References: <a href="https://ericzimmerman.github.io/">tool catalog</a>, <a href="https://github.com/EricZimmerman/PECmd">PECmd</a>, <a href="https://github.com/EricZimmerman/evtx">EvtxECmd</a>, <a href="https://github.com/EricZimmerman/MFTECmd">MFTECmd</a>, <a href="https://github.com/EricZimmerman/LECmd">LECmd</a>, <a href="https://github.com/EricZimmerman/JLECmd">JLECmd</a>, <a href="https://github.com/EricZimmerman/RECmd">RECmd</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../tools-cheatsheet/approved-tools-map/">Tool and artifact routing</a></li>
+<li><a href="../../steganograph-expl/triage/">Preserve original artifact evidence</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/dnspyex/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>dnSpyEx (dnSpy)</span>
+      </a>
+    
+    </span>
+    <span>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#choose-a-parser">Choose a parser</a></li>
+    <li><a href="#parse-execution-and-event-artifacts">Parse execution and event artifacts</a></li>
+    <li><a href="#parse-filesystem-and-recent-file-traces">Parse filesystem and recent-file traces</a></li>
+    <li><a href="#ctf-walkthrough">CTF walkthrough</a></li>
+    <li><a href="#flags-explained-by-parser">Flags explained by parser</a></li>
+    <li><a href="#ctf-program-execution-from-prefetch">CTF: program execution from Prefetch</a></li>
+    <li><a href="#ctf-filter-windows-event-results">CTF: filter Windows event results</a></li>
+    <li><a href="#ctf-search-parsed-records-by-a-clue">CTF: search parsed records by a clue</a></li>
+    <li><a href="#ctf-registry-batch-processing">CTF: registry batch processing</a></li>
+    <li><a href="#ctf-join-recent-file-traces">CTF: join recent-file traces</a></li>
+    <li><a href="#timeline-interpretation-checklist">Timeline interpretation checklist</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

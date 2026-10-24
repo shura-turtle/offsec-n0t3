@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GraphQL manual testing Endpoint → valid operation → schema → exact fields/arguments → resolver authorization. Introspection reveals structure; it does not by itself grant access.
+1. Find and confirm Look in frontend network requests before trying common /graphql, /api/graphql, /gql paths. A GraphiQL/Apollo UI may show history or schema documentation.
+POST /graphql HTTP/1.1 Host: ctf.invalid Content-Type: application/json {&#34;query&#34;:&#34;query { __typename }&#34;}Expected example: {&#34;data&#34;:{&#34;__typename&#34;:&#34;Query&#34;}}. A 200 OK response may still contain an errors array. GraphQL field errors can coexist with partial data.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/graphql/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="GraphQL · Schema to Resolver">
+  <meta property="og:description" content="GraphQL manual testing Endpoint → valid operation → schema → exact fields/arguments → resolver authorization. Introspection reveals structure; it does not by itself grant access.
+1. Find and confirm Look in frontend network requests before trying common /graphql, /api/graphql, /gql paths. A GraphiQL/Apollo UI may show history or schema documentation.
+POST /graphql HTTP/1.1 Host: ctf.invalid Content-Type: application/json {&#34;query&#34;:&#34;query { __typename }&#34;}Expected example: {&#34;data&#34;:{&#34;__typename&#34;:&#34;Query&#34;}}. A 200 OK response may still contain an errors array. GraphQL field errors can coexist with partial data.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="GraphQL · Schema to Resolver">
+  <meta itemprop="description" content="GraphQL manual testing Endpoint → valid operation → schema → exact fields/arguments → resolver authorization. Introspection reveals structure; it does not by itself grant access.
+1. Find and confirm Look in frontend network requests before trying common /graphql, /api/graphql, /gql paths. A GraphiQL/Apollo UI may show history or schema documentation.
+POST /graphql HTTP/1.1 Host: ctf.invalid Content-Type: application/json {&#34;query&#34;:&#34;query { __typename }&#34;}Expected example: {&#34;data&#34;:{&#34;__typename&#34;:&#34;Query&#34;}}. A 200 OK response may still contain an errors array. GraphQL field errors can coexist with partial data.">
+  <meta itemprop="wordCount" content="852">
+
+<title>GraphQL · Schema to Resolver • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/graphql/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="active" aria-current="page">GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>GraphQL · Schema to Resolver</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-find-and-confirm">1. Find and confirm</a></li>
+    <li><a href="#2-inspect-root-operation-names">2. Inspect root operation names</a></li>
+    <li><a href="#3-inspect-fields-arguments-and-wrappers">3. Inspect fields, arguments and wrappers</a></li>
+    <li><a href="#4-if-introspection-is-disabled">4. If introspection is disabled</a></li>
+    <li><a href="#5-authorization-through-direct-and-nested-resolvers">5. Authorization through direct and nested resolvers</a></li>
+    <li><a href="#6-global-node-ids">6. Global node IDs</a></li>
+    <li><a href="#7-variables-and-hidden-input-fields">7. Variables and hidden input fields</a></li>
+    <li><a href="#8-aliases-batching-and-per-operation-limits">8. Aliases, batching and per-operation limits</a></li>
+    <li><a href="#9-errors-and-neighboring-techniques">9. Errors and neighboring techniques</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="graphql-manual-testing">GraphQL manual testing<a class="anchor" href="#graphql-manual-testing"></a></h1>
+<p><strong>Endpoint → valid operation → schema → exact fields/arguments → resolver authorization.</strong> Introspection reveals structure; it does not by itself grant access.</p>
+<h2 id="1-find-and-confirm">1. Find and confirm<a class="anchor" href="#1-find-and-confirm"></a></h2>
+<p>Look in frontend network requests before trying common <code>/graphql</code>, <code>/api/graphql</code>, <code>/gql</code> paths. A GraphiQL/Apollo UI may show history or schema documentation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">POST</span> <span style="color:#8fbcbb">/graphql</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#81a1c1">:</span> application/json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;query&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;query { __typename }&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Expected example: <code>{&quot;data&quot;:{&quot;__typename&quot;:&quot;Query&quot;}}</code>. A <code>200 OK</code> response may still contain an <code>errors</code> array. GraphQL field errors can coexist with partial <code>data</code>.</p>
+<p>Raw GraphQL and JSON-wrapped requests are different transports. Some servers accept <code>application/graphql</code>; others accept only JSON. Follow a known working client request.</p>
+<h2 id="2-inspect-root-operation-names">2. Inspect root operation names<a class="anchor" href="#2-inspect-root-operation-names"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">__schema</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">query</span><span style="color:#8fbcbb">Type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">mutation</span><span style="color:#8fbcbb">Type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">subscription</span><span style="color:#8fbcbb">Type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Then list types:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">__schema</span> <span style="color:#eceff4">{</span> <span style="color:#81a1c1;font-weight:bold">type</span><span style="color:#8fbcbb">s</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">name</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">description</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Do not assume the query root is literally named <code>Query</code>; use the actual returned name.</p>
+<h2 id="3-inspect-fields-arguments-and-wrappers">3. Inspect fields, arguments and wrappers<a class="anchor" href="#3-inspect-fields-arguments-and-wrappers"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">__type</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">name</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;Query&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8fbcbb">fields</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">includeDeprecated</span><span style="color:#eceff4">:</span> <span style="color:#8fbcbb">true</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#8fbcbb">name</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#8fbcbb">args</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8fbcbb">name</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8fbcbb">defaultValue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#8fbcbb">ofType</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#8fbcbb">ofType</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#81a1c1;font-weight:bold">type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#8fbcbb">ofType</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#8fbcbb">ofType</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Replace <code>Query</code> with the root name from step 2. <code>NON_NULL</code> and <code>LIST</code> wrappers often have no <code>name</code>; follow <code>ofType</code>. Add more nested <code>ofType</code> levels if needed. Inspect returned object/input types by name:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">__type</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">name</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;User&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">fields</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">name</span> <span style="color:#81a1c1;font-weight:bold">type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">__type</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">name</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;UpdateUserInput&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8fbcbb">inputFields</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">name</span> <span style="color:#81a1c1;font-weight:bold">type</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#8fbcbb">ofType</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">kind</span> <span style="color:#8fbcbb">name</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>If this schema lacks those names, request returns null rather than discovering them automatically.</p>
+<h2 id="4-if-introspection-is-disabled">4. If introspection is disabled<a class="anchor" href="#4-if-introspection-is-disabled"></a></h2>
+<p>Use frontend operations, JS source maps, provided schema files, GraphiQL docs and validation errors. A typo can expose suggestions:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">usre</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">id</span> <span style="color:#eceff4">}</span> <span style="color:#eceff4">}</span></span></span></code></pre></div><p>Some servers suggest <code>user</code>; others suppress suggestions. This is a clue, not a complete enumeration strategy. Do not confuse <code>__typename</code> being available with full introspection being enabled. Persisted-query deployments may require known operation IDs; inspect client requests instead of assuming arbitrary queries are allowed.</p>
+<h2 id="5-authorization-through-direct-and-nested-resolvers">5. Authorization through direct and nested resolvers<a class="anchor" href="#5-authorization-through-direct-and-nested-resolvers"></a></h2>
+<p>Example only after enumerating matching fields:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">user</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">id</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;ACCOUNT_A_ID&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">id</span> <span style="color:#8fbcbb">username</span> <span style="color:#8fbcbb">privateNote</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Send using A&rsquo;s token, B&rsquo;s token and no token. Then test alternate paths to the same object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">project</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">id</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;A_PROJECT_ID&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8fbcbb">owner</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">id</span> <span style="color:#8fbcbb">username</span> <span style="color:#8fbcbb">privateNote</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>One root resolver can enforce access while a nested resolver leaks the same private field. The requested field must be intended private; normal public usernames are not enough to prove IDOR.</p>
+<h2 id="6-global-node-ids">6. Global node IDs<a class="anchor" href="#6-global-node-ids"></a></h2>
+<p>If the schema exposes <code>node(id: ID!)</code>, inspect actual IDs from your own objects. A Base64 ID may encode <code>User:12</code>; another may be an opaque UUID. Encoding is not access control.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">node</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">id</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;ENUMERATED_OR_ADAPTED_ID&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8fbcbb">__typename</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">...</span> <span style="color:#81a1c1;font-weight:bold">on</span> <span style="color:#8fbcbb">User</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">id</span> <span style="color:#8fbcbb">username</span> <span style="color:#8fbcbb">privateNote</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Inline fragments need a real schema type name and fields allowed on it. A null result can mean nonexistent object, wrong ID format, or authorization; compare known A/B IDs.</p>
+<h2 id="7-variables-and-hidden-input-fields">7. Variables and hidden input fields<a class="anchor" href="#7-variables-and-hidden-input-fields"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#88c0d0">POST</span> <span style="color:#8fbcbb">/graphql</span> <span style="color:#81a1c1;font-weight:bold">HTTP</span><span style="color:#81a1c1">/</span><span style="color:#b48ead">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#81a1c1">:</span> ctf.invalid
+</span></span><span style="display:flex;"><span>Authorization<span style="color:#81a1c1">:</span> Bearer YOUR_TOKEN
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#81a1c1">:</span> application/json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">{</span><span style="color:#81a1c1">&#34;query&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;mutation Change($input: UpdateUserInput!) { updateUser(input:$input) { id role } }&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;variables&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;input&#34;</span><span style="color:#eceff4">:{</span><span style="color:#81a1c1">&#34;displayName&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ctf-player&#34;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1">&#34;role&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;ADMIN&#34;</span><span style="color:#eceff4">}},</span><span style="color:#81a1c1">&#34;operationName&#34;</span><span style="color:#eceff4">:</span><span style="color:#a3be8c">&#34;Change&#34;</span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>All names above are schema-dependent. GraphQL usually rejects unknown input fields, so introspection or source is useful. Test only your own account and verify role through a protected backend action. A selectable <code>role</code> field is not automatically writable; enum values are case-sensitive.</p>
+<h2 id="8-aliases-batching-and-per-operation-limits">8. Aliases, batching and per-operation limits<a class="anchor" href="#8-aliases-batching-and-per-operation-limits"></a></h2>
+<p>A small comparison can show whether checks are applied per operation or only per HTTP request:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-graphql" data-lang="graphql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">query</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">mine</span><span style="color:#eceff4">:</span> <span style="color:#8fbcbb">user</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">id</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;ACCOUNT_B_ID&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">id</span> <span style="color:#8fbcbb">username</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8fbcbb">other</span><span style="color:#eceff4">:</span> <span style="color:#8fbcbb">user</span><span style="color:#eceff4">(</span><span style="color:#8fbcbb">id</span><span style="color:#eceff4">:</span> <span style="color:#a3be8c">&#34;ACCOUNT_A_ID&#34;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span> <span style="color:#8fbcbb">id</span> <span style="color:#8fbcbb">username</span> <span style="color:#8fbcbb">privateNote</span> <span style="color:#eceff4">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>Aliases rename response keys; they do not inherently bypass authorization. Some servers accept JSON arrays of operations, others reject HTTP batching. Keep manual comparisons small; large alias/depth tests may only exhaust resources and are not needed to prove an authorization flaw.</p>
+<p>A mutation document can contain multiple fields executed serially, but that is not a general concurrency/race primitive. Resolvers can still have independent state flaws; inspect actual response data and state.</p>
+<h2 id="9-errors-and-neighboring-techniques">9. Errors and neighboring techniques<a class="anchor" href="#9-errors-and-neighboring-techniques"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Error/result</th>
+          <th>Meaning / next step</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>Cannot query field ...</code></td>
+          <td>Wrong field/type; inspect schema/client</td>
+      </tr>
+      <tr>
+          <td><code>must have a selection of subfields</code></td>
+          <td>Object return needs <code>{ ... }</code></td>
+      </tr>
+      <tr>
+          <td><code>must not have a selection</code></td>
+          <td>Scalar/enum return; remove subfields</td>
+      </tr>
+      <tr>
+          <td>Variable type mismatch</td>
+          <td>Preserve ID/Int/String and non-null requirements</td>
+      </tr>
+      <tr>
+          <td><code>errors</code> plus partial <code>data</code></td>
+          <td>Check each returned field; don&rsquo;t compare status alone</td>
+      </tr>
+      <tr>
+          <td>Valid query but forbidden field</td>
+          <td>Resolver authorization active at that path</td>
+      </tr>
+      <tr>
+          <td>Query argument triggers SQL/URL/file behavior</td>
+          <td>Follow <a href="../sqli/">SQLi</a>, <a href="../ssrf/">SSRF</a> or <a href="../lfi-traversal/">LFI</a> at that resolver</td>
+      </tr>
+  </tbody>
+</table>
+<p>Cookie-authenticated GraphQL accepting form bodies or GET mutations may also introduce <a href="../csrf-cors/">CSRF</a>. A JSON-only route with enforced content type and preflight requirements is a different case.</p>
+<h2 id="tool-workflow">Tool workflow<a class="anchor" href="#tool-workflow"></a></h2>
+<p>Use <a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community Repeater</a> for paired manual requests. Keep the baseline in one tab and change one input in another. Browser-only behavior such as XSS, cookies and CORS still needs a real browser proof.</p>
+<h2 id="references">References<a class="anchor" href="#references"></a></h2>
+<p><a href="https://graphql.org/learn/introspection/">GraphQL introspection</a>, <a href="https://graphql.org/learn/serving-over-http/">GraphQL serving over HTTP</a>, <a href="https://graphql.org/learn/authorization/">GraphQL authorization</a>, <a href="https://graphql.org/learn/queries/">GraphQL operations</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/prototype-pollution/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Prototype Pollution · Source to Gadget</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/csrf-cors/" class="flex align-center">
+        <span>CSRF &amp; CORS · Send vs Read</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-find-and-confirm">1. Find and confirm</a></li>
+    <li><a href="#2-inspect-root-operation-names">2. Inspect root operation names</a></li>
+    <li><a href="#3-inspect-fields-arguments-and-wrappers">3. Inspect fields, arguments and wrappers</a></li>
+    <li><a href="#4-if-introspection-is-disabled">4. If introspection is disabled</a></li>
+    <li><a href="#5-authorization-through-direct-and-nested-resolvers">5. Authorization through direct and nested resolvers</a></li>
+    <li><a href="#6-global-node-ids">6. Global node IDs</a></li>
+    <li><a href="#7-variables-and-hidden-input-fields">7. Variables and hidden input fields</a></li>
+    <li><a href="#8-aliases-batching-and-per-operation-limits">8. Aliases, batching and per-operation limits</a></li>
+    <li><a href="#9-errors-and-neighboring-techniques">9. Errors and neighboring techniques</a></li>
+    <li><a href="#tool-workflow">Tool workflow</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

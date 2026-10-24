@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: raw byte inspection, file signatures, offsets and small patches.
+Run in: Windows GUI; installer or portable build.
+Walkthrough: inspect a suspicious file File → Open the artifact. Compare the first bytes with its claimed format. Search → Find → choose Text-string or Hex-values. Use Search → Goto to jump to a known offset. Inspect the data interpreter for selected integer/float values. Save edits as a separate working copy. File signatures to recognize Format Leading bytes PNG 89 50 4E 47 0D 0A 1A 0A JPEG FF D8 FF ZIP local header 50 4B 03 04 PDF 25 50 44 46 2D (%PDF-) ELF 7F 45 4C 46 Windows executable 4D 5A (MZ); verify the later PE header CTF: repair a known bad header Compare with the expected format → select the exact damaged bytes → overwrite in a copy → reopen with the relevant viewer/parser. A matching signature alone does not prove the rest of the file is valid.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/hxd/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="HxD">
+  <meta property="og:description" content="Use for: raw byte inspection, file signatures, offsets and small patches.
+Run in: Windows GUI; installer or portable build.
+Walkthrough: inspect a suspicious file File → Open the artifact. Compare the first bytes with its claimed format. Search → Find → choose Text-string or Hex-values. Use Search → Goto to jump to a known offset. Inspect the data interpreter for selected integer/float values. Save edits as a separate working copy. File signatures to recognize Format Leading bytes PNG 89 50 4E 47 0D 0A 1A 0A JPEG FF D8 FF ZIP local header 50 4B 03 04 PDF 25 50 44 46 2D (%PDF-) ELF 7F 45 4C 46 Windows executable 4D 5A (MZ); verify the later PE header CTF: repair a known bad header Compare with the expected format → select the exact damaged bytes → overwrite in a copy → reopen with the relevant viewer/parser. A matching signature alone does not prove the rest of the file is valid.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="HxD">
+  <meta itemprop="description" content="Use for: raw byte inspection, file signatures, offsets and small patches.
+Run in: Windows GUI; installer or portable build.
+Walkthrough: inspect a suspicious file File → Open the artifact. Compare the first bytes with its claimed format. Search → Find → choose Text-string or Hex-values. Use Search → Goto to jump to a known offset. Inspect the data interpreter for selected integer/float values. Save edits as a separate working copy. File signatures to recognize Format Leading bytes PNG 89 50 4E 47 0D 0A 1A 0A JPEG FF D8 FF ZIP local header 50 4B 03 04 PDF 25 50 44 46 2D (%PDF-) ELF 7F 45 4C 46 Windows executable 4D 5A (MZ); verify the later PE header CTF: repair a known bad header Compare with the expected format → select the exact damaged bytes → overwrite in a copy → reopen with the relevant viewer/parser. A matching signature alone does not prove the rest of the file is valid.">
+  <meta itemprop="wordCount" content="586">
+
+<title>HxD • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/hxd/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="active" aria-current="page">HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>HxD</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#walkthrough-inspect-a-suspicious-file">Walkthrough: inspect a suspicious file</a></li>
+    <li><a href="#file-signatures-to-recognize">File signatures to recognize</a></li>
+    <li><a href="#ctf-repair-a-known-bad-header">CTF: repair a known bad header</a></li>
+    <li><a href="#extract-a-byte-range">Extract a byte range</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-recover-an-appended-object">CTF: recover an appended object</a></li>
+    <li><a href="#ctf-repair-a-file-without-shifting-its-body">CTF: repair a file without shifting its body</a></li>
+    <li><a href="#ctf-interpret-a-numeric-field">CTF: interpret a numeric field</a></li>
+    <li><a href="#ctf-inspect-utf-16-text">CTF: inspect UTF-16 text</a></li>
+    <li><a href="#ctf-compare-a-known-good-reference">CTF: compare a known-good reference</a></li>
+    <li><a href="#gui-equivalents-of-common-cli-tasks">GUI equivalents of common CLI tasks</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">HxD</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> raw byte inspection, file signatures, offsets and small patches.<br>
+<strong>Run in:</strong> Windows GUI; installer or portable build.</p>
+<h2 id="walkthrough-inspect-a-suspicious-file">Walkthrough: inspect a suspicious file<a class="anchor" href="#walkthrough-inspect-a-suspicious-file"></a></h2>
+<ol>
+<li><strong>File → Open</strong> the artifact.</li>
+<li>Compare the first bytes with its claimed format.</li>
+<li><strong>Search → Find</strong> → choose <strong>Text-string</strong> or <strong>Hex-values</strong>.</li>
+<li>Use <strong>Search → Goto</strong> to jump to a known offset.</li>
+<li>Inspect the data interpreter for selected integer/float values.</li>
+<li>Save edits as a separate working copy.</li>
+</ol>
+<h2 id="file-signatures-to-recognize">File signatures to recognize<a class="anchor" href="#file-signatures-to-recognize"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Format</th>
+          <th>Leading bytes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>PNG</td>
+          <td><code>89 50 4E 47 0D 0A 1A 0A</code></td>
+      </tr>
+      <tr>
+          <td>JPEG</td>
+          <td><code>FF D8 FF</code></td>
+      </tr>
+      <tr>
+          <td>ZIP local header</td>
+          <td><code>50 4B 03 04</code></td>
+      </tr>
+      <tr>
+          <td>PDF</td>
+          <td><code>25 50 44 46 2D</code> (<code>%PDF-</code>)</td>
+      </tr>
+      <tr>
+          <td>ELF</td>
+          <td><code>7F 45 4C 46</code></td>
+      </tr>
+      <tr>
+          <td>Windows executable</td>
+          <td><code>4D 5A</code> (<code>MZ</code>); verify the later PE header</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ctf-repair-a-known-bad-header">CTF: repair a known bad header<a class="anchor" href="#ctf-repair-a-known-bad-header"></a></h2>
+<p>Compare with the expected format → select the exact damaged bytes → overwrite in a copy → reopen with the relevant viewer/parser. A matching signature alone does not prove the rest of the file is valid.</p>
+<h2 id="extract-a-byte-range">Extract a byte range<a class="anchor" href="#extract-a-byte-range"></a></h2>
+<p>Use <strong>Edit → Select block</strong> to enter an offset and length, copy the selected bytes into a new file, then save with an appropriate name.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Insert mode shifts later offsets; overwrite mode preserves file length.</li>
+<li>Distinguish hexadecimal and decimal offsets in dialogs.</li>
+<li>Endianness matters when interpreting multi-byte numbers.</li>
+<li>Changing PNG data can also require updating checksums.</li>
+</ul>
+<h2 id="ctf-recover-an-appended-object">CTF: recover an appended object<a class="anchor" href="#ctf-recover-an-appended-object"></a></h2>
+<ol>
+<li>Search for a suspected embedded header using <strong>Hex-values</strong>.</li>
+<li>Note the offset of every hit.</li>
+<li>Inspect whether a full structure follows that header.</li>
+<li>Use <strong>Select block</strong> with a validated start/length.</li>
+<li>Copy into a new file and save it separately.</li>
+<li>Open it with the relevant approved parser.</li>
+</ol>
+<p>A ZIP signature can appear inside ordinary compressed data. For a ZIP candidate, a parser that lists valid members is stronger evidence than the first four bytes alone.</p>
+<h2 id="ctf-repair-a-file-without-shifting-its-body">CTF: repair a file without shifting its body<a class="anchor" href="#ctf-repair-a-file-without-shifting-its-body"></a></h2>
+<p>Use overwrite mode for a damaged signature. Insert mode adds bytes and moves every later offset. Save a copy and compare its size and changed region with the original.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>before: ?? 50 4E 47 0D 0A 1A 0A ...
+</span></span><span style="display:flex;"><span>after:  89 50 4E 47 0D 0A 1A 0A ...</span></span></code></pre></div><p>This repairs only the first byte in the example. If internal lengths/checksums are wrong, the image may still fail to open.</p>
+<h2 id="ctf-interpret-a-numeric-field">CTF: interpret a numeric field<a class="anchor" href="#ctf-interpret-a-numeric-field"></a></h2>
+<p>Select exactly the bytes for the field and compare little/big-endian interpretations in the data interpreter. Validate the result against file size or another structural constraint. A decoded length larger than the entire file is a reason to revisit endianness, offset or field width.</p>
+<h2 id="ctf-inspect-utf-16-text">CTF: inspect UTF-16 text<a class="anchor" href="#ctf-inspect-utf-16-text"></a></h2>
+<p>When ASCII bytes alternate with zeroes, try a Unicode text search or inspect with <code>strings -e l</code> in WSL. Some Unicode characters use nonzero high bytes, so “every second byte is zero” is only a clue.</p>
+<h2 id="ctf-compare-a-known-good-reference">CTF: compare a known-good reference<a class="anchor" href="#ctf-compare-a-known-good-reference"></a></h2>
+<p>Open both files and use file comparison. Record changes by offset and length. Compare equivalent structures rather than assuming two different files must have identical headers beyond their format signature.</p>
+<h2 id="gui-equivalents-of-common-cli-tasks">GUI equivalents of common CLI tasks<a class="anchor" href="#gui-equivalents-of-common-cli-tasks"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>CLI concept</th>
+          <th>HxD operation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>xxd -s OFFSET</code></td>
+          <td>Goto offset</td>
+      </tr>
+      <tr>
+          <td><code>xxd -l LENGTH</code></td>
+          <td>Select a block of the desired length</td>
+      </tr>
+      <tr>
+          <td><code>xxd -r</code> patch</td>
+          <td>Overwrite selected bytes in a copy</td>
+      </tr>
+      <tr>
+          <td><code>strings</code> clue search</td>
+          <td>Text-string search with correct encoding</td>
+      </tr>
+      <tr>
+          <td>Carve a range</td>
+          <td>Select block → copy to new file</td>
+      </tr>
+  </tbody>
+</table>
+<p>HxD’s menus are not switches to append to a shell command. For repeatable scripting, use xxd/Python and record the exact offsets.</p>
+<p>Reference: <a href="https://mh-nexus.de/en/hxd/">HxD features and usage</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../steganograph-expl/png-jpeg/">PNG/JPEG structure</a></li>
+<li><a href="../../reversing-expl/strings-encodings/">Byte and encoding analysis</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/autopsy/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Autopsy</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/tshark/" class="flex align-center">
+        <span>TShark</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#walkthrough-inspect-a-suspicious-file">Walkthrough: inspect a suspicious file</a></li>
+    <li><a href="#file-signatures-to-recognize">File signatures to recognize</a></li>
+    <li><a href="#ctf-repair-a-known-bad-header">CTF: repair a known bad header</a></li>
+    <li><a href="#extract-a-byte-range">Extract a byte range</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-recover-an-appended-object">CTF: recover an appended object</a></li>
+    <li><a href="#ctf-repair-a-file-without-shifting-its-body">CTF: repair a file without shifting its body</a></li>
+    <li><a href="#ctf-interpret-a-numeric-field">CTF: interpret a numeric field</a></li>
+    <li><a href="#ctf-inspect-utf-16-text">CTF: inspect UTF-16 text</a></li>
+    <li><a href="#ctf-compare-a-known-good-reference">CTF: compare a known-good reference</a></li>
+    <li><a href="#gui-equivalents-of-common-cli-tasks">GUI equivalents of common CLI tasks</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

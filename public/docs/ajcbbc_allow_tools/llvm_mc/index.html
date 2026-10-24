@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: assembling instructions and decoding short byte sequences across architectures.
+Run in: WSL. Some distributions name the executable llvm-mc-VERSION.
+Inspect the installed targets llvm-mc --version llvm-mc --helpx86-64: instruction → bytes printf &#39;mov eax, 42\nret\n&#39; | llvm-mc \ --triple=x86_64-pc-linux-gnu --x86-asm-syntax=intel --show-encodingUse this to confirm a candidate instruction’s encoding while reading a CTF binary.
+x86-64: bytes → instruction printf &#39;0x90 0xc3\n&#39; | llvm-mc \ --triple=x86_64-pc-linux-gnu --disassemble --output-asm-variant=1The example decodes a NOP followed by RET. The disassembler input is textual hex bytes.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/llvm_mc/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="llvm-mc (LLVM tools)">
+  <meta property="og:description" content="Use for: assembling instructions and decoding short byte sequences across architectures.
+Run in: WSL. Some distributions name the executable llvm-mc-VERSION.
+Inspect the installed targets llvm-mc --version llvm-mc --helpx86-64: instruction → bytes printf &#39;mov eax, 42\nret\n&#39; | llvm-mc \ --triple=x86_64-pc-linux-gnu --x86-asm-syntax=intel --show-encodingUse this to confirm a candidate instruction’s encoding while reading a CTF binary.
+x86-64: bytes → instruction printf &#39;0x90 0xc3\n&#39; | llvm-mc \ --triple=x86_64-pc-linux-gnu --disassemble --output-asm-variant=1The example decodes a NOP followed by RET. The disassembler input is textual hex bytes.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="llvm-mc (LLVM tools)">
+  <meta itemprop="description" content="Use for: assembling instructions and decoding short byte sequences across architectures.
+Run in: WSL. Some distributions name the executable llvm-mc-VERSION.
+Inspect the installed targets llvm-mc --version llvm-mc --helpx86-64: instruction → bytes printf &#39;mov eax, 42\nret\n&#39; | llvm-mc \ --triple=x86_64-pc-linux-gnu --x86-asm-syntax=intel --show-encodingUse this to confirm a candidate instruction’s encoding while reading a CTF binary.
+x86-64: bytes → instruction printf &#39;0x90 0xc3\n&#39; | llvm-mc \ --triple=x86_64-pc-linux-gnu --disassemble --output-asm-variant=1The example decodes a NOP followed by RET. The disassembler input is textual hex bytes.">
+  <meta itemprop="wordCount" content="427">
+
+<title>llvm-mc (LLVM tools) • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/llvm_mc/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="active" aria-current="page">llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>llvm-mc (LLVM tools)</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#inspect-the-installed-targets">Inspect the installed targets</a></li>
+    <li><a href="#x86-64-instruction--bytes">x86-64: instruction → bytes</a></li>
+    <li><a href="#x86-64-bytes--instruction">x86-64: bytes → instruction</a></li>
+    <li><a href="#aarch64-encoding">AArch64 encoding</a></li>
+    <li><a href="#write-an-object-file">Write an object file</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#ctf-compare-instruction-encodings">CTF: compare instruction encodings</a></li>
+    <li><a href="#ctf-decode-several-candidate-byte-sequences">CTF: decode several candidate byte sequences</a></li>
+    <li><a href="#ctf-translate-syntax-for-reading">CTF: translate syntax for reading</a></li>
+    <li><a href="#cross-architecture-workflow">Cross-architecture workflow</a></li>
+    <li><a href="#common-failure-causes">Common failure causes</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">llvm-mc (LLVM tools)</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> assembling instructions and decoding short byte sequences across architectures.<br>
+<strong>Run in:</strong> WSL. Some distributions name the executable <code>llvm-mc-VERSION</code>.</p>
+<h2 id="inspect-the-installed-targets">Inspect the installed targets<a class="anchor" href="#inspect-the-installed-targets"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>llvm-mc --version
+</span></span><span style="display:flex;"><span>llvm-mc --help</span></span></code></pre></div><h2 id="x86-64-instruction--bytes">x86-64: instruction → bytes<a class="anchor" href="#x86-64-instruction--bytes"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#81a1c1">printf</span> <span style="color:#a3be8c">&#39;mov eax, 42\nret\n&#39;</span> <span style="color:#eceff4">|</span> llvm-mc <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --triple<span style="color:#81a1c1">=</span>x86_64-pc-linux-gnu --x86-asm-syntax<span style="color:#81a1c1">=</span>intel --show-encoding</span></span></code></pre></div><p>Use this to confirm a candidate instruction’s encoding while reading a CTF binary.</p>
+<h2 id="x86-64-bytes--instruction">x86-64: bytes → instruction<a class="anchor" href="#x86-64-bytes--instruction"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#81a1c1">printf</span> <span style="color:#a3be8c">&#39;0x90 0xc3\n&#39;</span> <span style="color:#eceff4">|</span> llvm-mc <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --triple<span style="color:#81a1c1">=</span>x86_64-pc-linux-gnu --disassemble --output-asm-variant<span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span></span></span></code></pre></div><p>The example decodes a NOP followed by RET. The disassembler input is textual hex bytes.</p>
+<h2 id="aarch64-encoding">AArch64 encoding<a class="anchor" href="#aarch64-encoding"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#81a1c1">printf</span> <span style="color:#a3be8c">&#39;mov x0, #42\nret\n&#39;</span> <span style="color:#eceff4">|</span> llvm-mc <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --triple<span style="color:#81a1c1">=</span>aarch64-linux-gnu --show-encoding</span></span></code></pre></div><h2 id="write-an-object-file">Write an object file<a class="anchor" href="#write-an-object-file"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>llvm-mc --triple<span style="color:#81a1c1">=</span>x86_64-pc-linux-gnu --filetype<span style="color:#81a1c1">=</span>obj input.s -o output.o
+</span></span><span style="display:flex;"><span>objdump -d -M intel output.o</span></span></code></pre></div><h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>An object file has headers and possibly relocations; it is not a raw byte blob.</li>
+<li>Match architecture, bitness, instruction mode and endianness.</li>
+<li>Some instructions need extra CPU features enabled.</li>
+<li>llvm-mc does not execute or emulate the instructions.</li>
+</ul>
+<h2 id="flags-explained">Flags explained<a class="anchor" href="#flags-explained"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Flag</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>--triple=TARGET</code></td>
+          <td>Select architecture/vendor/OS target</td>
+      </tr>
+      <tr>
+          <td><code>--x86-asm-syntax=intel</code></td>
+          <td>Parse Intel-style x86 input</td>
+      </tr>
+      <tr>
+          <td><code>--show-encoding</code></td>
+          <td>Print emitted instruction bytes</td>
+      </tr>
+      <tr>
+          <td><code>--disassemble</code></td>
+          <td>Interpret text byte values as machine instructions</td>
+      </tr>
+      <tr>
+          <td><code>--output-asm-variant=1</code></td>
+          <td>Select Intel-style output for x86</td>
+      </tr>
+      <tr>
+          <td><code>--filetype=obj</code></td>
+          <td>Write a relocatable object file</td>
+      </tr>
+      <tr>
+          <td><code>-o FILE</code></td>
+          <td>Set the output filename</td>
+      </tr>
+      <tr>
+          <td><code>--version</code></td>
+          <td>Print version and available targets</td>
+      </tr>
+  </tbody>
+</table>
+<p>The target must match the challenge. Selecting x86-64 does not correctly decode a 32-bit instruction stream in every case.</p>
+<h2 id="ctf-compare-instruction-encodings">CTF: compare instruction encodings<a class="anchor" href="#ctf-compare-instruction-encodings"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#81a1c1">printf</span> <span style="color:#a3be8c">&#39;xor eax, eax\nret\n&#39;</span> <span style="color:#eceff4">|</span> llvm-mc <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --triple<span style="color:#81a1c1">=</span>x86_64-pc-linux-gnu --x86-asm-syntax<span style="color:#81a1c1">=</span>intel --show-encoding</span></span></code></pre></div><p>Use encoding output to check the bytes seen in a disassembler or to understand a small local patch. Replacing instructions also requires respecting their original total length and surrounding control flow.</p>
+<h2 id="ctf-decode-several-candidate-byte-sequences">CTF: decode several candidate byte sequences<a class="anchor" href="#ctf-decode-several-candidate-byte-sequences"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#81a1c1">printf</span> <span style="color:#a3be8c">&#39;0x31 0xc0 0xc3\n&#39;</span> <span style="color:#eceff4">|</span> llvm-mc <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --triple<span style="color:#81a1c1">=</span>x86_64-pc-linux-gnu --disassemble --output-asm-variant<span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span></span></span></code></pre></div><p>This decodes <code>xor eax,eax; ret</code> in the specified mode. A valid decoding does not establish that those bytes execute in the target.</p>
+<h2 id="ctf-translate-syntax-for-reading">CTF: translate syntax for reading<a class="anchor" href="#ctf-translate-syntax-for-reading"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># AT&amp;T input by default, Intel display variant for x86 output</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">printf</span> <span style="color:#a3be8c">&#39;movl $42, %%eax\nretq\n&#39;</span> <span style="color:#eceff4">|</span> llvm-mc <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --triple<span style="color:#81a1c1">=</span>x86_64-pc-linux-gnu --output-asm-variant<span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span></span></span></code></pre></div><p>The doubled <code>%%</code> belongs to shell <code>printf</code>, which emits a literal <code>%</code>. Assembly source files would use <code>%eax</code> directly.</p>
+<h2 id="cross-architecture-workflow">Cross-architecture workflow<a class="anchor" href="#cross-architecture-workflow"></a></h2>
+<ol>
+<li>Identify architecture, bitness and endianness from the artifact.</li>
+<li>Check that <code>llvm-mc --version</code> lists an appropriate target.</li>
+<li>Assemble/decode a short known instruction first.</li>
+<li>Inspect only a bounded suspect sequence.</li>
+<li>Move to Ghidra or a supported debugger for control/data flow.</li>
+</ol>
+<h2 id="common-failure-causes">Common failure causes<a class="anchor" href="#common-failure-causes"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Symptom</th>
+          <th>Likely check</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Unknown instruction</td>
+          <td>Wrong syntax, target or missing CPU feature</td>
+      </tr>
+      <tr>
+          <td>Unexpected disassembly</td>
+          <td>Wrong bitness/endianness or decoding data</td>
+      </tr>
+      <tr>
+          <td>Object bytes include extra headers</td>
+          <td>Object output is not a raw shellcode blob</td>
+      </tr>
+      <tr>
+          <td>Address-relative instruction differs</td>
+          <td>Relocation/link context</td>
+      </tr>
+  </tbody>
+</table>
+<p>Reference: <a href="https://llvm.org/docs/CommandGuide/llvm-mc.html">LLVM llvm-mc manual</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../reversing-expl/static-analysis/">Architecture and static analysis</a></li>
+<li><a href="../../reversing-expl/python-snippets/">Byte transforms</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/qpdf/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>qpdf</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/xxd/" class="flex align-center">
+        <span>xxd</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#inspect-the-installed-targets">Inspect the installed targets</a></li>
+    <li><a href="#x86-64-instruction--bytes">x86-64: instruction → bytes</a></li>
+    <li><a href="#x86-64-bytes--instruction">x86-64: bytes → instruction</a></li>
+    <li><a href="#aarch64-encoding">AArch64 encoding</a></li>
+    <li><a href="#write-an-object-file">Write an object file</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained">Flags explained</a></li>
+    <li><a href="#ctf-compare-instruction-encodings">CTF: compare instruction encodings</a></li>
+    <li><a href="#ctf-decode-several-candidate-byte-sequences">CTF: decode several candidate byte sequences</a></li>
+    <li><a href="#ctf-translate-syntax-for-reading">CTF: translate syntax for reading</a></li>
+    <li><a href="#cross-architecture-workflow">Cross-architecture workflow</a></li>
+    <li><a href="#common-failure-causes">Common failure causes</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

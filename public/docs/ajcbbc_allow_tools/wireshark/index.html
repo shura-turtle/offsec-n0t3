@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: PCAP triage, conversations, file transfers, protocol inspection.
+Run in: Windows GUI. Use TShark for CLI extraction.
+First pass File → Open the capture. Check Statistics → Protocol Hierarchy, Endpoints, and Conversations. Apply a display filter in the top bar. Right click a relevant packet → Follow → TCP Stream or UDP Stream. Record the stream number and packet numbers. Display filters http http.request http.request.method == &#34;POST&#34; http.request.uri contains &#34;flag&#34; dns dns.qry.name contains &#34;example&#34; ip.addr == 192.0.2.10 tcp.port == 8080 tcp.stream eq 0 udp.stream eq 0 frame contains &#34;flag&#34; tls.handshake.extensions_server_nameframe contains searches packet bytes; reassembled content may require following the stream.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/wireshark/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Wireshark">
+  <meta property="og:description" content="Use for: PCAP triage, conversations, file transfers, protocol inspection.
+Run in: Windows GUI. Use TShark for CLI extraction.
+First pass File → Open the capture. Check Statistics → Protocol Hierarchy, Endpoints, and Conversations. Apply a display filter in the top bar. Right click a relevant packet → Follow → TCP Stream or UDP Stream. Record the stream number and packet numbers. Display filters http http.request http.request.method == &#34;POST&#34; http.request.uri contains &#34;flag&#34; dns dns.qry.name contains &#34;example&#34; ip.addr == 192.0.2.10 tcp.port == 8080 tcp.stream eq 0 udp.stream eq 0 frame contains &#34;flag&#34; tls.handshake.extensions_server_nameframe contains searches packet bytes; reassembled content may require following the stream.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Wireshark">
+  <meta itemprop="description" content="Use for: PCAP triage, conversations, file transfers, protocol inspection.
+Run in: Windows GUI. Use TShark for CLI extraction.
+First pass File → Open the capture. Check Statistics → Protocol Hierarchy, Endpoints, and Conversations. Apply a display filter in the top bar. Right click a relevant packet → Follow → TCP Stream or UDP Stream. Record the stream number and packet numbers. Display filters http http.request http.request.method == &#34;POST&#34; http.request.uri contains &#34;flag&#34; dns dns.qry.name contains &#34;example&#34; ip.addr == 192.0.2.10 tcp.port == 8080 tcp.stream eq 0 udp.stream eq 0 frame contains &#34;flag&#34; tls.handshake.extensions_server_nameframe contains searches packet bytes; reassembled content may require following the stream.">
+  <meta itemprop="wordCount" content="621">
+
+<title>Wireshark • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/wireshark/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="active" aria-current="page">Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Wireshark</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#first-pass">First pass</a></li>
+    <li><a href="#display-filters">Display filters</a></li>
+    <li><a href="#walkthrough-recover-an-http-download">Walkthrough: recover an HTTP download</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-reconstruct-a-plaintext-conversation">CTF: reconstruct a plaintext conversation</a></li>
+    <li><a href="#ctf-dns-tunnel-clues">CTF: DNS tunnel clues</a></li>
+    <li><a href="#ctf-nonstandard-http-port">CTF: nonstandard HTTP port</a></li>
+    <li><a href="#ctf-ftp-and-mail-traffic">CTF: FTP and mail traffic</a></li>
+    <li><a href="#ctf-find-tls-host-clues">CTF: find TLS host clues</a></li>
+    <li><a href="#ctf-inspect-missingrepeated-data">CTF: inspect missing/repeated data</a></li>
+    <li><a href="#decode-values-from-individual-fields">Decode values from individual fields</a></li>
+    <li><a href="#gui-filter-syntax-versus-cli-flags">GUI filter syntax versus CLI flags</a></li>
+    <li><a href="#suggested-investigation-record">Suggested investigation record</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Wireshark</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> PCAP triage, conversations, file transfers, protocol inspection.<br>
+<strong>Run in:</strong> Windows GUI. Use <a href="../tshark/">TShark</a> for CLI extraction.</p>
+<h2 id="first-pass">First pass<a class="anchor" href="#first-pass"></a></h2>
+<ol>
+<li><strong>File → Open</strong> the capture.</li>
+<li>Check <strong>Statistics → Protocol Hierarchy</strong>, <strong>Endpoints</strong>, and <strong>Conversations</strong>.</li>
+<li>Apply a display filter in the top bar.</li>
+<li>Right click a relevant packet → <strong>Follow → TCP Stream</strong> or <strong>UDP Stream</strong>.</li>
+<li>Record the stream number and packet numbers.</li>
+</ol>
+<h2 id="display-filters">Display filters<a class="anchor" href="#display-filters"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>http
+</span></span><span style="display:flex;"><span>http.request
+</span></span><span style="display:flex;"><span>http.request.method == &#34;POST&#34;
+</span></span><span style="display:flex;"><span>http.request.uri contains &#34;flag&#34;
+</span></span><span style="display:flex;"><span>dns
+</span></span><span style="display:flex;"><span>dns.qry.name contains &#34;example&#34;
+</span></span><span style="display:flex;"><span>ip.addr == 192.0.2.10
+</span></span><span style="display:flex;"><span>tcp.port == 8080
+</span></span><span style="display:flex;"><span>tcp.stream eq 0
+</span></span><span style="display:flex;"><span>udp.stream eq 0
+</span></span><span style="display:flex;"><span>frame contains &#34;flag&#34;
+</span></span><span style="display:flex;"><span>tls.handshake.extensions_server_name</span></span></code></pre></div><p><code>frame contains</code> searches packet bytes; reassembled content may require following the stream.</p>
+<h2 id="walkthrough-recover-an-http-download">Walkthrough: recover an HTTP download<a class="anchor" href="#walkthrough-recover-an-http-download"></a></h2>
+<ol>
+<li>Filter <code>http</code> and locate the request/response.</li>
+<li><strong>File → Export Objects → HTTP</strong>.</li>
+<li>Select the object and save it into your output folder.</li>
+<li>Inspect it with the appropriate approved tool.</li>
+</ol>
+<p>For encrypted TLS, use <strong>Preferences → Protocols → TLS → (Pre)-Master-Secret log filename</strong> only when matching secrets are provided. A server private key alone does not generally decrypt modern TLS.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Capture filter: <code>host 192.0.2.10</code>. Display filter: <code>ip.addr == 192.0.2.10</code>.</li>
+<li>No HTTP results? Check the port and <strong>Analyze → Decode As</strong>.</li>
+<li>Missing packets or a truncated capture can prevent reassembly.</li>
+</ul>
+<h2 id="ctf-reconstruct-a-plaintext-conversation">CTF: reconstruct a plaintext conversation<a class="anchor" href="#ctf-reconstruct-a-plaintext-conversation"></a></h2>
+<ol>
+<li>Sort <strong>Conversations</strong> by bytes or duration to find candidates.</li>
+<li>Select a packet and follow its stream.</li>
+<li>Inspect both directions; requests and replies can contain separate clues.</li>
+<li>Switch display between ASCII, hex and raw as needed.</li>
+<li>Save the relevant stream, noting whether both directions or one direction was selected.</li>
+<li>Decode embedded Base64/hex separately in CyberChef.</li>
+</ol>
+<p>For file recovery, prefer <strong>Export Objects</strong> when a protocol exporter exists. A raw bidirectional stream can mix control messages and transferred bytes.</p>
+<h2 id="ctf-dns-tunnel-clues">CTF: DNS tunnel clues<a class="anchor" href="#ctf-dns-tunnel-clues"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>dns.flags.response == 0
+</span></span><span style="display:flex;"><span>dns.qry.type == 16
+</span></span><span style="display:flex;"><span>dns.qry.name contains &#34;challenge.example&#34;</span></span></code></pre></div><p>Inspect long labels, repeated suffixes and response TXT data. Record timestamps and packet numbers. Labels may contain sequence counters, retransmissions and encoding chunks; concatenate only after establishing their format and order.</p>
+<h2 id="ctf-nonstandard-http-port">CTF: nonstandard HTTP port<a class="anchor" href="#ctf-nonstandard-http-port"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>tcp.port == 8081</span></span></code></pre></div><p>If payload bytes look like HTTP but Wireshark does not decode it, select a packet → <strong>Analyze → Decode As</strong> → choose HTTP for the relevant port. Then retry <code>http.request</code> and object export. Do not force a decoder without inspecting the bytes.</p>
+<h2 id="ctf-ftp-and-mail-traffic">CTF: FTP and mail traffic<a class="anchor" href="#ctf-ftp-and-mail-traffic"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ftp
+</span></span><span style="display:flex;"><span>ftp-data
+</span></span><span style="display:flex;"><span>smtp || pop || imap</span></span></code></pre></div><p>Follow control sessions to identify login exchanges and transfer names. FTP data can be on a separate connection. MIME mail attachments can require content-transfer decoding after reconstructing the message.</p>
+<h2 id="ctf-find-tls-host-clues">CTF: find TLS host clues<a class="anchor" href="#ctf-find-tls-host-clues"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>tls.handshake.type == 1
+</span></span><span style="display:flex;"><span>tls.handshake.extensions_server_name</span></span></code></pre></div><p>An observed ClientHello can reveal an SNI hostname. Missing SNI may reflect a partial capture, protocol changes or encrypted client hello; it does not prove no hostname exists.</p>
+<h2 id="ctf-inspect-missingrepeated-data">CTF: inspect missing/repeated data<a class="anchor" href="#ctf-inspect-missingrepeated-data"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>tcp.analysis.retransmission
+</span></span><span style="display:flex;"><span>tcp.analysis.out_of_order
+</span></span><span style="display:flex;"><span>tcp.analysis.lost_segment
+</span></span><span style="display:flex;"><span>tcp.flags.reset == 1</span></span></code></pre></div><p>These are analysis indicators. Capture location and packet ordering can produce apparent anomalies. When bytes are missing, document that limitation before treating a recovered file as complete.</p>
+<h2 id="decode-values-from-individual-fields">Decode values from individual fields<a class="anchor" href="#decode-values-from-individual-fields"></a></h2>
+<p>Click a field in the packet details → inspect selected bytes → copy its value or bytes. A displayed decimal number, hex string and wire bytes can represent the same value differently. Use the protocol’s documented endianness.</p>
+<h2 id="gui-filter-syntax-versus-cli-flags">GUI filter syntax versus CLI flags<a class="anchor" href="#gui-filter-syntax-versus-cli-flags"></a></h2>
+<p>Wireshark’s filter bar takes expressions, not switches such as <code>-r</code>. Use <a href="../tshark/">TShark</a> for command-line flags. In <code>tcp.stream eq 3</code>, <code>eq</code> means equality and <code>3</code> is the stream index. <code>&amp;&amp;</code> / <code>and</code> combines conditions; <code>||</code> / <code>or</code> accepts either condition.</p>
+<h2 id="suggested-investigation-record">Suggested investigation record<a class="anchor" href="#suggested-investigation-record"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>capture: traffic.pcapng
+</span></span><span style="display:flex;"><span>question: &lt;what the challenge asks&gt;
+</span></span><span style="display:flex;"><span>filter: &lt;exact expression&gt;
+</span></span><span style="display:flex;"><span>stream: &lt;index and protocol&gt;
+</span></span><span style="display:flex;"><span>frames: &lt;relevant packet numbers&gt;
+</span></span><span style="display:flex;"><span>recovered file: &lt;path + hash&gt;
+</span></span><span style="display:flex;"><span>decode steps: &lt;ordered recipe&gt;
+</span></span><span style="display:flex;"><span>remaining limitation: &lt;missing packets / encryption / none known&gt;</span></span></code></pre></div><p>References: <a href="https://www.wireshark.org/docs/wsug_html_chunked/">Wireshark User’s Guide</a>, <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html">TCP analysis</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../network-expl/packet-triage/">Packet triage</a></li>
+<li><a href="../../network-expl/http-streams/">HTTP and stream recovery</a></li>
+<li><a href="../../network-expl/wifi/">Wi-Fi captures</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/cyberchef/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>CyberChef</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="flex align-center">
+        <span>PDF Viewer</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#first-pass">First pass</a></li>
+    <li><a href="#display-filters">Display filters</a></li>
+    <li><a href="#walkthrough-recover-an-http-download">Walkthrough: recover an HTTP download</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-reconstruct-a-plaintext-conversation">CTF: reconstruct a plaintext conversation</a></li>
+    <li><a href="#ctf-dns-tunnel-clues">CTF: DNS tunnel clues</a></li>
+    <li><a href="#ctf-nonstandard-http-port">CTF: nonstandard HTTP port</a></li>
+    <li><a href="#ctf-ftp-and-mail-traffic">CTF: FTP and mail traffic</a></li>
+    <li><a href="#ctf-find-tls-host-clues">CTF: find TLS host clues</a></li>
+    <li><a href="#ctf-inspect-missingrepeated-data">CTF: inspect missing/repeated data</a></li>
+    <li><a href="#decode-values-from-individual-fields">Decode values from individual fields</a></li>
+    <li><a href="#gui-filter-syntax-versus-cli-flags">GUI filter syntax versus CLI flags</a></li>
+    <li><a href="#suggested-investigation-record">Suggested investigation record</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

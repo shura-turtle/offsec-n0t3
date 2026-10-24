@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: disk image browsing, deleted files, browser history and timelines.
+Run in: Windows GUI. Uses The Sleuth Kit and additional ingest modules.
+Walkthrough: investigate a disk image New Case → choose a case name and a separate output directory. Add Data Source → Disk Image or VM File → select the artifact. Set the source timezone from the challenge information. Select relevant ingest modules and start processing. Browse Data Sources, Views, and Results as results appear. Search the expected flag prefix and challenge keywords. Export useful files with Extract File(s) and record their source paths. Where to look Question Useful view/module What was deleted? Deleted file entries / filesystem views What did the user browse? Recent Activity / web artifacts Is a file extension misleading? File Type Identification / Extension Mismatch What happened at a given time? Timeline Is there hidden text or a named secret? Keyword Search Is an archive/document carrying another file? Embedded File Extraction Fast CTF workflow Start with likely user folders, downloads and deleted entries. Add focused searches while ingest runs. Correlate a hit with its full path, timestamps and neighboring artifacts.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/autopsy/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Autopsy">
+  <meta property="og:description" content="Use for: disk image browsing, deleted files, browser history and timelines.
+Run in: Windows GUI. Uses The Sleuth Kit and additional ingest modules.
+Walkthrough: investigate a disk image New Case → choose a case name and a separate output directory. Add Data Source → Disk Image or VM File → select the artifact. Set the source timezone from the challenge information. Select relevant ingest modules and start processing. Browse Data Sources, Views, and Results as results appear. Search the expected flag prefix and challenge keywords. Export useful files with Extract File(s) and record their source paths. Where to look Question Useful view/module What was deleted? Deleted file entries / filesystem views What did the user browse? Recent Activity / web artifacts Is a file extension misleading? File Type Identification / Extension Mismatch What happened at a given time? Timeline Is there hidden text or a named secret? Keyword Search Is an archive/document carrying another file? Embedded File Extraction Fast CTF workflow Start with likely user folders, downloads and deleted entries. Add focused searches while ingest runs. Correlate a hit with its full path, timestamps and neighboring artifacts.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Autopsy">
+  <meta itemprop="description" content="Use for: disk image browsing, deleted files, browser history and timelines.
+Run in: Windows GUI. Uses The Sleuth Kit and additional ingest modules.
+Walkthrough: investigate a disk image New Case → choose a case name and a separate output directory. Add Data Source → Disk Image or VM File → select the artifact. Set the source timezone from the challenge information. Select relevant ingest modules and start processing. Browse Data Sources, Views, and Results as results appear. Search the expected flag prefix and challenge keywords. Export useful files with Extract File(s) and record their source paths. Where to look Question Useful view/module What was deleted? Deleted file entries / filesystem views What did the user browse? Recent Activity / web artifacts Is a file extension misleading? File Type Identification / Extension Mismatch What happened at a given time? Timeline Is there hidden text or a named secret? Keyword Search Is an archive/document carrying another file? Embedded File Extraction Fast CTF workflow Start with likely user folders, downloads and deleted entries. Add focused searches while ingest runs. Correlate a hit with its full path, timestamps and neighboring artifacts.">
+  <meta itemprop="wordCount" content="594">
+
+<title>Autopsy • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/autopsy/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="active" aria-current="page">Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Autopsy</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#walkthrough-investigate-a-disk-image">Walkthrough: investigate a disk image</a></li>
+    <li><a href="#where-to-look">Where to look</a></li>
+    <li><a href="#fast-ctf-workflow">Fast CTF workflow</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-recover-a-deleted-document">CTF: recover a deleted document</a></li>
+    <li><a href="#ctf-reconstruct-browsing-activity">CTF: reconstruct browsing activity</a></li>
+    <li><a href="#ctf-identify-a-disguised-file">CTF: identify a disguised file</a></li>
+    <li><a href="#ctf-timeline-investigation">CTF: timeline investigation</a></li>
+    <li><a href="#tune-keyword-searches">Tune keyword searches</a></li>
+    <li><a href="#ingest-choices-under-tournament-time-limits">Ingest choices under tournament time limits</a></li>
+    <li><a href="#gui-action-versus-cli-flag">GUI action versus CLI flag</a></li>
+    <li><a href="#what-to-save-with-a-finding">What to save with a finding</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Autopsy</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> disk image browsing, deleted files, browser history and timelines.<br>
+<strong>Run in:</strong> Windows GUI. Uses The Sleuth Kit and additional ingest modules.</p>
+<h2 id="walkthrough-investigate-a-disk-image">Walkthrough: investigate a disk image<a class="anchor" href="#walkthrough-investigate-a-disk-image"></a></h2>
+<ol>
+<li><strong>New Case</strong> → choose a case name and a separate output directory.</li>
+<li><strong>Add Data Source → Disk Image or VM File</strong> → select the artifact.</li>
+<li>Set the source timezone from the challenge information.</li>
+<li>Select relevant ingest modules and start processing.</li>
+<li>Browse <strong>Data Sources</strong>, <strong>Views</strong>, and <strong>Results</strong> as results appear.</li>
+<li>Search the expected flag prefix and challenge keywords.</li>
+<li>Export useful files with <strong>Extract File(s)</strong> and record their source paths.</li>
+</ol>
+<h2 id="where-to-look">Where to look<a class="anchor" href="#where-to-look"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Question</th>
+          <th>Useful view/module</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>What was deleted?</td>
+          <td>Deleted file entries / filesystem views</td>
+      </tr>
+      <tr>
+          <td>What did the user browse?</td>
+          <td>Recent Activity / web artifacts</td>
+      </tr>
+      <tr>
+          <td>Is a file extension misleading?</td>
+          <td>File Type Identification / Extension Mismatch</td>
+      </tr>
+      <tr>
+          <td>What happened at a given time?</td>
+          <td>Timeline</td>
+      </tr>
+      <tr>
+          <td>Is there hidden text or a named secret?</td>
+          <td>Keyword Search</td>
+      </tr>
+      <tr>
+          <td>Is an archive/document carrying another file?</td>
+          <td>Embedded File Extraction</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="fast-ctf-workflow">Fast CTF workflow<a class="anchor" href="#fast-ctf-workflow"></a></h2>
+<p>Start with likely user folders, downloads and deleted entries. Add focused searches while ingest runs. Correlate a hit with its full path, timestamps and neighboring artifacts.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Some results appear only after the relevant ingest module completes.</li>
+<li>A keyword hit can come from metadata or an unrelated context.</li>
+<li>Preserve the original image and export recovered files separately.</li>
+<li>Use the tournament’s permitted modules; do not add AI/ML components.</li>
+</ul>
+<p>For CLI recovery see <a href="../sleuth_kit/">The Sleuth Kit</a>.</p>
+<h2 id="ctf-recover-a-deleted-document">CTF: recover a deleted document<a class="anchor" href="#ctf-recover-a-deleted-document"></a></h2>
+<ol>
+<li>Identify the likely user/profile folder.</li>
+<li>Inspect deleted filesystem entries and filename searches.</li>
+<li>Preview candidates in text/hex views.</li>
+<li>Extract the file to a separate directory.</li>
+<li>Check whether it opens and whether its contents match the question.</li>
+<li>Preserve the original path, deletion state and metadata address if available.</li>
+</ol>
+<p>Recovery can be partial when clusters are overwritten. A recovered filename and a recovered complete file are different outcomes.</p>
+<h2 id="ctf-reconstruct-browsing-activity">CTF: reconstruct browsing activity<a class="anchor" href="#ctf-reconstruct-browsing-activity"></a></h2>
+<p>Use Recent Activity/web results to identify URLs, downloads and time windows. Follow a suspicious download to its filesystem artifact. Browser-history entries do not necessarily show that a user viewed all page content; correlate with other traces.</p>
+<h2 id="ctf-identify-a-disguised-file">CTF: identify a disguised file<a class="anchor" href="#ctf-identify-a-disguised-file"></a></h2>
+<p>Compare the filename extension with detected file type. Export a mismatch candidate and inspect its magic bytes in HxD/xxd. The extension mismatch module helps prioritize; a deliberate extension change does not itself explain the hidden content.</p>
+<h2 id="ctf-timeline-investigation">CTF: timeline investigation<a class="anchor" href="#ctf-timeline-investigation"></a></h2>
+<p>Start with a known event or narrow time window from the statement. Filter by path/artifact type, then correlate created/modified/accessed observations. Record the source timezone and whether the interface converts display times.</p>
+<h2 id="tune-keyword-searches">Tune keyword searches<a class="anchor" href="#tune-keyword-searches"></a></h2>
+<p>Search the actual tournament prefix, a distinctive username, a document title, a URL fragment or the name of an expected secret. Inspect hit context and source location. Whole-disk “password” hits can be numerous; narrower evidence-based queries are more useful.</p>
+<h2 id="ingest-choices-under-tournament-time-limits">Ingest choices under tournament time limits<a class="anchor" href="#ingest-choices-under-tournament-time-limits"></a></h2>
+<p>Choose modules based on the question: filesystem and keyword analysis for a missing document, Recent Activity for user behavior, and embedded file processing for archives/documents. You can inspect available filesystem data while longer ingest work continues.</p>
+<h2 id="gui-action-versus-cli-flag">GUI action versus CLI flag<a class="anchor" href="#gui-action-versus-cli-flag"></a></h2>
+<p>Autopsy’s data source settings and ingest checkboxes are GUI choices. They do not share fls/icat switches. For repeatable command-line recovery, the equivalent sequence is <code>mmls</code> → <code>fls</code> → <code>icat</code>; see <a href="../sleuth_kit/">The Sleuth Kit</a> for each option’s meaning.</p>
+<h2 id="what-to-save-with-a-finding">What to save with a finding<a class="anchor" href="#what-to-save-with-a-finding"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>case / image: &lt;name and hash&gt;
+</span></span><span style="display:flex;"><span>source item: &lt;path or artifact record&gt;
+</span></span><span style="display:flex;"><span>view/search: &lt;exact place and keyword&gt;
+</span></span><span style="display:flex;"><span>time basis: &lt;timezone and timestamp type&gt;
+</span></span><span style="display:flex;"><span>exported file: &lt;path and hash&gt;
+</span></span><span style="display:flex;"><span>conclusion: &lt;what this directly shows&gt;</span></span></code></pre></div><p>Reference: <a href="https://sleuthkit.org/autopsy/docs/user-docs/4.22.0/">Autopsy user documentation</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../steganograph-expl/triage/">Artifact triage</a></li>
+<li><a href="../../steganograph-expl/archives-carving/">Archive/carving workflow</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/x64dbg/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>x64dbg</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/hxd/" class="flex align-center">
+        <span>HxD</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#walkthrough-investigate-a-disk-image">Walkthrough: investigate a disk image</a></li>
+    <li><a href="#where-to-look">Where to look</a></li>
+    <li><a href="#fast-ctf-workflow">Fast CTF workflow</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-recover-a-deleted-document">CTF: recover a deleted document</a></li>
+    <li><a href="#ctf-reconstruct-browsing-activity">CTF: reconstruct browsing activity</a></li>
+    <li><a href="#ctf-identify-a-disguised-file">CTF: identify a disguised file</a></li>
+    <li><a href="#ctf-timeline-investigation">CTF: timeline investigation</a></li>
+    <li><a href="#tune-keyword-searches">Tune keyword searches</a></li>
+    <li><a href="#ingest-choices-under-tournament-time-limits">Ingest choices under tournament time limits</a></li>
+    <li><a href="#gui-action-versus-cli-flag">GUI action versus CLI flag</a></li>
+    <li><a href="#what-to-save-with-a-finding">What to save with a finding</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

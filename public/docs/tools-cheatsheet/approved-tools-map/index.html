@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Existing Tools → Challenge Workflows This map links your existing 39 AJCBBC tool notes to the new technique collections. It describes use, not an expanded competition allowlist. Optional dependencies/plugins remain subject to event rules.
+Decode, inspect, and prepare Tool Start with it when Workflow CyberChef Encodings, XOR, compression, supplied crypto parameters Visual recipes Python 3 Repeat a byte transformation or decode structured data Snippet library uv Prepare a permitted isolated Python dependency environment Reversing helpers WSL Run Linux CLI tools from Windows All CLI workflows; mind Windows/WSL paths Notepad&#43;&#43; Inspect text, encodings, line endings and regex matches Unicode/text HxD Inspect offsets, signatures, byte changes File triage xxd Reversible byte/hex inspection Reversing strings strings Fast ASCII/UTF-16 string triage Static analysis xz XZ/LZMA archive/container clue Archives/carving Web Tool Start with it when Workflow Chrome Inspect requests, DOM, JS, storage, WebSocket messages First 10 minutes Burp Community Capture/replay exact HTTP parameters and compare responses Web payload index jq Inspect API JSON and structured exports GraphQL / NoSQL Network and protocol analysis Tool Start with it when Workflow OpenVPN Client Challenge requires the supplied VPN Establish access first; preserve route details Wireshark Explore packet conversations and follow streams Packet triage TShark Repeat filters, export fields/objects HTTP extraction Zeek Summarize PCAP sessions at scale Protocol overview OpenSSL Inspect certs/keys or explicit crypto parameters TLS / SSH cannelloni Challenge provides a CAN-over-UDP tunnel CAN bus can-utils Inspect/replay an authorized CAN interface/log CAN bus Images, documents, archives Tool Start with it when Workflow ExifTool Metadata, embedded comments, file-type mismatch Stego triage binwalk Embedded data signatures / container offsets Archives/carving zsteg PNG/BMP low-bit data candidates Image LSB ZBar Barcode/QR clue Image formats PDF Viewer Layers, visible text, annotation clue PDF/documents pdftotext Extract PDF text for searching PDF/documents qpdf Inspect PDF structure, streams, attachments PDF/documents Disk and memory forensics Tool Start with it when Next step Autopsy Filesystem image and timeline Identify partition/filesystem → browse/recover artifacts The Sleuth Kit Need reproducible partition/file extraction Correct sector offset → list entries → extract exact inode fsck.fat FAT corruption clue Diagnose a copy before any repair Volatility 3 Memory image Identify OS/process → relevant plugin → export evidence OpenSSH key recovery Matching Linux/OpenSSH memory evidence Validate plugin/version/process preconditions Eric Zimmerman’s Tools Windows event/artifact evidence Choose parser matching artifact → correlate timestamp/context Reversing and cryptography Tool Start with it when Workflow Ghidra Native executable, data flow and decompilation Ghidra cheatsheet gdb Linux runtime registers/memory/checker Dynamic debugging objdump Fast disassembly and section/import view Static analysis llvm-mc Encode/decode an instruction for a known architecture Static analysis x64dbg Native Windows executable at runtime Dynamic debugging dnSpyEx .NET assembly, managed metadata and IL .NET reversing RsaCtfTool RSA key/ciphertext with exploitable conditions Python crypto cookbook One complete example PCAP → Wireshark protocol hierarchy → TShark HTTP object/stream extraction → identify exported file bytes → CyberChef decode only if evidence supports it → Ghidra for a native executable, zsteg for a suitable lossless image → Python helper reproduces the confirmed transformTool output is a lead, not the final answer. Preserve the originating packet/file offset, exact operation, and verification result.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/tools-cheatsheet/approved-tools-map/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="39 Tools · Technique Map">
+  <meta property="og:description" content="Existing Tools → Challenge Workflows This map links your existing 39 AJCBBC tool notes to the new technique collections. It describes use, not an expanded competition allowlist. Optional dependencies/plugins remain subject to event rules.
+Decode, inspect, and prepare Tool Start with it when Workflow CyberChef Encodings, XOR, compression, supplied crypto parameters Visual recipes Python 3 Repeat a byte transformation or decode structured data Snippet library uv Prepare a permitted isolated Python dependency environment Reversing helpers WSL Run Linux CLI tools from Windows All CLI workflows; mind Windows/WSL paths Notepad&#43;&#43; Inspect text, encodings, line endings and regex matches Unicode/text HxD Inspect offsets, signatures, byte changes File triage xxd Reversible byte/hex inspection Reversing strings strings Fast ASCII/UTF-16 string triage Static analysis xz XZ/LZMA archive/container clue Archives/carving Web Tool Start with it when Workflow Chrome Inspect requests, DOM, JS, storage, WebSocket messages First 10 minutes Burp Community Capture/replay exact HTTP parameters and compare responses Web payload index jq Inspect API JSON and structured exports GraphQL / NoSQL Network and protocol analysis Tool Start with it when Workflow OpenVPN Client Challenge requires the supplied VPN Establish access first; preserve route details Wireshark Explore packet conversations and follow streams Packet triage TShark Repeat filters, export fields/objects HTTP extraction Zeek Summarize PCAP sessions at scale Protocol overview OpenSSL Inspect certs/keys or explicit crypto parameters TLS / SSH cannelloni Challenge provides a CAN-over-UDP tunnel CAN bus can-utils Inspect/replay an authorized CAN interface/log CAN bus Images, documents, archives Tool Start with it when Workflow ExifTool Metadata, embedded comments, file-type mismatch Stego triage binwalk Embedded data signatures / container offsets Archives/carving zsteg PNG/BMP low-bit data candidates Image LSB ZBar Barcode/QR clue Image formats PDF Viewer Layers, visible text, annotation clue PDF/documents pdftotext Extract PDF text for searching PDF/documents qpdf Inspect PDF structure, streams, attachments PDF/documents Disk and memory forensics Tool Start with it when Next step Autopsy Filesystem image and timeline Identify partition/filesystem → browse/recover artifacts The Sleuth Kit Need reproducible partition/file extraction Correct sector offset → list entries → extract exact inode fsck.fat FAT corruption clue Diagnose a copy before any repair Volatility 3 Memory image Identify OS/process → relevant plugin → export evidence OpenSSH key recovery Matching Linux/OpenSSH memory evidence Validate plugin/version/process preconditions Eric Zimmerman’s Tools Windows event/artifact evidence Choose parser matching artifact → correlate timestamp/context Reversing and cryptography Tool Start with it when Workflow Ghidra Native executable, data flow and decompilation Ghidra cheatsheet gdb Linux runtime registers/memory/checker Dynamic debugging objdump Fast disassembly and section/import view Static analysis llvm-mc Encode/decode an instruction for a known architecture Static analysis x64dbg Native Windows executable at runtime Dynamic debugging dnSpyEx .NET assembly, managed metadata and IL .NET reversing RsaCtfTool RSA key/ciphertext with exploitable conditions Python crypto cookbook One complete example PCAP → Wireshark protocol hierarchy → TShark HTTP object/stream extraction → identify exported file bytes → CyberChef decode only if evidence supports it → Ghidra for a native executable, zsteg for a suitable lossless image → Python helper reproduces the confirmed transformTool output is a lead, not the final answer. Preserve the originating packet/file offset, exact operation, and verification result.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="39 Tools · Technique Map">
+  <meta itemprop="description" content="Existing Tools → Challenge Workflows This map links your existing 39 AJCBBC tool notes to the new technique collections. It describes use, not an expanded competition allowlist. Optional dependencies/plugins remain subject to event rules.
+Decode, inspect, and prepare Tool Start with it when Workflow CyberChef Encodings, XOR, compression, supplied crypto parameters Visual recipes Python 3 Repeat a byte transformation or decode structured data Snippet library uv Prepare a permitted isolated Python dependency environment Reversing helpers WSL Run Linux CLI tools from Windows All CLI workflows; mind Windows/WSL paths Notepad&#43;&#43; Inspect text, encodings, line endings and regex matches Unicode/text HxD Inspect offsets, signatures, byte changes File triage xxd Reversible byte/hex inspection Reversing strings strings Fast ASCII/UTF-16 string triage Static analysis xz XZ/LZMA archive/container clue Archives/carving Web Tool Start with it when Workflow Chrome Inspect requests, DOM, JS, storage, WebSocket messages First 10 minutes Burp Community Capture/replay exact HTTP parameters and compare responses Web payload index jq Inspect API JSON and structured exports GraphQL / NoSQL Network and protocol analysis Tool Start with it when Workflow OpenVPN Client Challenge requires the supplied VPN Establish access first; preserve route details Wireshark Explore packet conversations and follow streams Packet triage TShark Repeat filters, export fields/objects HTTP extraction Zeek Summarize PCAP sessions at scale Protocol overview OpenSSL Inspect certs/keys or explicit crypto parameters TLS / SSH cannelloni Challenge provides a CAN-over-UDP tunnel CAN bus can-utils Inspect/replay an authorized CAN interface/log CAN bus Images, documents, archives Tool Start with it when Workflow ExifTool Metadata, embedded comments, file-type mismatch Stego triage binwalk Embedded data signatures / container offsets Archives/carving zsteg PNG/BMP low-bit data candidates Image LSB ZBar Barcode/QR clue Image formats PDF Viewer Layers, visible text, annotation clue PDF/documents pdftotext Extract PDF text for searching PDF/documents qpdf Inspect PDF structure, streams, attachments PDF/documents Disk and memory forensics Tool Start with it when Next step Autopsy Filesystem image and timeline Identify partition/filesystem → browse/recover artifacts The Sleuth Kit Need reproducible partition/file extraction Correct sector offset → list entries → extract exact inode fsck.fat FAT corruption clue Diagnose a copy before any repair Volatility 3 Memory image Identify OS/process → relevant plugin → export evidence OpenSSH key recovery Matching Linux/OpenSSH memory evidence Validate plugin/version/process preconditions Eric Zimmerman’s Tools Windows event/artifact evidence Choose parser matching artifact → correlate timestamp/context Reversing and cryptography Tool Start with it when Workflow Ghidra Native executable, data flow and decompilation Ghidra cheatsheet gdb Linux runtime registers/memory/checker Dynamic debugging objdump Fast disassembly and section/import view Static analysis llvm-mc Encode/decode an instruction for a known architecture Static analysis x64dbg Native Windows executable at runtime Dynamic debugging dnSpyEx .NET assembly, managed metadata and IL .NET reversing RsaCtfTool RSA key/ciphertext with exploitable conditions Python crypto cookbook One complete example PCAP → Wireshark protocol hierarchy → TShark HTTP object/stream extraction → identify exported file bytes → CyberChef decode only if evidence supports it → Ghidra for a native executable, zsteg for a suitable lossless image → Python helper reproduces the confirmed transformTool output is a lead, not the final answer. Preserve the originating packet/file offset, exact operation, and verification result.">
+  <meta itemprop="wordCount" content="510">
+
+<title>39 Tools · Technique Map • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/tools-cheatsheet/approved-tools-map/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details open>
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="active" aria-current="page">39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>39 Tools · Technique Map</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#decode-inspect-and-prepare">Decode, inspect, and prepare</a></li>
+    <li><a href="#web">Web</a></li>
+    <li><a href="#network-and-protocol-analysis">Network and protocol analysis</a></li>
+    <li><a href="#images-documents-archives">Images, documents, archives</a></li>
+    <li><a href="#disk-and-memory-forensics">Disk and memory forensics</a></li>
+    <li><a href="#reversing-and-cryptography">Reversing and cryptography</a></li>
+    <li><a href="#one-complete-example">One complete example</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="tools"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/tools-cheatsheet/">Tools · Visual Cheatsheets</a></nav><span>3 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="existing-tools--challenge-workflows">Existing Tools → Challenge Workflows<a class="anchor" href="#existing-tools--challenge-workflows"></a></h1>
+<p>This map links your existing 39 <a href="../../ajcbbc_allow_tools/">AJCBBC tool notes</a> to the new technique collections. It describes use, not an expanded competition allowlist. Optional dependencies/plugins remain subject to event rules.</p>
+<h2 id="decode-inspect-and-prepare">Decode, inspect, and prepare<a class="anchor" href="#decode-inspect-and-prepare"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool</th>
+          <th>Start with it when</th>
+          <th>Workflow</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/cyberchef/">CyberChef</a></td>
+          <td>Encodings, XOR, compression, supplied crypto parameters</td>
+          <td><a href="../cyberchef-cheatsheet/">Visual recipes</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/python3/">Python 3</a></td>
+          <td>Repeat a byte transformation or decode structured data</td>
+          <td><a href="../python-library/">Snippet library</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/uv/">uv</a></td>
+          <td>Prepare a permitted isolated Python dependency environment</td>
+          <td><a href="../../reversing-expl/python-snippets/">Reversing helpers</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/wsl/">WSL</a></td>
+          <td>Run Linux CLI tools from Windows</td>
+          <td>All CLI workflows; mind Windows/WSL paths</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/notepad_plus_plus/">Notepad++</a></td>
+          <td>Inspect text, encodings, line endings and regex matches</td>
+          <td><a href="../../steganograph-expl/text-unicode/">Unicode/text</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/hxd/">HxD</a></td>
+          <td>Inspect offsets, signatures, byte changes</td>
+          <td><a href="../../steganograph-expl/triage/">File triage</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/xxd/">xxd</a></td>
+          <td>Reversible byte/hex inspection</td>
+          <td><a href="../../reversing-expl/strings-encodings/">Reversing strings</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/strings/">strings</a></td>
+          <td>Fast ASCII/UTF-16 string triage</td>
+          <td><a href="../../reversing-expl/static-analysis/">Static analysis</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/xz/">xz</a></td>
+          <td>XZ/LZMA archive/container clue</td>
+          <td><a href="../../steganograph-expl/archives-carving/">Archives/carving</a></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="web">Web<a class="anchor" href="#web"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool</th>
+          <th>Start with it when</th>
+          <th>Workflow</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/google_chrome/">Chrome</a></td>
+          <td>Inspect requests, DOM, JS, storage, WebSocket messages</td>
+          <td><a href="../../web-expl/methodology/">First 10 minutes</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/burp_suite_community/">Burp Community</a></td>
+          <td>Capture/replay exact HTTP parameters and compare responses</td>
+          <td><a href="../../web-expl/">Web payload index</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/jq/">jq</a></td>
+          <td>Inspect API JSON and structured exports</td>
+          <td><a href="../../web-expl/graphql/">GraphQL</a> / <a href="../../web-expl/nosqli/">NoSQL</a></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="network-and-protocol-analysis">Network and protocol analysis<a class="anchor" href="#network-and-protocol-analysis"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool</th>
+          <th>Start with it when</th>
+          <th>Workflow</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/openvpn_client/">OpenVPN Client</a></td>
+          <td>Challenge requires the supplied VPN</td>
+          <td>Establish access first; preserve route details</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/wireshark/">Wireshark</a></td>
+          <td>Explore packet conversations and follow streams</td>
+          <td><a href="../../network-expl/packet-triage/">Packet triage</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/tshark/">TShark</a></td>
+          <td>Repeat filters, export fields/objects</td>
+          <td><a href="../../network-expl/http-streams/">HTTP extraction</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/zeek/">Zeek</a></td>
+          <td>Summarize PCAP sessions at scale</td>
+          <td><a href="../../network-expl/protocols/">Protocol overview</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/openssl/">OpenSSL</a></td>
+          <td>Inspect certs/keys or explicit crypto parameters</td>
+          <td><a href="../../network-expl/tls-ssh/">TLS / SSH</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/cannelloni/">cannelloni</a></td>
+          <td>Challenge provides a CAN-over-UDP tunnel</td>
+          <td><a href="../../network-expl/can-bus/">CAN bus</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/can_utils/">can-utils</a></td>
+          <td>Inspect/replay an authorized CAN interface/log</td>
+          <td><a href="../../network-expl/can-bus/">CAN bus</a></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="images-documents-archives">Images, documents, archives<a class="anchor" href="#images-documents-archives"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool</th>
+          <th>Start with it when</th>
+          <th>Workflow</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/exiftool/">ExifTool</a></td>
+          <td>Metadata, embedded comments, file-type mismatch</td>
+          <td><a href="../../steganograph-expl/triage/">Stego triage</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/binwalk/">binwalk</a></td>
+          <td>Embedded data signatures / container offsets</td>
+          <td><a href="../../steganograph-expl/archives-carving/">Archives/carving</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/zsteg/">zsteg</a></td>
+          <td>PNG/BMP low-bit data candidates</td>
+          <td><a href="../../steganograph-expl/images-lsb/">Image LSB</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/zbar/">ZBar</a></td>
+          <td>Barcode/QR clue</td>
+          <td><a href="../../steganograph-expl/png-jpeg/">Image formats</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/pdf_viewer/">PDF Viewer</a></td>
+          <td>Layers, visible text, annotation clue</td>
+          <td><a href="../../steganograph-expl/pdf-documents/">PDF/documents</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/pdftotext/">pdftotext</a></td>
+          <td>Extract PDF text for searching</td>
+          <td><a href="../../steganograph-expl/pdf-documents/">PDF/documents</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/qpdf/">qpdf</a></td>
+          <td>Inspect PDF structure, streams, attachments</td>
+          <td><a href="../../steganograph-expl/pdf-documents/">PDF/documents</a></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="disk-and-memory-forensics">Disk and memory forensics<a class="anchor" href="#disk-and-memory-forensics"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool</th>
+          <th>Start with it when</th>
+          <th>Next step</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/autopsy/">Autopsy</a></td>
+          <td>Filesystem image and timeline</td>
+          <td>Identify partition/filesystem → browse/recover artifacts</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/sleuth_kit/">The Sleuth Kit</a></td>
+          <td>Need reproducible partition/file extraction</td>
+          <td>Correct sector offset → list entries → extract exact inode</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/fsck_fat/">fsck.fat</a></td>
+          <td>FAT corruption clue</td>
+          <td>Diagnose a copy before any repair</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/volatility3/">Volatility 3</a></td>
+          <td>Memory image</td>
+          <td>Identify OS/process → relevant plugin → export evidence</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/openssh_session_key_recovery/">OpenSSH key recovery</a></td>
+          <td>Matching Linux/OpenSSH memory evidence</td>
+          <td>Validate plugin/version/process preconditions</td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/eric_zimmerman_tools/">Eric Zimmerman&rsquo;s Tools</a></td>
+          <td>Windows event/artifact evidence</td>
+          <td>Choose parser matching artifact → correlate timestamp/context</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="reversing-and-cryptography">Reversing and cryptography<a class="anchor" href="#reversing-and-cryptography"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Tool</th>
+          <th>Start with it when</th>
+          <th>Workflow</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/ghidra/">Ghidra</a></td>
+          <td>Native executable, data flow and decompilation</td>
+          <td><a href="../../reversing-expl/ghidra-cheatsheet/">Ghidra cheatsheet</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/gdb/">gdb</a></td>
+          <td>Linux runtime registers/memory/checker</td>
+          <td><a href="../../reversing-expl/dynamic-debugging/">Dynamic debugging</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/objdump/">objdump</a></td>
+          <td>Fast disassembly and section/import view</td>
+          <td><a href="../../reversing-expl/static-analysis/">Static analysis</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/llvm_mc/">llvm-mc</a></td>
+          <td>Encode/decode an instruction for a known architecture</td>
+          <td><a href="../../reversing-expl/static-analysis/">Static analysis</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/x64dbg/">x64dbg</a></td>
+          <td>Native Windows executable at runtime</td>
+          <td><a href="../../reversing-expl/dynamic-debugging/">Dynamic debugging</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/dnspyex/">dnSpyEx</a></td>
+          <td>.NET assembly, managed metadata and IL</td>
+          <td><a href="../../reversing-expl/dotnet/">.NET reversing</a></td>
+      </tr>
+      <tr>
+          <td><a href="../../ajcbbc_allow_tools/rsactftool/">RsaCtfTool</a></td>
+          <td>RSA key/ciphertext with exploitable conditions</td>
+          <td><a href="../../ajcbbc_allow_tools/python3/#cookbook-map">Python crypto cookbook</a></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="one-complete-example">One complete example<a class="anchor" href="#one-complete-example"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>PCAP
+</span></span><span style="display:flex;"><span>  → Wireshark protocol hierarchy
+</span></span><span style="display:flex;"><span>  → TShark HTTP object/stream extraction
+</span></span><span style="display:flex;"><span>  → identify exported file bytes
+</span></span><span style="display:flex;"><span>  → CyberChef decode only if evidence supports it
+</span></span><span style="display:flex;"><span>  → Ghidra for a native executable, zsteg for a suitable lossless image
+</span></span><span style="display:flex;"><span>  → Python helper reproduces the confirmed transform</span></span></code></pre></div><p>Tool output is a lead, not the final answer. Preserve the originating packet/file offset, exact operation, and verification result.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>CyberChef · Visual Recipes</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/tools-cheatsheet/python-library/" class="flex align-center">
+        <span>Python · Offline Snippet Library</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#decode-inspect-and-prepare">Decode, inspect, and prepare</a></li>
+    <li><a href="#web">Web</a></li>
+    <li><a href="#network-and-protocol-analysis">Network and protocol analysis</a></li>
+    <li><a href="#images-documents-archives">Images, documents, archives</a></li>
+    <li><a href="#disk-and-memory-forensics">Disk and memory forensics</a></li>
+    <li><a href="#reversing-and-cryptography">Reversing and cryptography</a></li>
+    <li><a href="#one-complete-example">One complete example</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

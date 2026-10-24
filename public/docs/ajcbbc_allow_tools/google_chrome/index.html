@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: browser challenges, DevTools, HTTP traffic, client side code.
+Run in: Windows. No extra extension needed for these workflows.
+Quick keys Action Key DevTools F12 or Ctrl&#43;Shift&#43;I Page source Ctrl&#43;U Search loaded sources Ctrl&#43;Shift&#43;F inside DevTools Inspect element Ctrl&#43;Shift&#43;C Walkthrough: inspect a request Open DevTools → Network before performing the action. Enable Preserve log when navigation would clear requests. Reload or submit the form. Select the request; inspect Headers, Payload, Response, and Initiator. Filter Fetch/XHR for APIs or WS for WebSocket messages. Record the method, URL, cookies, body and response. Inspect browser state Use Application → Storage for cookies, local storage, session storage and IndexedDB.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/google_chrome/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Google Chrome">
+  <meta property="og:description" content="Use for: browser challenges, DevTools, HTTP traffic, client side code.
+Run in: Windows. No extra extension needed for these workflows.
+Quick keys Action Key DevTools F12 or Ctrl&#43;Shift&#43;I Page source Ctrl&#43;U Search loaded sources Ctrl&#43;Shift&#43;F inside DevTools Inspect element Ctrl&#43;Shift&#43;C Walkthrough: inspect a request Open DevTools → Network before performing the action. Enable Preserve log when navigation would clear requests. Reload or submit the form. Select the request; inspect Headers, Payload, Response, and Initiator. Filter Fetch/XHR for APIs or WS for WebSocket messages. Record the method, URL, cookies, body and response. Inspect browser state Use Application → Storage for cookies, local storage, session storage and IndexedDB.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Google Chrome">
+  <meta itemprop="description" content="Use for: browser challenges, DevTools, HTTP traffic, client side code.
+Run in: Windows. No extra extension needed for these workflows.
+Quick keys Action Key DevTools F12 or Ctrl&#43;Shift&#43;I Page source Ctrl&#43;U Search loaded sources Ctrl&#43;Shift&#43;F inside DevTools Inspect element Ctrl&#43;Shift&#43;C Walkthrough: inspect a request Open DevTools → Network before performing the action. Enable Preserve log when navigation would clear requests. Reload or submit the form. Select the request; inspect Headers, Payload, Response, and Initiator. Filter Fetch/XHR for APIs or WS for WebSocket messages. Record the method, URL, cookies, body and response. Inspect browser state Use Application → Storage for cookies, local storage, session storage and IndexedDB.">
+  <meta itemprop="wordCount" content="551">
+
+<title>Google Chrome • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/google_chrome/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="active" aria-current="page">Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Google Chrome</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#quick-keys">Quick keys</a></li>
+    <li><a href="#walkthrough-inspect-a-request">Walkthrough: inspect a request</a></li>
+    <li><a href="#inspect-browser-state">Inspect browser state</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-follow-client-side-flag-generation">CTF: follow client-side flag generation</a></li>
+    <li><a href="#ctf-pause-before-an-api-request">CTF: pause before an API request</a></li>
+    <li><a href="#ctf-inspect-inline-and-loaded-resources">CTF: inspect inline and loaded resources</a></li>
+    <li><a href="#decode-browser-strings-in-console">Decode browser strings in Console</a></li>
+    <li><a href="#replay-one-same-origin-api-call">Replay one same-origin API call</a></li>
+    <li><a href="#ctf-inspect-websocket-state">CTF: inspect WebSocket state</a></li>
+    <li><a href="#troubleshooting-browser-only-solves">Troubleshooting browser-only solves</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>3 MIN READ</span></div>
+<h1 class="page-title">Google Chrome</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> browser challenges, DevTools, HTTP traffic, client side code.<br>
+<strong>Run in:</strong> Windows. No extra extension needed for these workflows.</p>
+<h2 id="quick-keys">Quick keys<a class="anchor" href="#quick-keys"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Action</th>
+          <th>Key</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>DevTools</td>
+          <td>F12 or Ctrl+Shift+I</td>
+      </tr>
+      <tr>
+          <td>Page source</td>
+          <td>Ctrl+U</td>
+      </tr>
+      <tr>
+          <td>Search loaded sources</td>
+          <td>Ctrl+Shift+F inside DevTools</td>
+      </tr>
+      <tr>
+          <td>Inspect element</td>
+          <td>Ctrl+Shift+C</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="walkthrough-inspect-a-request">Walkthrough: inspect a request<a class="anchor" href="#walkthrough-inspect-a-request"></a></h2>
+<ol>
+<li>Open <strong>DevTools → Network</strong> before performing the action.</li>
+<li>Enable <strong>Preserve log</strong> when navigation would clear requests.</li>
+<li>Reload or submit the form.</li>
+<li>Select the request; inspect <strong>Headers</strong>, <strong>Payload</strong>, <strong>Response</strong>, and <strong>Initiator</strong>.</li>
+<li>Filter <strong>Fetch/XHR</strong> for APIs or <strong>WS</strong> for WebSocket messages.</li>
+<li>Record the method, URL, cookies, body and response.</li>
+</ol>
+<h2 id="inspect-browser-state">Inspect browser state<a class="anchor" href="#inspect-browser-state"></a></h2>
+<p>Use <strong>Application → Storage</strong> for cookies, local storage, session storage and IndexedDB.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">// DevTools Console: inspect this origin&#39;s browser state
+</span></span></span><span style="display:flex;"><span><span style="color:#81a1c1">document</span><span style="color:#eceff4">.</span>cookie
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Object</span><span style="color:#eceff4">.</span>entries<span style="color:#eceff4">(</span>localStorage<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">Object</span><span style="color:#eceff4">.</span>entries<span style="color:#eceff4">(</span>sessionStorage<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">// Same-origin request using this browser session
+</span></span></span><span style="display:flex;"><span>fetch<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;/api/status&#39;</span><span style="color:#eceff4">).</span>then<span style="color:#eceff4">(</span>r <span style="color:#eceff4">=&gt;</span> r<span style="color:#eceff4">.</span>text<span style="color:#eceff4">()).</span>then<span style="color:#eceff4">(</span>console<span style="color:#eceff4">.</span>log<span style="color:#eceff4">)</span></span></span></code></pre></div><h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li><code>HttpOnly</code> cookies are absent from <code>document.cookie</code>; inspect them in Application.</li>
+<li>Client side validation can differ from server behavior; inspect the actual request.</li>
+<li>A Console fetch follows browser origin/CORS rules.</li>
+<li>Save useful responses and source snippets before changing state.</li>
+</ul>
+<h2 id="ctf-follow-client-side-flag-generation">CTF: follow client-side flag generation<a class="anchor" href="#ctf-follow-client-side-flag-generation"></a></h2>
+<ol>
+<li>Open <strong>Sources</strong> and locate the script used by the challenge page.</li>
+<li>Pretty-print minified code when needed.</li>
+<li>Search for the visible button text, endpoint or success message.</li>
+<li>Set a breakpoint in its event handler.</li>
+<li>Trigger the action and inspect Scope/Watch values.</li>
+<li>Step through decoding/transformation code and copy the resulting value.</li>
+</ol>
+<p>The value accepted by the server can differ from a client-side display. Check the actual request/response if the challenge has a server component.</p>
+<h2 id="ctf-pause-before-an-api-request">CTF: pause before an API request<a class="anchor" href="#ctf-pause-before-an-api-request"></a></h2>
+<p>Use <strong>Sources → XHR/fetch Breakpoints</strong> and add a substring of the relevant URL. Trigger the request, inspect the caller and variables, then continue execution. This helps locate a request builder hidden inside a large script bundle.</p>
+<h2 id="ctf-inspect-inline-and-loaded-resources">CTF: inspect inline and loaded resources<a class="anchor" href="#ctf-inspect-inline-and-loaded-resources"></a></h2>
+<p>Look in page source, HTML comments, script files, source maps when available and network responses. Source search covers loaded resources; it does not prove every server file has been searched.</p>
+<h2 id="decode-browser-strings-in-console">Decode browser strings in Console<a class="anchor" href="#decode-browser-strings-in-console"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">// Base64 text → a binary string; not automatically UTF-8 text
+</span></span></span><span style="display:flex;"><span>atob<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;ZmxhZ3tkZW1vfQ==&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">// Percent-encoded text → decoded text
+</span></span></span><span style="display:flex;"><span><span style="color:#81a1c1">decodeURIComponent</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;flag%7Bdemo%7D&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic">// Binary-safe Base64 → bytes → UTF-8
+</span></span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">const</span> bytes <span style="color:#81a1c1">=</span> Uint8Array<span style="color:#eceff4">.</span>from<span style="color:#eceff4">(</span>atob<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;ZmxhZ3tkZW1vfQ==&#39;</span><span style="color:#eceff4">),</span> c <span style="color:#eceff4">=&gt;</span> c<span style="color:#eceff4">.</span>charCodeAt<span style="color:#eceff4">(</span><span style="color:#b48ead">0</span><span style="color:#eceff4">));</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">new</span> TextDecoder<span style="color:#eceff4">().</span>decode<span style="color:#eceff4">(</span>bytes<span style="color:#eceff4">)</span></span></span></code></pre></div><p><code>atob</code> uses ordinary Base64; URL-safe token alphabets and omitted padding need normalization. Re-running a <code>const</code> declaration in the same Console context can require renaming it or using a block.</p>
+<h2 id="replay-one-same-origin-api-call">Replay one same-origin API call<a class="anchor" href="#replay-one-same-origin-api-call"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>fetch<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;/api/item&#39;</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>  method<span style="color:#81a1c1">:</span> <span style="color:#a3be8c">&#39;POST&#39;</span><span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>  headers<span style="color:#81a1c1">:</span> <span style="color:#eceff4">{</span><span style="color:#a3be8c">&#39;Content-Type&#39;</span><span style="color:#81a1c1">:</span> <span style="color:#a3be8c">&#39;application/json&#39;</span><span style="color:#eceff4">},</span>
+</span></span><span style="display:flex;"><span>  body<span style="color:#81a1c1">:</span> JSON<span style="color:#eceff4">.</span>stringify<span style="color:#eceff4">({</span>id<span style="color:#81a1c1">:</span> <span style="color:#b48ead">7</span><span style="color:#eceff4">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}).</span>then<span style="color:#eceff4">(</span><span style="color:#81a1c1;font-weight:bold">async</span> response <span style="color:#eceff4">=&gt;</span> <span style="color:#eceff4">({</span>
+</span></span><span style="display:flex;"><span>  status<span style="color:#81a1c1">:</span> response<span style="color:#eceff4">.</span>status<span style="color:#eceff4">,</span>
+</span></span><span style="display:flex;"><span>  body<span style="color:#81a1c1">:</span> <span style="color:#81a1c1;font-weight:bold">await</span> response<span style="color:#eceff4">.</span>text<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">})).</span>then<span style="color:#eceff4">(</span>console<span style="color:#eceff4">.</span>log<span style="color:#eceff4">)</span></span></span></code></pre></div><p>Use the challenge’s exact URL, method, token headers and body. This runs in the current browser session; changing localStorage alone does not necessarily change the server’s session.</p>
+<h2 id="ctf-inspect-websocket-state">CTF: inspect WebSocket state<a class="anchor" href="#ctf-inspect-websocket-state"></a></h2>
+<p>In <strong>Network → WS</strong>, select the connection and inspect messages. Record direction, message type and order. A connection banner, command ACK and final objective notification are separate events. Keep the session open when the protocol requires asynchronous updates.</p>
+<h2 id="troubleshooting-browser-only-solves">Troubleshooting browser-only solves<a class="anchor" href="#troubleshooting-browser-only-solves"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Problem</th>
+          <th>Inspect</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Sources changed after reload</td>
+          <td>Cache, source maps and loaded script URLs</td>
+      </tr>
+      <tr>
+          <td>Request absent from Network</td>
+          <td>Open DevTools before triggering; preserve logs</td>
+      </tr>
+      <tr>
+          <td>Response blocked in JavaScript</td>
+          <td>CORS and actual Network status/body</td>
+      </tr>
+      <tr>
+          <td>Breakpoint never hits</td>
+          <td>Wrong file, handler or asynchronous branch</td>
+      </tr>
+      <tr>
+          <td>Flag-looking string is rejected</td>
+          <td>Decoy, encoding layer, prefix or incomplete generation</td>
+      </tr>
+  </tbody>
+</table>
+<p>References: <a href="https://developer.chrome.com/docs/devtools/network">Network guide</a>, <a href="https://developer.chrome.com/docs/devtools/javascript/breakpoints">JavaScript breakpoints</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../web-expl/methodology/">Web first 10 minutes</a></li>
+<li><a href="../../web-expl/xss/">XSS context testing</a></li>
+<li><a href="../../web-expl/websockets/">WebSockets</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>OpenVPN Client</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/wsl/" class="flex align-center">
+        <span>Windows Subsystem for Linux (WSL)</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#quick-keys">Quick keys</a></li>
+    <li><a href="#walkthrough-inspect-a-request">Walkthrough: inspect a request</a></li>
+    <li><a href="#inspect-browser-state">Inspect browser state</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#ctf-follow-client-side-flag-generation">CTF: follow client-side flag generation</a></li>
+    <li><a href="#ctf-pause-before-an-api-request">CTF: pause before an API request</a></li>
+    <li><a href="#ctf-inspect-inline-and-loaded-resources">CTF: inspect inline and loaded resources</a></li>
+    <li><a href="#decode-browser-strings-in-console">Decode browser strings in Console</a></li>
+    <li><a href="#replay-one-same-origin-api-call">Replay one same-origin API call</a></li>
+    <li><a href="#ctf-inspect-websocket-state">CTF: inspect WebSocket state</a></li>
+    <li><a href="#troubleshooting-browser-only-solves">Troubleshooting browser-only solves</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

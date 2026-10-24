@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="PNG and JPEG container clues Separate container bytes, metadata and decoded samples. Each offers a different hiding place.
+1. PNG chunk layout 8-byte PNG signature repeated: 4-byte big-endian data length 4-byte ASCII chunk type N bytes of data 4-byte CRC over type &#43; data Chunk What to inspect IHDR Width, height, bit depth, color type, interlace PLTE Palette entries; index patterns may be meaningful IDAT Parts of the compressed image datastream, not plaintext pixel rows tEXt, zTXt, iTXt Textual metadata, sometimes compressed tRNS Transparency information for relevant color types IEND End of the PNG datastream Unknown ancillary chunk Inspect type, length, contents and CRC; unknown does not automatically mean malicious PNG compression and per-row filters must be decoded before interpreting pixel LSB. The PNG specification defines chunk CRCs, image filtering and datastream boundaries.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/steganograph-expl/png-jpeg/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="PNG & JPEG Structure">
+  <meta property="og:description" content="PNG and JPEG container clues Separate container bytes, metadata and decoded samples. Each offers a different hiding place.
+1. PNG chunk layout 8-byte PNG signature repeated: 4-byte big-endian data length 4-byte ASCII chunk type N bytes of data 4-byte CRC over type &#43; data Chunk What to inspect IHDR Width, height, bit depth, color type, interlace PLTE Palette entries; index patterns may be meaningful IDAT Parts of the compressed image datastream, not plaintext pixel rows tEXt, zTXt, iTXt Textual metadata, sometimes compressed tRNS Transparency information for relevant color types IEND End of the PNG datastream Unknown ancillary chunk Inspect type, length, contents and CRC; unknown does not automatically mean malicious PNG compression and per-row filters must be decoded before interpreting pixel LSB. The PNG specification defines chunk CRCs, image filtering and datastream boundaries.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="PNG & JPEG Structure">
+  <meta itemprop="description" content="PNG and JPEG container clues Separate container bytes, metadata and decoded samples. Each offers a different hiding place.
+1. PNG chunk layout 8-byte PNG signature repeated: 4-byte big-endian data length 4-byte ASCII chunk type N bytes of data 4-byte CRC over type &#43; data Chunk What to inspect IHDR Width, height, bit depth, color type, interlace PLTE Palette entries; index patterns may be meaningful IDAT Parts of the compressed image datastream, not plaintext pixel rows tEXt, zTXt, iTXt Textual metadata, sometimes compressed tRNS Transparency information for relevant color types IEND End of the PNG datastream Unknown ancillary chunk Inspect type, length, contents and CRC; unknown does not automatically mean malicious PNG compression and per-row filters must be decoded before interpreting pixel LSB. The PNG specification defines chunk CRCs, image filtering and datastream boundaries.">
+  <meta itemprop="wordCount" content="726">
+
+<title>PNG &amp; JPEG Structure • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/steganograph-expl/png-jpeg/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details open>
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="active" aria-current="page">PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>PNG &amp; JPEG Structure</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-png-chunk-layout">1. PNG chunk layout</a></li>
+    <li><a href="#2-bounded-chunkcrc-inspection">2. Bounded chunk/CRC inspection</a></li>
+    <li><a href="#3-appended-data-after-iend">3. Appended data after IEND</a></li>
+    <li><a href="#4-png-dimensions-and-intentional-corruption">4. PNG dimensions and intentional corruption</a></li>
+    <li><a href="#5-jpeg-different-representation">5. JPEG: different representation</a></li>
+    <li><a href="#6-pixel-lsb-versus-coefficient-steganography">6. Pixel LSB versus coefficient steganography</a></li>
+    <li><a href="#7-alpha-palettes-and-animations">7. Alpha, palettes and animations</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="stego"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/steganograph-expl/">Steganography</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="png-and-jpeg-container-clues">PNG and JPEG container clues<a class="anchor" href="#png-and-jpeg-container-clues"></a></h1>
+<p><strong>Separate container bytes, metadata and decoded samples.</strong> Each offers a different hiding place.</p>
+<h2 id="1-png-chunk-layout">1. PNG chunk layout<a class="anchor" href="#1-png-chunk-layout"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>8-byte PNG signature
+</span></span><span style="display:flex;"><span>repeated:
+</span></span><span style="display:flex;"><span>    4-byte big-endian data length
+</span></span><span style="display:flex;"><span>    4-byte ASCII chunk type
+</span></span><span style="display:flex;"><span>    N bytes of data
+</span></span><span style="display:flex;"><span>    4-byte CRC over type + data</span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>Chunk</th>
+          <th>What to inspect</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>IHDR</code></td>
+          <td>Width, height, bit depth, color type, interlace</td>
+      </tr>
+      <tr>
+          <td><code>PLTE</code></td>
+          <td>Palette entries; index patterns may be meaningful</td>
+      </tr>
+      <tr>
+          <td><code>IDAT</code></td>
+          <td>Parts of the compressed image datastream, not plaintext pixel rows</td>
+      </tr>
+      <tr>
+          <td><code>tEXt</code>, <code>zTXt</code>, <code>iTXt</code></td>
+          <td>Textual metadata, sometimes compressed</td>
+      </tr>
+      <tr>
+          <td><code>tRNS</code></td>
+          <td>Transparency information for relevant color types</td>
+      </tr>
+      <tr>
+          <td><code>IEND</code></td>
+          <td>End of the PNG datastream</td>
+      </tr>
+      <tr>
+          <td>Unknown ancillary chunk</td>
+          <td>Inspect type, length, contents and CRC; unknown does not automatically mean malicious</td>
+      </tr>
+  </tbody>
+</table>
+<p>PNG compression and per-row filters must be decoded before interpreting pixel LSB. The <a href="https://www.w3.org/TR/png-3/">PNG specification</a> defines chunk CRCs, image filtering and datastream boundaries.</p>
+<h2 id="2-bounded-chunkcrc-inspection">2. Bounded chunk/CRC inspection<a class="anchor" href="#2-bounded-chunkcrc-inspection"></a></h2>
+<p>Standard-library parser; it does not repair or overwrite the source:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">struct</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">zlib</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>data <span style="color:#81a1c1">=</span> Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;image.png&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>read_bytes<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">if</span> data<span style="color:#eceff4">[:</span><span style="color:#b48ead">8</span><span style="color:#eceff4">]</span> <span style="color:#81a1c1">!=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;</span><span style="color:#ebcb8b">\x89</span><span style="color:#a3be8c">PNG</span><span style="color:#ebcb8b">\r\n\x1a\n</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;wrong PNG signature&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>pos <span style="color:#81a1c1">=</span> <span style="color:#b48ead">8</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">while</span> pos <span style="color:#81a1c1">+</span> <span style="color:#b48ead">12</span> <span style="color:#81a1c1">&lt;=</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    length <span style="color:#81a1c1">=</span> struct<span style="color:#81a1c1">.</span>unpack_from<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;&gt;I&#34;</span><span style="color:#eceff4">,</span> data<span style="color:#eceff4">,</span> pos<span style="color:#eceff4">)[</span><span style="color:#b48ead">0</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    end <span style="color:#81a1c1">=</span> pos <span style="color:#81a1c1">+</span> <span style="color:#b48ead">12</span> <span style="color:#81a1c1">+</span> length
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> end <span style="color:#81a1c1">&gt;</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;truncated chunk at </span><span style="color:#a3be8c">{</span>pos<span style="color:#a3be8c">:</span><span style="color:#a3be8c">#x</span><span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    kind <span style="color:#81a1c1">=</span> data<span style="color:#eceff4">[</span>pos<span style="color:#81a1c1">+</span><span style="color:#b48ead">4</span><span style="color:#eceff4">:</span>pos<span style="color:#81a1c1">+</span><span style="color:#b48ead">8</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    body <span style="color:#81a1c1">=</span> data<span style="color:#eceff4">[</span>pos<span style="color:#81a1c1">+</span><span style="color:#b48ead">8</span><span style="color:#eceff4">:</span>pos<span style="color:#81a1c1">+</span><span style="color:#b48ead">8</span><span style="color:#81a1c1">+</span>length<span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    stored <span style="color:#81a1c1">=</span> struct<span style="color:#81a1c1">.</span>unpack_from<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;&gt;I&#34;</span><span style="color:#eceff4">,</span> data<span style="color:#eceff4">,</span> pos<span style="color:#81a1c1">+</span><span style="color:#b48ead">8</span><span style="color:#81a1c1">+</span>length<span style="color:#eceff4">)[</span><span style="color:#b48ead">0</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    actual <span style="color:#81a1c1">=</span> zlib<span style="color:#81a1c1">.</span>crc32<span style="color:#eceff4">(</span>kind <span style="color:#81a1c1">+</span> body<span style="color:#eceff4">)</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffffffff</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">hex</span><span style="color:#eceff4">(</span>pos<span style="color:#eceff4">),</span> <span style="color:#81a1c1">repr</span><span style="color:#eceff4">(</span>kind<span style="color:#eceff4">),</span> length<span style="color:#eceff4">,</span> <span style="color:#a3be8c">&#34;CRC_OK&#34;</span> <span style="color:#81a1c1;font-weight:bold">if</span> stored <span style="color:#81a1c1">==</span> actual <span style="color:#81a1c1;font-weight:bold">else</span> <span style="color:#a3be8c">&#34;CRC_BAD&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    pos <span style="color:#81a1c1">=</span> end
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> kind <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;IEND&#34;</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">if</span> length <span style="color:#81a1c1">!=</span> <span style="color:#b48ead">0</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;invalid nonempty IEND&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;end&#34;</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">hex</span><span style="color:#eceff4">(</span>pos<span style="color:#eceff4">),</span> <span style="color:#a3be8c">&#34;trailing bytes&#34;</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span><span style="color:#81a1c1">-</span>pos<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">break</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">else</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">raise</span> <span style="color:#bf616a">ValueError</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;no complete IEND found&#34;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>This reports structural boundaries; it is not a full PNG conformance checker. A CRC failure tells you bytes differ from the declared checksum, not which bytes should be changed.</p>
+<h2 id="3-appended-data-after-iend">3. Appended data after IEND<a class="anchor" href="#3-appended-data-after-iend"></a></h2>
+<p>Take the parser&rsquo;s printed <code>end</code> offset, then inspect/carve exactly that range:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>python3 file_carver.py scan image.png
+</span></span><span style="display:flex;"><span>python3 file_carver.py extract image.png trailer.bin --offset 0x1234 --to-eof
+</span></span><span style="display:flex;"><span>xxd -l <span style="color:#b48ead">64</span> trailer.bin</span></span></code></pre></div><p><code>0x1234</code> is a placeholder, not a universal PNG endpoint. A PNG with trailing ZIP bytes may still display normally. Validate the ZIP independently; compressed image bytes can accidentally contain short signature matches.</p>
+<h2 id="4-png-dimensions-and-intentional-corruption">4. PNG dimensions and intentional corruption<a class="anchor" href="#4-png-dimensions-and-intentional-corruption"></a></h2>
+<p>Unusual dimensions, truncated display or a bad IHDR CRC can be challenge clues. Inspect IHDR and compare expected decompressed row lengths before editing. Changing width/height affects scanline interpretation and can produce deceptive partial images.</p>
+<p>Make a new copy for experiments. If you alter chunk data, recompute that chunk&rsquo;s CRC over its <strong>type plus data</strong>. Merely changing the CRC to match corrupted dimensions does not prove the repaired image reflects the intended hidden content.</p>
+<h2 id="5-jpeg-different-representation">5. JPEG: different representation<a class="anchor" href="#5-jpeg-different-representation"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>SOI ff d8 → marker segments / scan headers → compressed scan data → EOI ff d9</span></span></code></pre></div><p>JPEG may include comments, EXIF, XMP, thumbnails and multiple scan segments. Entropy-coded scan data uses byte stuffing and restart markers; a naive “every <code>ff</code> begins a length-prefixed segment” parser is wrong inside a scan.</p>
+<p>First inspect:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>exiftool -a -u -g1 image.jpg
+</span></span><span style="display:flex;"><span>strings -a -n <span style="color:#b48ead">6</span> -t x image.jpg
+</span></span><span style="display:flex;"><span>binwalk image.jpg</span></span></code></pre></div><p>Use the actual JPEG endpoint from a structure-aware inspection. The <strong>first</strong> <code>ff d9</code> byte pair found anywhere can occur inside an embedded thumbnail or segment payload, so it is not a universal trailer boundary.</p>
+<h2 id="6-pixel-lsb-versus-coefficient-steganography">6. Pixel LSB versus coefficient steganography<a class="anchor" href="#6-pixel-lsb-versus-coefficient-steganography"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Method</th>
+          <th>Carrier</th>
+          <th>Practical consequence</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>PNG/BMP pixel LSB</td>
+          <td>Decoded integer sample bits</td>
+          <td>zsteg/Pillow bit extraction may work</td>
+      </tr>
+      <tr>
+          <td>JPEG coefficient hiding</td>
+          <td>Quantized transform coefficients</td>
+          <td>RGB pixels from Pillow do not expose the same bits</td>
+      </tr>
+      <tr>
+          <td>JPEG metadata/trailer</td>
+          <td>Container bytes</td>
+          <td>ExifTool, hex tools and precise carving can work</td>
+      </tr>
+      <tr>
+          <td>Spatial LSB then saved as JPEG</td>
+          <td>Original sample bits altered by lossy coding</td>
+          <td>Exact original bit recovery may be impossible</td>
+      </tr>
+  </tbody>
+</table>
+<p>Do not convert JPEG to PNG and expect it to restore original pre-compression LSBs. Likewise, zsteg is not a universal JPEG coefficient extractor. If the event&rsquo;s approved toolbox lacks a dedicated coefficient decoder, first exhaust metadata, trailers and source/clue-directed formats; do not claim absence of a hidden coefficient payload from a failed pixel scan.</p>
+<h2 id="7-alpha-palettes-and-animations">7. Alpha, palettes and animations<a class="anchor" href="#7-alpha-palettes-and-animations"></a></h2>
+<p>Transparency may hide visible RGB values, or alpha itself may carry a bit plane. Palette indexes may encode a message even when palette colors look normal. Animated formats may place fragments across frames; record frame index and disposal/compositing behavior when extracting.</p>
+<p>Different decoders may return composited frames instead of raw frame rectangles. Record the library/tool and frame handling used to reproduce your result.</p>
+<p>Tools: <a href="../../ajcbbc_allow_tools/exiftool/">ExifTool</a>, <a href="../../ajcbbc_allow_tools/hxd/">HxD</a>, <a href="../../ajcbbc_allow_tools/xxd/">xxd</a>, <a href="../../ajcbbc_allow_tools/binwalk/">binwalk</a>.</p>
+<p>Next: <a href="../images-lsb/">bit-plane extraction</a>, <a href="../archives-carving/">bounded carving</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/steganograph-expl/images-lsb/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Images: LSB &amp; Bit Planes</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/steganograph-expl/archives-carving/" class="flex align-center">
+        <span>Archives &amp; File Carving</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-png-chunk-layout">1. PNG chunk layout</a></li>
+    <li><a href="#2-bounded-chunkcrc-inspection">2. Bounded chunk/CRC inspection</a></li>
+    <li><a href="#3-appended-data-after-iend">3. Appended data after IEND</a></li>
+    <li><a href="#4-png-dimensions-and-intentional-corruption">4. PNG dimensions and intentional corruption</a></li>
+    <li><a href="#5-jpeg-different-representation">5. JPEG: different representation</a></li>
+    <li><a href="#6-pixel-lsb-versus-coefficient-steganography">6. Pixel LSB versus coefficient steganography</a></li>
+    <li><a href="#7-alpha-palettes-and-animations">7. Alpha, palettes and animations</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

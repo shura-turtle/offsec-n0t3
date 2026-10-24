@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Use for: processes, command lines, network state and files in memory dumps.
+Run in: WSL. Examples use python3 vol.py from the installed checkout; a packaged installation may provide vol instead.
+Discover plugins and identify Windows memory python3 vol.py -h python3 vol.py -f /path/to/memory.raw windows.infoGlobal options such as -f, -o, -r, -p, and -s go before the plugin name. Use absolute artifact paths if running from the tool directory.
+Windows CTF triage # Active processes and parent relationships python3 vol.py -f /path/to/memory.raw windows.pslist python3 vol.py -f /path/to/memory.raw windows.pstree # Scan for process objects and inspect command lines python3 vol.py -f /path/to/memory.raw windows.psscan python3 vol.py -f /path/to/memory.raw windows.cmdline # Network objects and file objects python3 vol.py -f /path/to/memory.raw windows.netscan python3 vol.py -f /path/to/memory.raw windows.filescanExtract files associated with a process mkdir -p /tmp/vol_out # Replace 1234 with the PID found during triage python3 vol.py -f /path/to/memory.raw -o /tmp/vol_out \ windows.dumpfiles --pid 1234Export structured output python3 vol.py -f /path/to/memory.raw -r json windows.pslist &gt; processes.jsonLinux memory python3 vol.py -f /path/to/linux.raw banners python3 vol.py -f /path/to/linux.raw linux.pslist python3 vol.py -f /path/to/linux.raw linux.pstreeLinux plugins require matching kernel symbols. Windows symbols can also need an available symbol cache or download access.
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/ajcbbc_allow_tools/volatility3/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Volatility 3">
+  <meta property="og:description" content="Use for: processes, command lines, network state and files in memory dumps.
+Run in: WSL. Examples use python3 vol.py from the installed checkout; a packaged installation may provide vol instead.
+Discover plugins and identify Windows memory python3 vol.py -h python3 vol.py -f /path/to/memory.raw windows.infoGlobal options such as -f, -o, -r, -p, and -s go before the plugin name. Use absolute artifact paths if running from the tool directory.
+Windows CTF triage # Active processes and parent relationships python3 vol.py -f /path/to/memory.raw windows.pslist python3 vol.py -f /path/to/memory.raw windows.pstree # Scan for process objects and inspect command lines python3 vol.py -f /path/to/memory.raw windows.psscan python3 vol.py -f /path/to/memory.raw windows.cmdline # Network objects and file objects python3 vol.py -f /path/to/memory.raw windows.netscan python3 vol.py -f /path/to/memory.raw windows.filescanExtract files associated with a process mkdir -p /tmp/vol_out # Replace 1234 with the PID found during triage python3 vol.py -f /path/to/memory.raw -o /tmp/vol_out \ windows.dumpfiles --pid 1234Export structured output python3 vol.py -f /path/to/memory.raw -r json windows.pslist &gt; processes.jsonLinux memory python3 vol.py -f /path/to/linux.raw banners python3 vol.py -f /path/to/linux.raw linux.pslist python3 vol.py -f /path/to/linux.raw linux.pstreeLinux plugins require matching kernel symbols. Windows symbols can also need an available symbol cache or download access.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+
+
+  <meta itemprop="name" content="Volatility 3">
+  <meta itemprop="description" content="Use for: processes, command lines, network state and files in memory dumps.
+Run in: WSL. Examples use python3 vol.py from the installed checkout; a packaged installation may provide vol instead.
+Discover plugins and identify Windows memory python3 vol.py -h python3 vol.py -f /path/to/memory.raw windows.infoGlobal options such as -f, -o, -r, -p, and -s go before the plugin name. Use absolute artifact paths if running from the tool directory.
+Windows CTF triage # Active processes and parent relationships python3 vol.py -f /path/to/memory.raw windows.pslist python3 vol.py -f /path/to/memory.raw windows.pstree # Scan for process objects and inspect command lines python3 vol.py -f /path/to/memory.raw windows.psscan python3 vol.py -f /path/to/memory.raw windows.cmdline # Network objects and file objects python3 vol.py -f /path/to/memory.raw windows.netscan python3 vol.py -f /path/to/memory.raw windows.filescanExtract files associated with a process mkdir -p /tmp/vol_out # Replace 1234 with the PID found during triage python3 vol.py -f /path/to/memory.raw -o /tmp/vol_out \ windows.dumpfiles --pid 1234Export structured output python3 vol.py -f /path/to/memory.raw -r json windows.pslist &gt; processes.jsonLinux memory python3 vol.py -f /path/to/linux.raw banners python3 vol.py -f /path/to/linux.raw linux.pslist python3 vol.py -f /path/to/linux.raw linux.pstreeLinux plugins require matching kernel symbols. Windows symbols can also need an available symbol cache or download access.">
+  <meta itemprop="wordCount" content="676">
+
+<title>Volatility 3 • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/ajcbbc_allow_tools/volatility3/">
+<link rel="stylesheet" href="/book.min.7886b6a45be989e541bea3447ffdf8cfa4eab5872c00b33d9895c3fe20798996.css" integrity="sha256-eIa2pFvpieVBvqNEf/34z6TqtYcsALM9mJXD/iB5iZY=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.6641e65073282cb36eef05cedef40c45da2ae0b4450909d47bde09f2d8432c67.js" integrity="sha256-ZkHmUHMoLLNu7wXO3vQMRdoq4LRFCQnUe94J8thDLGc=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details open>
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="active" aria-current="page">Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Volatility 3</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#discover-plugins-and-identify-windows-memory">Discover plugins and identify Windows memory</a></li>
+    <li><a href="#windows-ctf-triage">Windows CTF triage</a></li>
+    <li><a href="#extract-files-associated-with-a-process">Extract files associated with a process</a></li>
+    <li><a href="#export-structured-output">Export structured output</a></li>
+    <li><a href="#linux-memory">Linux memory</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained-global-versus-plugin-options">Flags explained: global versus plugin options</a></li>
+    <li><a href="#ctf-investigate-a-suspicious-process">CTF: investigate a suspicious process</a></li>
+    <li><a href="#ctf-search-the-emitted-process-memory">CTF: search the emitted process memory</a></li>
+    <li><a href="#ctf-registry-autorun-clues">CTF: registry autorun clues</a></li>
+    <li><a href="#ctf-scan-for-file-objects-then-recover-a-candidate">CTF: scan for file objects, then recover a candidate</a></li>
+    <li><a href="#build-a-compact-memory-timeline">Build a compact memory timeline</a></li>
+    <li><a href="#troubleshooting-symbol-and-plugin-failures">Troubleshooting symbol and plugin failures</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="approved"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/ajcbbc_allow_tools/">AJCBBC Allowed Tools</a></nav><span>4 MIN READ</span></div>
+<h1 class="page-title">Volatility 3</h1>
+
+
+      
+  <article class="markdown book-article"><p><strong>Use for:</strong> processes, command lines, network state and files in memory dumps.<br>
+<strong>Run in:</strong> WSL. Examples use <code>python3 vol.py</code> from the installed checkout; a packaged installation may provide <code>vol</code> instead.</p>
+<h2 id="discover-plugins-and-identify-windows-memory">Discover plugins and identify Windows memory<a class="anchor" href="#discover-plugins-and-identify-windows-memory"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 vol.py -h
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.info</span></span></code></pre></div><p>Global options such as <code>-f</code>, <code>-o</code>, <code>-r</code>, <code>-p</code>, and <code>-s</code> go before the plugin name. Use absolute artifact paths if running from the tool directory.</p>
+<h2 id="windows-ctf-triage">Windows CTF triage<a class="anchor" href="#windows-ctf-triage"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Active processes and parent relationships</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.pslist
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.pstree
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Scan for process objects and inspect command lines</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.psscan
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.cmdline
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Network objects and file objects</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.netscan
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.filescan</span></span></code></pre></div><h2 id="extract-files-associated-with-a-process">Extract files associated with a process<a class="anchor" href="#extract-files-associated-with-a-process"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p /tmp/vol_out
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Replace 1234 with the PID found during triage</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw -o /tmp/vol_out <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  windows.dumpfiles --pid <span style="color:#b48ead">1234</span></span></span></code></pre></div><h2 id="export-structured-output">Export structured output<a class="anchor" href="#export-structured-output"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw -r json windows.pslist &gt; processes.json</span></span></code></pre></div><h2 id="linux-memory">Linux memory<a class="anchor" href="#linux-memory"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw banners
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw linux.pslist
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/linux.raw linux.pstree</span></span></code></pre></div><p>Linux plugins require matching kernel symbols. Windows symbols can also need an available symbol cache or download access.</p>
+<h2 id="gotchas">Gotchas<a class="anchor" href="#gotchas"></a></h2>
+<ul>
+<li>Plugin names/options vary; inspect <code>PLUGIN -h</code> on the supplied build.</li>
+<li>Volatility 2 profiles and commands are different from Volatility 3.</li>
+<li>Empty results can reflect unsupported symbols or missing pages.</li>
+</ul>
+<h2 id="flags-explained-global-versus-plugin-options">Flags explained: global versus plugin options<a class="anchor" href="#flags-explained-global-versus-plugin-options"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Flag</th>
+          <th>Meaning</th>
+          <th>Position</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-f FILE</code></td>
+          <td>Input memory image</td>
+          <td>Before plugin name</td>
+      </tr>
+      <tr>
+          <td><code>-o DIR</code></td>
+          <td>Output directory for files emitted by a plugin</td>
+          <td>Before plugin name</td>
+      </tr>
+      <tr>
+          <td><code>-r json</code></td>
+          <td>Select JSON result renderer</td>
+          <td>Before plugin name</td>
+      </tr>
+      <tr>
+          <td><code>-p DIR</code></td>
+          <td>Additional plugin search directory</td>
+          <td>Before plugin name</td>
+      </tr>
+      <tr>
+          <td><code>-s DIR</code></td>
+          <td>Additional symbol search directory</td>
+          <td>Before plugin name</td>
+      </tr>
+      <tr>
+          <td><code>-h</code></td>
+          <td>Framework or selected plugin help</td>
+          <td>Use at the relevant level</td>
+      </tr>
+      <tr>
+          <td><code>--pid N</code></td>
+          <td>Select a process, when the plugin supports it</td>
+          <td>After plugin name</td>
+      </tr>
+      <tr>
+          <td><code>--dump</code></td>
+          <td>Ask a supporting plugin to write memory/files</td>
+          <td>After plugin name</td>
+      </tr>
+      <tr>
+          <td><code>--key PATH</code></td>
+          <td>Select registry key for printkey</td>
+          <td>After plugin name</td>
+      </tr>
+  </tbody>
+</table>
+<p>The same <code>-r</code> means result renderer in Volatility and input capture in TShark.</p>
+<h2 id="ctf-investigate-a-suspicious-process">CTF: investigate a suspicious process<a class="anchor" href="#ctf-investigate-a-suspicious-process"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Process identity, parentage, command line and libraries</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.pstree
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.cmdline --pid <span style="color:#b48ead">1234</span>
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.dlllist --pid <span style="color:#b48ead">1234</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Inspect the available memmap options, then dump mapped memory</span>
+</span></span><span style="display:flex;"><span>python3 vol.py windows.memmap -h
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw -o /tmp/vol_out <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  windows.memmap --pid <span style="color:#b48ead">1234</span> --dump</span></span></code></pre></div><p>Use the PID from your image. A process name is not unique identity; check creation time, parent, path and associated activity.</p>
+<h2 id="ctf-search-the-emitted-process-memory">CTF: search the emitted process memory<a class="anchor" href="#ctf-search-the-emitted-process-memory"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Replace the filename with the actual dump name reported by memmap</span>
+</span></span><span style="display:flex;"><span>strings -a -t x /tmp/vol_out/pid.1234.dmp &gt; process_ascii.txt
+</span></span><span style="display:flex;"><span>strings -a -e l -t x /tmp/vol_out/pid.1234.dmp &gt; process_wide.txt
+</span></span><span style="display:flex;"><span>grep -niE <span style="color:#a3be8c">&#39;flag|password|secret|https?://&#39;</span> process_ascii.txt process_wide.txt</span></span></code></pre></div><p>A dump-file offset is not automatically the original virtual address. Keep memmap’s mapping output for correlation.</p>
+<h2 id="ctf-registry-autorun-clues">CTF: registry autorun clues<a class="anchor" href="#ctf-registry-autorun-clues"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.registry.hivelist
+</span></span><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.registry.printkey <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --key <span style="color:#a3be8c">&#39;Software\Microsoft\Windows\CurrentVersion\Run&#39;</span></span></span></code></pre></div><p>Inspect the plugin’s help to select a specific hive when necessary. A key can be absent from some hives or unavailable memory pages. Preserve the hive path and value data in your notes.</p>
+<h2 id="ctf-scan-for-file-objects-then-recover-a-candidate">CTF: scan for file objects, then recover a candidate<a class="anchor" href="#ctf-scan-for-file-objects-then-recover-a-candidate"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 vol.py -f /path/to/memory.raw windows.filescan &gt; filescan.txt
+</span></span><span style="display:flex;"><span>grep -niE <span style="color:#a3be8c">&#39;flag|secret|\.txt|\.zip&#39;</span> filescan.txt
+</span></span><span style="display:flex;"><span>python3 vol.py windows.dumpfiles -h</span></span></code></pre></div><p>Use the plugin’s <code>--virtaddr</code> or <code>--physaddr</code> only after verifying which address type your source plugin returned. A wrong address kind can produce empty output without disproving that the file existed.</p>
+<h2 id="build-a-compact-memory-timeline">Build a compact memory timeline<a class="anchor" href="#build-a-compact-memory-timeline"></a></h2>
+<p>Join process start/exit times, command lines, network observations and recovered file content. Treat a scanned process object as possible historical evidence; <code>psscan</code> and active-list enumeration answer different questions.</p>
+<h2 id="troubleshooting-symbol-and-plugin-failures">Troubleshooting symbol and plugin failures<a class="anchor" href="#troubleshooting-symbol-and-plugin-failures"></a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Error/outcome</th>
+          <th>Distinguish</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Unsatisfied kernel/symbol requirement</td>
+          <td>Missing or mismatched symbols versus malformed image</td>
+      </tr>
+      <tr>
+          <td>Plugin not listed</td>
+          <td>Search path/import/API compatibility</td>
+      </tr>
+      <tr>
+          <td>Empty dump directory</td>
+          <td>Plugin did not emit bytes versus wrong output location</td>
+      </tr>
+      <tr>
+          <td>Process absent from pslist</td>
+          <td>Exited process, corruption or wrong image interpretation</td>
+      </tr>
+      <tr>
+          <td>Extracted file incomplete</td>
+          <td>Missing resident pages/cache state</td>
+      </tr>
+  </tbody>
+</table>
+<p>References: <a href="https://volatility3.readthedocs.io/en/latest/getting-started-windows-tutorial.html">Windows tutorial</a>, <a href="https://volatility3.readthedocs.io/en/latest/getting-started-linux-tutorial.html">Linux tutorial</a>, <a href="https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.dumpfiles.html">dumpfiles</a>, <a href="https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.memmap.html">memmap</a>, <a href="https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.registry.printkey.html">registry printkey</a>.</p>
+<h2 id="related-playbooks">Related playbooks<a class="anchor" href="#related-playbooks"></a></h2>
+<ul>
+<li><a href="../../reversing-expl/dynamic-debugging/">Runtime evidence and memory</a></li>
+<li><a href="../../network-expl/tls-ssh/">TLS/SSH secrets versus metadata</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/rsactftool/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>RsaCtfTool</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="flex align-center">
+        <span>OpenSSH-Session-Key-Recovery</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#discover-plugins-and-identify-windows-memory">Discover plugins and identify Windows memory</a></li>
+    <li><a href="#windows-ctf-triage">Windows CTF triage</a></li>
+    <li><a href="#extract-files-associated-with-a-process">Extract files associated with a process</a></li>
+    <li><a href="#export-structured-output">Export structured output</a></li>
+    <li><a href="#linux-memory">Linux memory</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#flags-explained-global-versus-plugin-options">Flags explained: global versus plugin options</a></li>
+    <li><a href="#ctf-investigate-a-suspicious-process">CTF: investigate a suspicious process</a></li>
+    <li><a href="#ctf-search-the-emitted-process-memory">CTF: search the emitted process memory</a></li>
+    <li><a href="#ctf-registry-autorun-clues">CTF: registry autorun clues</a></li>
+    <li><a href="#ctf-scan-for-file-objects-then-recover-a-candidate">CTF: scan for file objects, then recover a candidate</a></li>
+    <li><a href="#build-a-compact-memory-timeline">Build a compact memory timeline</a></li>
+    <li><a href="#troubleshooting-symbol-and-plugin-failures">Troubleshooting symbol and plugin failures</a></li>
+    <li><a href="#related-playbooks">Related playbooks</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
