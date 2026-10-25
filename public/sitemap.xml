@@ -12,6 +12,45 @@
   </url><url>
     <loc>http://localhost:1313/docs/tools-cheatsheet/</loc>
   </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/a-matter-of-time/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/connected/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/cryptpad/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/fatmike/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/fatmike-02/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/flipvm/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/flrscrnsvr/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/httpd/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/matryoshka-v2/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/wallpaper/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/what-did-you-type/</loc>
+    <lastmod>2026-10-24T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/docs/web-expl/methodology/</loc>
   </url><url>
     <loc>http://localhost:1313/docs/network-expl/packet-triage/</loc>
@@ -246,11 +285,34 @@
   </url><url>
     <loc>http://localhost:1313/docs/web-expl/python-snippets/</loc>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/corrupted/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/fake-c2/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/flag-encoder/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/gorillabot/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/hunt4c2/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/matryoshka/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/packer/</loc>
+    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/categories/</loc>
   </url><url>
     <loc>http://localhost:1313/tags/</loc>
   </url>

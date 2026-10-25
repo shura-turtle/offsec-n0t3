@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Reconstruct the ICMP-triggered AES decryptor from source and packet fields.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/httpd/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="httpd">
+  <meta property="og:description" content="Reconstruct the ICMP-triggered AES decryptor from source and packet fields.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-24T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="httpd">
+  <meta itemprop="description" content="Reconstruct the ICMP-triggered AES decryptor from source and packet fields.">
+  <meta itemprop="datePublished" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="wordCount" content="996">
+
+<title>httpd • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/httpd/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.cd74fd78e64f4409a8b4a8c55aa3b35c93ee0254ebf66cd6aed15eb7bf8b1472.js" integrity="sha256-zXT9eOZPRAmotKjFWqOzXJPuAlTr9mzWrtFet7&#43;LFHI=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">18</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="" >A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="" >cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="" >Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="" >Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="active" aria-current="page">httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="" >What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>httpd</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-executable">1. Identify the executable</a></li>
+    <li><a href="#2-follow-the-background-routine">2. Follow the background routine</a></li>
+    <li><a href="#3-translate-the-packet-checks">3. Translate the packet checks</a></li>
+    <li><a href="#4-construct-the-icmp-checksum">4. Construct the ICMP checksum</a></li>
+    <li><a href="#5-reproduce-the-key-construction-exactly">5. Reproduce the key construction exactly</a></li>
+    <li><a href="#6-extract-the-ciphertext-from-machine-code">6. Extract the ciphertext from machine code</a></li>
+    <li><a href="#7-decrypt-and-check-the-result">7. Decrypt and check the result</a></li>
+    <li><a href="#8-run-the-complete-offline-solver">8. Run the complete offline solver</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="httpd">HTTPD<a class="anchor" href="#httpd"></a></h1>
+<p><a href="files/solve.py">Download solver</a></p>
+<p>The executable looks like a small HTTP server, but the flag does not come from a URL. A background packet-capture routine watches ICMP traffic, extracts selected bytes, and uses them as an AES key and IV.</p>
+<p>Recovered flag:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{fUn_w1th_m4g1c_p4ck3t5}</span></span></code></pre></div><p>This solve reproduces the packet checks and AES calculation offline using the supplied source and ciphertext extracted from the binary. The FreeBSD executable was not run under Linux, and no packets were sent to a live host.</p>
+<h2 id="1-identify-the-executable">1. Identify the executable<a class="anchor" href="#1-identify-the-executable"></a></h2>
+<p>The handout is <code>httpd/handout/httpd</code> in the public challenge repository. Start with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>file httpd
+</span></span><span style="display:flex;"><span>sha256sum httpd</span></span></code></pre></div><p>The relevant output is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ELF 64-bit LSB executable, x86-64, version 1 (FreeBSD), dynamically linked,
+</span></span><span style="display:flex;"><span>interpreter /libexec/ld-elf.so.1, for FreeBSD 14.3, with debug_info, not stripped</span></span></code></pre></div><p>SHA-256:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>f30893ce8639f4a551206878db19c6a7f299ecad22ffb5e60ed90df4f47e89dc</span></span></code></pre></div><p>The operating system matters here. This is a FreeBSD program requiring its runtime and packet-capture interface. Native Linux execution is not a useful test of the challenge logic.</p>
+<p>The repository also supplies <code>httpd/source/httpd.go</code> and an official solution PDF. The steps below cross-check the source model against the embedded ciphertext rather than just copying the flag from a source comment.</p>
+<h2 id="2-follow-the-background-routine">2. Follow the background routine<a class="anchor" href="#2-follow-the-background-routine"></a></h2>
+<p>The Go source starts an HTTP listener on port 8080. Its normal GET handler returns:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Nothing to see here :{</span></span></code></pre></div><p>More useful is the goroutine started beside it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">go</span> <span style="color:#88c0d0">httpInit</span><span style="color:#eceff4">()</span></span></span></code></pre></div><p><code>httpInit</code> opens packet capture on interface <code>re0</code> and filters for ICMP:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>pcap<span style="color:#eceff4">.</span><span style="color:#88c0d0">OpenLive</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;re0&#34;</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">1600</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1;font-weight:bold">true</span><span style="color:#eceff4">,</span> pcap<span style="color:#eceff4">.</span>BlockForever<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>handle<span style="color:#eceff4">.</span><span style="color:#88c0d0">SetBPFFilter</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;icmp&#34;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>The shipped binary&rsquo;s relevant symbol is named <code>net/http.init</code>. The source and binary naming differ, so follow its pcap and AES calls instead of relying only on a function name.</p>
+<p>The routine slices bytes directly from the captured Ethernet frame. It does not use an IPv4 parser to account for optional headers. For this input we need Ethernet + a normal 20-byte IPv4 header + ICMP.</p>
+<h2 id="3-translate-the-packet-checks">3. Translate the packet checks<a class="anchor" href="#3-translate-the-packet-checks"></a></h2>
+<p>These are offsets from the beginning of the Ethernet frame, not from the IP header:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Frame offset</th>
+          <th>Field</th>
+          <th>Required interpretation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x10:0x12</code></td>
+          <td>IPv4 total length</td>
+          <td>Big-endian value <code>0x20</code></td>
+      </tr>
+      <tr>
+          <td><code>0x14:0x18</code></td>
+          <td>IPv4 flags/fragment offset, TTL, protocol</td>
+          <td>Used as four key bytes</td>
+      </tr>
+      <tr>
+          <td><code>0x22</code></td>
+          <td>ICMP type</td>
+          <td><code>8</code>, echo request</td>
+      </tr>
+      <tr>
+          <td><code>0x24:0x26</code></td>
+          <td>ICMP checksum</td>
+          <td>Used as key bytes and little-endian XOR operand</td>
+      </tr>
+      <tr>
+          <td><code>0x26:0x28</code></td>
+          <td>ICMP identifier</td>
+          <td>Little-endian value <code>0x1337</code></td>
+      </tr>
+      <tr>
+          <td><code>0x2a:0x2e</code></td>
+          <td>Four bytes of ICMP payload</td>
+          <td>Little-endian value <code>0xe55fdec6</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>An IPv4 total length of 32 consists of a 20-byte IP header, an eight-byte ICMP header, and four payload bytes.</p>
+<p>For the identifier, the raw bytes must be <code>37 13</code>. Interpreted little-endian, those are <code>0x1337</code>; interpreted as the network-order ICMP identifier, they are <code>0x3713</code>. Passing <code>0x1337</code> directly to a network-order packet builder would put the wrong bytes in the frame.</p>
+<p>Similarly, the required payload bytes are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>c6 de 5f e5</span></span></code></pre></div><p>They are a fixed challenge value. There is no requirement to synchronize with the current clock.</p>
+<h2 id="4-construct-the-icmp-checksum">4. Construct the ICMP checksum<a class="anchor" href="#4-construct-the-icmp-checksum"></a></h2>
+<p>Choose the ordinary echo-request sequence number 1. Before inserting the checksum, the 12-byte ICMP message is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>08 00 00 00 37 13 00 01 c6 de 5f e5</span></span></code></pre></div><p>Compute the one&rsquo;s-complement checksum by adding network-order 16-bit words, folding carries, and complementing the result:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">struct</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">checksum</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span> <span style="color:#81a1c1">%</span> <span style="color:#b48ead">2</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        data <span style="color:#81a1c1">+=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;</span><span style="color:#ebcb8b">\0</span><span style="color:#a3be8c">&#34;</span>
+</span></span><span style="display:flex;"><span>    value <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">sum</span><span style="color:#eceff4">(</span>struct<span style="color:#81a1c1">.</span>unpack<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;&gt;&#34;</span> <span style="color:#81a1c1">+</span> <span style="color:#a3be8c">&#34;H&#34;</span> <span style="color:#81a1c1">*</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">)</span> <span style="color:#81a1c1">//</span> <span style="color:#b48ead">2</span><span style="color:#eceff4">),</span> data<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">while</span> value <span style="color:#81a1c1">&gt;&gt;</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        value <span style="color:#81a1c1">=</span> <span style="color:#eceff4">(</span>value <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffff</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">+</span> <span style="color:#eceff4">(</span>value <span style="color:#81a1c1">&gt;&gt;</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> <span style="color:#eceff4">(</span><span style="color:#81a1c1">~</span>value<span style="color:#eceff4">)</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffff</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>message <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;0800000037130001c6de5fe5&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#a3be8c">f</span><span style="color:#a3be8c">&#34;</span><span style="color:#a3be8c">{</span>checksum<span style="color:#eceff4">(</span>message<span style="color:#eceff4">)</span><span style="color:#a3be8c">:</span><span style="color:#a3be8c">04x</span><span style="color:#a3be8c">}</span><span style="color:#a3be8c">&#34;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>9a27</span></span></code></pre></div><p>Insert <code>9a 27</code> into the checksum field:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>08 00 9a 27 37 13 00 01 c6 de 5f e5</span></span></code></pre></div><p>The checksum of this completed message is zero, which checks the construction independently of the AES output.</p>
+<p>For the four IP-header bytes used in the key, choose Don&rsquo;t Fragment, fragment offset zero, TTL 64, and protocol ICMP:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>40 00 40 01</span></span></code></pre></div><p>The sequence number, TTL, and flags are not all directly constrained by the program&rsquo;s success checks. These normal values are the ones that produce the meaningful decrypted flag. The synthetic packet built by the solver verifies all explicit checks before deriving the key.</p>
+<h2 id="5-reproduce-the-key-construction-exactly">5. Reproduce the key construction exactly<a class="anchor" href="#5-reproduce-the-key-construction-exactly"></a></h2>
+<p>The source reads the payload and checksum as little-endian integers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>ts <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">int</span><span style="color:#81a1c1">.</span>from_bytes<span style="color:#eceff4">(</span><span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;c6de5fe5&#34;</span><span style="color:#eceff4">),</span> <span style="color:#a3be8c">&#34;little&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>cs <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">int</span><span style="color:#81a1c1">.</span>from_bytes<span style="color:#eceff4">(</span><span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;9a27&#34;</span><span style="color:#eceff4">),</span> <span style="color:#a3be8c">&#34;little&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>high <span style="color:#81a1c1">=</span> <span style="color:#eceff4">(</span>ts <span style="color:#81a1c1">&gt;&gt;</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">^</span> cs
+</span></span><span style="display:flex;"><span>low <span style="color:#81a1c1">=</span> <span style="color:#eceff4">(</span>ts <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffff</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">^</span> cs</span></span></code></pre></div><p>The values are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ts   = e55fdec6
+</span></span><span style="display:flex;"><span>cs   = 279a
+</span></span><span style="display:flex;"><span>high = e55f XOR 279a = c2c5
+</span></span><span style="display:flex;"><span>low  = dec6 XOR 279a = f95c</span></span></code></pre></div><p>It serializes the two XOR results big-endian and assembles the rest as raw packet bytes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>high[2] || ip_fields[4] || checksum[2] || payload[4] || identifier[2] || low[2]</span></span></code></pre></div><p>The resulting 16-byte key is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>c2c5 40004001 9a27 c6de5fe5 3713 f95c</span></span></code></pre></div><p>Without spaces:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>c2c5400040019a27c6de5fe53713f95c</span></span></code></pre></div><p>The call to <code>cipher.NewCBCDecrypter</code> passes the same bytes as the IV. This is AES-128-CBC with <code>IV = key</code>.</p>
+<h2 id="6-extract-the-ciphertext-from-machine-code">6. Extract the ciphertext from machine code<a class="anchor" href="#6-extract-the-ciphertext-from-machine-code"></a></h2>
+<p>The ciphertext is assembled by four <code>movabs</code> instructions, so a search for the complete 32-byte string in the file fails. Disassemble this range:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -d -M intel --start-address<span style="color:#81a1c1">=</span>0x7484d2 <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  --stop-address<span style="color:#81a1c1">=</span>0x748509 httpd</span></span></code></pre></div><p>The four constants are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">0</span><span style="color:#8fbcbb">x7484d2:</span> <span style="color:#88c0d0">movabs</span> <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0xc07edfb429a5f151</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">0</span><span style="color:#8fbcbb">x7484df:</span> <span style="color:#88c0d0">movabs</span> <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0xb34e3d248f2f3b2a</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">0</span><span style="color:#8fbcbb">x7484ed:</span> <span style="color:#88c0d0">movabs</span> <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x8cdd9c0bcfb0ed5a</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">0</span><span style="color:#8fbcbb">x7484fb:</span> <span style="color:#88c0d0">movabs</span> <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x0c64c43e9b0ee6cd</span></span></span></code></pre></div><p>Each is stored as a little-endian 64-bit word. Concatenating their bytes gives:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>51f1a529b4df7ec02a3b2f8f243d4eb35aedb0cf0b9cdd8ccde60e9b3ec4640c</span></span></code></pre></div><p>The accompanying solver reads those instruction bytes through the ELF <code>PT_LOAD</code> mappings. It checks each <code>48 b9</code> opcode and extracts the eight-byte immediate, so the ciphertext comes from the supplied binary rather than a copied plaintext comment.</p>
+<h2 id="7-decrypt-and-check-the-result">7. Decrypt and check the result<a class="anchor" href="#7-decrypt-and-check-the-result"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Cipher</span> <span style="color:#81a1c1;font-weight:bold">import</span> AES
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Util.Padding</span> <span style="color:#81a1c1;font-weight:bold">import</span> unpad
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>key <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;c2c5400040019a27c6de5fe53713f95c&#34;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>ciphertext <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;51f1a529b4df7ec02a3b2f8f243d4eb3&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;5aedb0cf0b9cdd8ccde60e9b3ec4640c&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>padded <span style="color:#81a1c1">=</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_CBC<span style="color:#eceff4">,</span> key<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decrypt<span style="color:#eceff4">(</span>ciphertext<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>plaintext <span style="color:#81a1c1">=</span> unpad<span style="color:#eceff4">(</span>padded<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>block_size<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_CBC<span style="color:#eceff4">,</span> key<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>encrypt<span style="color:#eceff4">(</span>padded<span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> ciphertext
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>plaintext<span style="color:#81a1c1">.</span>decode<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;ascii&#34;</span><span style="color:#eceff4">))</span></span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{fUn_w1th_m4g1c_p4ck3t5}</span></span></code></pre></div><h2 id="8-run-the-complete-offline-solver">8. Run the complete offline solver<a class="anchor" href="#8-run-the-complete-offline-solver"></a></h2>
+<p>Install PyCryptodome and point <code>solve.py</code> at the handout:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m venv .venv
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">source</span> .venv/bin/activate
+</span></span><span style="display:flex;"><span>python -m pip install pycryptodome
+</span></span><span style="display:flex;"><span>python solve.py /path/to/ctf-2026-challenges-public/httpd/handout/httpd</span></span></code></pre></div><p>Recorded output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ICMP checksum: 9a27
+</span></span><span style="display:flex;"><span>ICMP bytes: 08009a2737130001c6de5fe5
+</span></span><span style="display:flex;"><span>Key and IV: c2c5400040019a27c6de5fe53713f95c
+</span></span><span style="display:flex;"><span>Ciphertext: 51f1a529b4df7ec02a3b2f8f243d4eb35aedb0cf0b9cdd8ccde60e9b3ec4640c
+</span></span><span style="display:flex;"><span>CMO{fUn_w1th_m4g1c_p4ck3t5}</span></span></code></pre></div><p>The script constructs a synthetic Ethernet/IP/ICMP frame in memory, checks the source&rsquo;s field predicates, derives the key from those frame offsets, extracts the encrypted bytes from the ELF, checks padding, and re-encrypts to the same ciphertext. This is static/source-model verification. Running the packet-capture service on FreeBSD and observing its output was not part of this replay.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>FLRSCRNSVR</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="flex align-center">
+        <span>Matryoshka v2</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-executable">1. Identify the executable</a></li>
+    <li><a href="#2-follow-the-background-routine">2. Follow the background routine</a></li>
+    <li><a href="#3-translate-the-packet-checks">3. Translate the packet checks</a></li>
+    <li><a href="#4-construct-the-icmp-checksum">4. Construct the ICMP checksum</a></li>
+    <li><a href="#5-reproduce-the-key-construction-exactly">5. Reproduce the key construction exactly</a></li>
+    <li><a href="#6-extract-the-ciphertext-from-machine-code">6. Extract the ciphertext from machine code</a></li>
+    <li><a href="#7-decrypt-and-check-the-result">7. Decrypt and check the result</a></li>
+    <li><a href="#8-run-the-complete-offline-solver">8. Run the complete offline solver</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

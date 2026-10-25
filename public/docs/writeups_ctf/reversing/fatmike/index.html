@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Decrypt the hidden code section, restore INT3 branches, and run the original serial validator.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/fatmike/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Fatmike — JIT Decryption and Nanomites">
+  <meta property="og:description" content="Decrypt the hidden code section, restore INT3 branches, and run the original serial validator.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-24T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="Fatmike — JIT Decryption and Nanomites">
+  <meta itemprop="description" content="Decrypt the hidden code section, restore INT3 branches, and run the original serial validator.">
+  <meta itemprop="datePublished" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="wordCount" content="773">
+
+<title>Fatmike — JIT Decryption and Nanomites • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/fatmike/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.cd74fd78e64f4409a8b4a8c55aa3b35c93ee0254ebf66cd6aed15eb7bf8b1472.js" integrity="sha256-zXT9eOZPRAmotKjFWqOzXJPuAlTr9mzWrtFet7&#43;LFHI=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">18</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="" >A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="" >cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="active" aria-current="page">Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="" >Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="" >httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="" >What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Fatmike — JIT Decryption and Nanomites</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-hidden-code">1. Identify the hidden code</a></li>
+    <li><a href="#2-decrypt-pc-with-the-programs-own-routine">2. Decrypt <code>.pc</code> with the program’s own routine</a></li>
+    <li><a href="#3-follow-the-nanomites">3. Follow the nanomites</a></li>
+    <li><a href="#4-check-the-serial">4. Check the serial</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>4 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="fatmike--jit-decryption-and-nanomites">Fatmike — JIT Decryption and Nanomites<a class="anchor" href="#fatmike--jit-decryption-and-nanomites"></a></h1>
+<p><a href="files/solve.py">Download solver</a></p>
+<p>The serial is <code>D3FE-A7ED-BAAD-C0D3</code>. The repository&rsquo;s challenge README gives the flag as <code>CMO{byp4ss3d_f4tm1k3_2o26}</code>. I verified the serial by executing the handout&rsquo;s original decrypted validator: it returns <code>1</code>; changing the last digit to <code>4</code> returns <code>0</code>. The flag text below comes from that README, since the Windows GUI did not finish under Wine&rsquo;s breakpoint handling.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{byp4ss3d_f4tm1k3_2o26}</span></span></code></pre></div><h2 id="1-identify-the-hidden-code">1. Identify the hidden code<a class="anchor" href="#1-identify-the-hidden-code"></a></h2>
+<p>Use <code>Fatmike/Handout/Crackme.exe</code> from the public repository. Its SHA-256 is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>489dc223e8e0cf0dbce028e5dc8ce75036f0f5253289bd61a8faa479360d778e</span></span></code></pre></div><p>It is a 32-bit Windows GUI program. PE section <code>.pc</code> starts at VA <code>0x40a000</code>, file offset <code>0x8e00</code>. The section has 0x5b9 meaningful bytes, padded to 0x600. Its on-disk bytes do not disassemble into the serial checker. The normal code calls <code>0x40a000</code> at <code>0x4030e4</code>, and then calls <code>0x40a025</code> at <code>0x4030f6</code>. Those calls identify <code>.pc</code> as code that must be unpacked before use.</p>
+<p>The executable also has an RCDATA resource numbered <code>1111</code>, at file offset <code>0x75358</code>, size 24584. The first DWORD is <code>1536</code> (<code>0x600</code>). After the eight-byte header come 1536 records of four little-endian DWORDs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>section RVA | condition ID | signed displacement | instruction length</span></span></code></pre></div><p>There is one record for each byte in the padded <code>.pc</code> section. For example, the record at offset <code>0x35</code> describes RVA <code>0xa035</code>, condition <code>13</code>, displacement <code>14</code>, length <code>2</code>.</p>
+<h2 id="2-decrypt-pc-with-the-programs-own-routine">2. Decrypt <code>.pc</code> with the program&rsquo;s own routine<a class="anchor" href="#2-decrypt-pc-with-the-programs-own-routine"></a></h2>
+<p>The code around <code>0x403fba</code> manages the decrypted section. It calls the cipher constructor at <code>0x401e39</code> and stream XOR routine at <code>0x401f4d</code>. I stopped the isolated Wine process before entering a serial and read the 32-byte key at VA <code>0x40d268</code>; a second run gave the same bytes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>f630aa38d57297375d645559c334fd50
+</span></span><span style="display:flex;"><span>d55ca1d177d2655a042351cf69244bf2</span></span></code></pre></div><p>The constructor receives that key and the eight-byte nonce <code>0a 0b 0c 0d 0e 0f 10 11</code>. The downloadable solver maps the executable&rsquo;s original <code>.text</code> into Unicorn, runs <code>0x401e39</code>, then runs <code>0x401f4d</code> on the 0x600 bytes from file offset <code>0x8e00</code>. This avoids guessing the cipher&rsquo;s custom constants or rewriting its rounds.</p>
+<p>The decrypted bytes begin:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>c7 01 47 bb 5d 86 8b c1 c7 41 04 90 b1 6e 0a c7</span></span></code></pre></div><p>They now decode as real x86. The function at <code>0x40a000</code> writes five expected DWORDs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>865dbb47  0a6eb190  20476c33  1c8a7693  59febdfb</span></span></code></pre></div><p>These are checkpoints for the serial validator at <code>0x40a025</code>.</p>
+<h2 id="3-follow-the-nanomites">3. Follow the nanomites<a class="anchor" href="#3-follow-the-nanomites"></a></h2>
+<p>Plain disassembly of the decrypted section still breaks: executable paths contain <code>INT3</code> (<code>cc</code>) instead of branch instructions. The exception handler at <code>0x4045f3</code> looks up the record for the breakpoint address, evaluates its condition with the saved EFLAGS, then sets the resumed EIP to either <code>site + length</code> or <code>site + length + displacement</code>.</p>
+<p>I ran the original condition dispatcher at <code>0x404166</code> over representative EFLAGS values. Its IDs include <code>13 = equal</code>, <code>1 = not equal</code>, and <code>2 = unconditional</code>. Two examples from the validator show the scheme:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Breakpoint</th>
+          <th>Prior instruction</th>
+          <th>Resource record</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x40a035</code></td>
+          <td>compare serial pointer with zero</td>
+          <td>ID 13, displacement 14, length 2</td>
+          <td>Null input jumps to failure at <code>0x40a045</code></td>
+      </tr>
+      <tr>
+          <td><code>0x40a043</code></td>
+          <td>compare <code>strlen(serial)</code> with 19</td>
+          <td>ID 13, displacement 7, length 2</td>
+          <td>A 19-byte input jumps to <code>0x40a04c</code>; otherwise fail</td>
+      </tr>
+  </tbody>
+</table>
+<p>Some <code>cc</code> bytes also appear inside junk or instruction operands. Replacing every <code>cc</code> with a jump corrupts code. The solver leaves decrypted bytes intact and handles interrupt 3 as the original exception handler does.</p>
+<h2 id="4-check-the-serial">4. Check the serial<a class="anchor" href="#4-check-the-serial"></a></h2>
+<p>At <code>0x40a025</code> the validator rejects null input and strings whose length is not 19. It starts its hash state at <code>0xcafebabe</code>, reads each serial byte, and calls the updater at <code>0x40a1ce</code>. Every four bytes it compares its state against the next DWORD from <code>0x40a000</code>; it checks the final three bytes against the fifth DWORD. The path also changes the state between checkpoints, so hashing each four-character group independently from <code>0xcafebabe</code> gives the wrong later values.</p>
+<p>For <code>D3FE-A7ED-BAAD-C0D3</code>, the original updater and validator produce:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Consumed bytes</th>
+          <th>State</th>
+          <th>Expected</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>D3FE</code></td>
+          <td><code>865dbb47</code></td>
+          <td><code>865dbb47</code></td>
+      </tr>
+      <tr>
+          <td><code>-A7E</code></td>
+          <td><code>0a6eb190</code></td>
+          <td><code>0a6eb190</code></td>
+      </tr>
+      <tr>
+          <td><code>D-BA</code></td>
+          <td><code>20476c33</code></td>
+          <td><code>20476c33</code></td>
+      </tr>
+      <tr>
+          <td><code>AD-C</code></td>
+          <td><code>1c8a7693</code></td>
+          <td><code>1c8a7693</code></td>
+      </tr>
+      <tr>
+          <td><code>0D3</code></td>
+          <td><code>59febdfb</code></td>
+          <td><code>59febdfb</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>The group boundaries are byte offsets 4, 8, 12, 16, and 19, not the hyphens. Thus the hyphens are hashed as input bytes.</p>
+<p>The solver executes the original function at <code>0x40a025</code>, dispatching 936 nanomite breakpoints for the valid serial. Three unrelated calls are stubbed: <code>strlen</code>, an object allocator, and its setup routine. The serial hash and comparisons are executed from the decrypted handout bytes.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m pip install unicorn
+</span></span><span style="display:flex;"><span>python solve.py /path/to/Crackme.exe</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>decrypted .pc head: c70147bb5d868bc1c7410490b16e0ac7
+</span></span><span style="display:flex;"><span>serial: D3FE-A7ED-BAAD-C0D3 validator: 1 nanomites: 936
+</span></span><span style="display:flex;"><span>mutant: D3FE-A7ED-BAAD-C0D4 validator: 0 nanomites: 942
+</span></span><span style="display:flex;"><span>flag from repository README: CMO{byp4ss3d_f4tm1k3_2o26}</span></span></code></pre></div><p>The serial and flag are disclosed in <code>Fatmike/README.md</code>; the native-code replay independently proves that this serial passes the handout&rsquo;s actual checker. It does not prove that Wine displayed the flag. Under Wine, the process entered its intentional breakpoint path and opened WineDbg instead of completing the GUI flow.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/cryptpad/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>cryptpad</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/fatmike-02/" class="flex align-center">
+        <span>Fatmike 02 — Record Player</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-hidden-code">1. Identify the hidden code</a></li>
+    <li><a href="#2-decrypt-pc-with-the-programs-own-routine">2. Decrypt <code>.pc</code> with the program’s own routine</a></li>
+    <li><a href="#3-follow-the-nanomites">3. Follow the nanomites</a></li>
+    <li><a href="#4-check-the-serial">4. Check the serial</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fix two playback settings, then recover the flag from a checked XOR window in the embedded audio.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/fatmike-02/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="Fatmike 02 — Record Player">
+  <meta property="og:description" content="Fix two playback settings, then recover the flag from a checked XOR window in the embedded audio.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-24T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="Fatmike 02 — Record Player">
+  <meta itemprop="description" content="Fix two playback settings, then recover the flag from a checked XOR window in the embedded audio.">
+  <meta itemprop="datePublished" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="wordCount" content="929">
+
+<title>Fatmike 02 — Record Player • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/fatmike-02/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.cd74fd78e64f4409a8b4a8c55aa3b35c93ee0254ebf66cd6aed15eb7bf8b1472.js" integrity="sha256-zXT9eOZPRAmotKjFWqOzXJPuAlTr9mzWrtFet7&#43;LFHI=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">18</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="" >A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="" >cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="" >Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="active" aria-current="page">Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="" >httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="" >What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Fatmike 02 — Record Player</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-binary">1. Identify the binary</a></li>
+    <li><a href="#2-find-the-play-handler-and-its-two-settings">2. Find the PLAY handler and its two settings</a></li>
+    <li><a href="#3-extract-the-audio-resource">3. Extract the audio resource</a></li>
+    <li><a href="#4-recover-the-encrypted-flag-bytes">4. Recover the encrypted flag bytes</a></li>
+    <li><a href="#5-search-audio-windows-instead-of-playing-the-song">5. Search audio windows instead of playing the song</a></li>
+    <li><a href="#6-reproduce-the-extraction-and-patches">6. Reproduce the extraction and patches</a></li>
+    <li><a href="#7-verify-the-original-codes-checks">7. Verify the original code&rsquo;s checks</a></li>
+    <li><a href="#source">Source</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="fatmike-02--record-player">Fatmike 02 — Record Player<a class="anchor" href="#fatmike-02--record-player"></a></h1>
+<p><a href="files/solve.py">Download solver</a></p>
+<p>The record player forces backward playback and pitch processing when the PLAY button is pressed. The official solution describes changing those two settings. I reproduced the patches against the handout and extracted the flag directly from its audio resource, then checked the result with the original hash function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{y0u_g0t_r1ckr0ll3d}</span></span></code></pre></div><p>The verification here is offline: original x64 code confirms the hash and the effect of the two patches. I did not launch the complete GUI or listen to playback.</p>
+<h2 id="1-identify-the-binary">1. Identify the binary<a class="anchor" href="#1-identify-the-binary"></a></h2>
+<p>The handout is <code>Fatmike_02/Handout/RecordPlayer.exe</code> in the public repository.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>file RecordPlayer.exe
+</span></span><span style="display:flex;"><span>sha256sum RecordPlayer.exe
+</span></span><span style="display:flex;"><span>objdump -d -M intel RecordPlayer.exe &gt; record-player.asm</span></span></code></pre></div><p>The file is a native Windows x64 GUI executable. Its preferred image base is <code>0x140000000</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>c0846e7b630e3d307ed795378b5346b90cc524a508d35a118979f85938d0f5a3</span></span></code></pre></div><p>The imports give two useful starting points: <code>waveOutOpen</code>/<code>waveOutWrite</code> identify the audio path, while <code>FindResourceW</code>, <code>LoadResource</code>, and <code>LockResource</code> identify embedded data. A <code>SOUND</code> resource name is also visible in the binary.</p>
+<h2 id="2-find-the-play-handler-and-its-two-settings">2. Find the PLAY handler and its two settings<a class="anchor" href="#2-find-the-play-handler-and-its-two-settings"></a></h2>
+<p>The control-command handler begins at <code>0x140003860</code>. It dispatches control ID <code>0x3e9</code> to the PLAY path. That path loads sound resource ID <code>0x8d</code> and then forces two settings before starting playback:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">14000392</span><span style="color:#88c0d0">d</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">dl</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">14000392</span><span style="color:#88c0d0">f</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rbx</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0x50</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003933</span>  <span style="color:#88c0d0">call</span>    <span style="color:#b48ead">0x140003a00</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003938</span>  <span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">dl</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">14000393</span><span style="color:#88c0d0">a</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rbx</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0x50</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">14000393</span><span style="color:#88c0d0">e</span>  <span style="color:#8fbcbb">call</span>    <span style="color:#b48ead">0x140003a20</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003943</span>  <span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rbx</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0x50</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003947</span>  <span style="color:#88c0d0">call</span>    <span style="color:#b48ead">0x1400020f0</span></span></span></code></pre></div><p>Both setters take the audio-object pointer in <code>RCX</code> and a Boolean value in <code>DL</code>.</p>
+<p>The first setter calculates the byte-step direction:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">140003</span><span style="color:#88c0d0">a00</span>  <span style="color:#8fbcbb">movzx</span>   <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">dl</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003</span><span style="color:#88c0d0">a03</span>  <span style="color:#8fbcbb">xor</span>     <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003</span><span style="color:#88c0d0">a06</span>  <span style="color:#8fbcbb">lea</span>     <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rax</span><span style="color:#eceff4">*</span><span style="color:#b48ead">2</span><span style="color:#eceff4">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140003</span><span style="color:#88c0d0">a0d</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rcx</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0x18</span><span style="color:#eceff4">],</span> <span style="color:#8fbcbb">eax</span></span></span></code></pre></div><p>With <code>DL=1</code>, the stored signed step is <code>-1</code>; with <code>DL=0</code>, it is <code>+1</code>.</p>
+<p>The second setter writes the pitch-processing flag:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">140003</span><span style="color:#88c0d0">a20</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rcx</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0x1d</span><span style="color:#eceff4">],</span> <span style="color:#8fbcbb">dl</span></span></span></code></pre></div><p>Changing the two call arguments from one to zero selects forward playback with pitch processing disabled.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Instruction VA</th>
+          <th>File offset</th>
+          <th>Original bytes</th>
+          <th>Patched bytes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x14000392d</code></td>
+          <td><code>0x2d2d</code></td>
+          <td><code>b2 01</code></td>
+          <td><code>b2 00</code></td>
+      </tr>
+      <tr>
+          <td><code>0x140003938</code></td>
+          <td><code>0x2d38</code></td>
+          <td><code>b2 01</code></td>
+          <td><code>b2 00</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>The addresses printed in the official README were from a different loaded address range. Use the RVAs or the addresses measured in this handout rather than copying a runtime address literally.</p>
+<h2 id="3-extract-the-audio-resource">3. Extract the audio resource<a class="anchor" href="#3-extract-the-audio-resource"></a></h2>
+<p>The only RIFF/WAVE object in the file starts at raw offset <code>0x78708</code>. Reading its chunk headers gives:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>44100 samples per second
+</span></span><span style="display:flex;"><span>1 channel
+</span></span><span style="display:flex;"><span>8-bit PCM
+</span></span><span style="display:flex;"><span>720623 samples</span></span></code></pre></div><p>The audio loader at <code>0x140001f50</code> checks PCM format, reads the channel count, sample rate, and bit depth, finds the <code>data</code> chunk, and copies its samples into the audio object.</p>
+<p>The accompanying solver can save the WAV independently:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python solve.py RecordPlayer.exe --extract-audio sound.wav --details</span></span></code></pre></div><p>The WAV itself is not a plaintext flag container. The next part explains why a particular window of its samples matters.</p>
+<h2 id="4-recover-the-encrypted-flag-bytes">4. Recover the encrypted flag bytes<a class="anchor" href="#4-recover-the-encrypted-flag-bytes"></a></h2>
+<p>The audio-object constructor builds a 23-byte vector from constants loaded at <code>0x1400017b6</code>–<code>0x1400017df</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>30 2b 3d fc f6 b6 06 3b 0e b1 ed c0 e1 48 07 0c
+</span></span><span style="display:flex;"><span>0b bb f4 f9 48 01 19</span></span></code></pre></div><p>It stores an expected hash at object offset <code>0x150</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">14000183</span><span style="color:#88c0d0">f</span>  <span style="color:#8fbcbb">mov</span> <span style="color:#8fbcbb">dword</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rdi</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0x150</span><span style="color:#eceff4">],</span> <span style="color:#b48ead">0x18940a3d</span></span></span></code></pre></div><p>The sound-buffer fill routine starts at <code>0x140002310</code>. It keeps a sliding queue of recently emitted audio bytes. Once that queue contains a complete 23-byte window, it XORs the window with the constructor&rsquo;s vector:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">14000252</span><span style="color:#88c0d0">c</span>  <span style="color:#8fbcbb">movzx</span>   <span style="color:#8fbcbb">r12d</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">byte</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rax</span><span style="color:#bf616a">+</span><span style="color:#8fbcbb">rdx</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140002531</span>  <span style="color:#88c0d0">xor</span>     <span style="color:#8fbcbb">r12b</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">byte</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">r8</span><span style="color:#bf616a">+</span><span style="color:#8fbcbb">r9</span><span style="color:#eceff4">]</span></span></span></code></pre></div><p>The decoded candidate is then checked by the routine at <code>0x140001030</code>. Its seed is <code>0x811c9dc5</code>, and each byte is XORed into the state before multiplication by <code>0x01000193</code>: FNV-1a-32.</p>
+<p>Only a candidate with hash <code>0x18940a3d</code> reaches the callback at <code>0x1400026b3</code>. That callback carries the decoded string back to the window code, which updates the displayed text.</p>
+<h2 id="5-search-audio-windows-instead-of-playing-the-song">5. Search audio windows instead of playing the song<a class="anchor" href="#5-search-audio-windows-instead-of-playing-the-song"></a></h2>
+<p>After the two playback fixes, the samples are emitted in their original forward order. We can therefore search the embedded sample bytes directly:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">def</span> <span style="color:#88c0d0">fnv1a</span><span style="color:#eceff4">(</span>data<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    value <span style="color:#81a1c1">=</span> <span style="color:#b48ead">0x811c9dc5</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">for</span> byte <span style="color:#81a1c1;font-weight:bold">in</span> data<span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>        value <span style="color:#81a1c1">=</span> <span style="color:#eceff4">((</span>value <span style="color:#81a1c1">^</span> byte<span style="color:#eceff4">)</span> <span style="color:#81a1c1">*</span> <span style="color:#b48ead">0x01000193</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffffffff</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">return</span> value
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">for</span> start <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">range</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>samples<span style="color:#eceff4">)</span> <span style="color:#81a1c1">-</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>encrypted<span style="color:#eceff4">)</span> <span style="color:#81a1c1">+</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    candidate <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>        encrypted<span style="color:#eceff4">[</span>i<span style="color:#eceff4">]</span> <span style="color:#81a1c1">^</span> samples<span style="color:#eceff4">[</span>start <span style="color:#81a1c1">+</span> i<span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">for</span> i <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">range</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>encrypted<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#81a1c1">all</span><span style="color:#eceff4">(</span><span style="color:#b48ead">32</span> <span style="color:#81a1c1">&lt;=</span> c <span style="color:#81a1c1">&lt;</span> <span style="color:#b48ead">127</span> <span style="color:#81a1c1;font-weight:bold">for</span> c <span style="color:#81a1c1;font-weight:bold">in</span> candidate<span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#81a1c1;font-weight:bold">if</span> fnv1a<span style="color:#eceff4">(</span>candidate<span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> <span style="color:#b48ead">0x18940a3d</span><span style="color:#eceff4">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>start<span style="color:#eceff4">,</span> candidate<span style="color:#eceff4">)</span></span></span></code></pre></div><p>Exactly one printable candidate matches:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>132300 b&#39;CMO{y0u_g0t_r1ckr0ll3d}&#39;</span></span></code></pre></div><p>At 44100 samples per second, sample <code>132300</code> is exactly three seconds into the audio. That explains why the program needs a short period of correct playback before it can display the flag.</p>
+<h2 id="6-reproduce-the-extraction-and-patches">6. Reproduce the extraction and patches<a class="anchor" href="#6-reproduce-the-extraction-and-patches"></a></h2>
+<p>The solver extracts the constants and WAV from the binary rather than embedding the official flag:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python solve.py RecordPlayer.exe --details</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>WAV raw offset: 0x78708
+</span></span><span style="display:flex;"><span>Audio: 44100 Hz, mono 8-bit, 720623 samples
+</span></span><span style="display:flex;"><span>Encrypted bytes: 302b3dfcf6b6063b0eb1edc0e148070c0bbbf4f9480119
+</span></span><span style="display:flex;"><span>FNV-1a target: 0x18940a3d
+</span></span><span style="display:flex;"><span>Matching sample: 132300 (3.0 seconds)
+</span></span><span style="display:flex;"><span>Patch VA/file offsets: 0x14000392d/0x2d2d and 0x140003938/0x2d38
+</span></span><span style="display:flex;"><span>CMO{y0u_g0t_r1ckr0ll3d}</span></span></code></pre></div><p>To produce a patched copy:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python solve.py RecordPlayer.exe --patch-output RecordPlayer.patched.exe
+</span></span><span style="display:flex;"><span>cmp -l RecordPlayer.exe RecordPlayer.patched.exe</span></span></code></pre></div><p><code>cmp</code> reports just two changed bytes. Its positions are one-based and its byte values are octal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>  11567   1   0
+</span></span><span style="display:flex;"><span>  11578   1   0</span></span></code></pre></div><p>The solver refuses to overwrite its input file.</p>
+<h2 id="7-verify-the-original-codes-checks">7. Verify the original code&rsquo;s checks<a class="anchor" href="#7-verify-the-original-codes-checks"></a></h2>
+<p>For the optional machine-code comparison:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m pip install unicorn
+</span></span><span style="display:flex;"><span>python solve.py RecordPlayer.exe --verify-native --details</span></span></code></pre></div><p>The verifier first executes the original FNV-1a routine at <code>0x140001030</code> over the extracted candidate and confirms its result is <code>0x18940a3d</code>.</p>
+<p>It then executes the two PLAY-handler call sites and their original setters in two fresh emulators:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Code image</th>
+          <th>Audio-object step</th>
+          <th>Pitch flag</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Original</td>
+          <td><code>-1</code></td>
+          <td><code>1</code></td>
+      </tr>
+      <tr>
+          <td>Two-byte patched copy</td>
+          <td><code>+1</code></td>
+          <td><code>0</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>The emulator stops before entering the playback setup. Thus the proof covers the patched settings and checked audio-window extraction, not a full GUI execution. Re-XORing the recovered candidate with the matching audio bytes also reproduces the 23 encrypted bytes exactly.</p>
+<h2 id="source">Source<a class="anchor" href="#source"></a></h2>
+<p><a href="https://github.com/crackmesone/ctf-2026-challenges-public/tree/5f8857cf3556e4e36d7e7fc4650044ae682701b8/Fatmike_02">Official challenge and patch description</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/fatmike/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Fatmike — JIT Decryption and Nanomites</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/flipvm/" class="flex align-center">
+        <span>FlipVM</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-binary">1. Identify the binary</a></li>
+    <li><a href="#2-find-the-play-handler-and-its-two-settings">2. Find the PLAY handler and its two settings</a></li>
+    <li><a href="#3-extract-the-audio-resource">3. Extract the audio resource</a></li>
+    <li><a href="#4-recover-the-encrypted-flag-bytes">4. Recover the encrypted flag bytes</a></li>
+    <li><a href="#5-search-audio-windows-instead-of-playing-the-song">5. Search audio windows instead of playing the song</a></li>
+    <li><a href="#6-reproduce-the-extraction-and-patches">6. Reproduce the extraction and patches</a></li>
+    <li><a href="#7-verify-the-original-codes-checks">7. Verify the original code&rsquo;s checks</a></li>
+    <li><a href="#source">Source</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

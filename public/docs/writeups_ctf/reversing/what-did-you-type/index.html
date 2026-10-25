@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Recover USB typing and encrypted HTTP uploads from two packet captures.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/what-did-you-type/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="What Did You Type">
+  <meta property="og:description" content="Recover USB typing and encrypted HTTP uploads from two packet captures.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-24T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="What Did You Type">
+  <meta itemprop="description" content="Recover USB typing and encrypted HTTP uploads from two packet captures.">
+  <meta itemprop="datePublished" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="wordCount" content="1387">
+
+<title>What Did You Type • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/what-did-you-type/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.cd74fd78e64f4409a8b4a8c55aa3b35c93ee0254ebf66cd6aed15eb7bf8b1472.js" integrity="sha256-zXT9eOZPRAmotKjFWqOzXJPuAlTr9mzWrtFet7&#43;LFHI=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">18</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="" >A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="" >cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="" >Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="" >Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="" >httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="active" aria-current="page">What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>What Did You Type</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-supplied-evidence">1. Identify the supplied evidence</a></li>
+    <li><a href="#2-read-the-usb-keyboard-reports">2. Read the USB keyboard reports</a></li>
+    <li><a href="#3-decode-the-supplied-download">3. Decode the supplied download</a></li>
+    <li><a href="#4-export-the-http-bodies">4. Export the HTTP bodies</a></li>
+    <li><a href="#5-extract-the-loaders-encrypted-resource">5. Extract the loader&rsquo;s encrypted resource</a></li>
+    <li><a href="#6-skip-the-serialized-flat-program-and-decode-its-arguments">6. Skip the serialized flat program and decode its arguments</a></li>
+    <li><a href="#7-recover-the-per-file-encryption-format">7. Recover the per-file encryption format</a></li>
+    <li><a href="#8-read-the-three-flag-fragments">8. Read the three flag fragments</a></li>
+    <li><a href="#9-reproduce-the-extraction">9. Reproduce the extraction</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>7 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="what-did-you-type">What Did You Type<a class="anchor" href="#what-did-you-type"></a></h1>
+<p><a href="files/solve.py">Download solver</a></p>
+<p>The archive contains two PCAPs: one records USB keyboard traffic, and the other records files being uploaded over HTTP. The supplied <code>PbWE.txt</code> is a Base64-encoded encrypted ZIP containing the program responsible for the upload.</p>
+<p>The recovered flag is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{Dumb357_P3r50n_1n_7h3_M1lky_W4y_!!!}</span></span></code></pre></div><p>It is split between an XLSX cell, handwriting in a JPG, and a DOCX watermark. All three files were recovered from the network capture. The JPG fragment was read visually; the solver labels that transcription rather than pretending to perform OCR. The result also matches the repository author&rsquo;s published flag.</p>
+<h2 id="1-identify-the-supplied-evidence">1. Identify the supplied evidence<a class="anchor" href="#1-identify-the-supplied-evidence"></a></h2>
+<p>Repository: <a href="https://github.com/crackmesone/ctf-2026-challenges-public">crackmesone/ctf-2026-challenges-public</a>, commit <code>5f8857cf3556e4e36d7e7fc4650044ae682701b8</code>.</p>
+<p>The files are under <code>What did you type/Handout/</code>:</p>
+<table>
+  <thead>
+      <tr>
+          <th>File</th>
+          <th>SHA-256</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>chall.zip</code></td>
+          <td><code>425e58419c3b76d47ab7973c95d26b172b670a7917fe4be100c5c4a743b764a0</code></td>
+      </tr>
+      <tr>
+          <td><code>PbWE.txt</code></td>
+          <td><code>cb3854b84b78259d09272cf2cb188f586bc422313b4035325e4f2ad9dff86f8d</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>Extract the challenge archive using <code>crackmes.one</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>7z x -pcrackmes.one chall.zip -owork
+</span></span><span style="display:flex;"><span>file work/*</span></span></code></pre></div><p>The names are misleading if considered without their file types:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>monitor_hardware: pcap capture file, USB with USBPcap header
+</span></span><span style="display:flex;"><span>monitor_network:  pcap capture file, Ethernet</span></span></code></pre></div><p><code>monitor_hardware</code> has 61,760 packets and SHA-256 <code>dc1de2d5f8f6a5d7fbc4275e6a77a15203a7c77eb977185a03b5a8e1413e67f2</code>. <code>monitor_network</code> has 110 packets and SHA-256 <code>16967eb56744af0b3eae055686a3d9f6aa04c6b0ce542cf15ec8b1059b12e9dc</code>.</p>
+<p>The two captures have different dates. Do not merge their timestamps into a single precise incident timeline without additional evidence. The useful relationship here comes from the commands, program, and upload behavior.</p>
+<h2 id="2-read-the-usb-keyboard-reports">2. Read the USB keyboard reports<a class="anchor" href="#2-read-the-usb-keyboard-reports"></a></h2>
+<p>List interrupt transfers carrying eight-byte reports:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tshark -r work/monitor_hardware <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -Y <span style="color:#a3be8c">&#39;usb.transfer_type==0x01 &amp;&amp; usb.data_len==8&#39;</span> <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -T fields -e frame.number -e usbhid.data</span></span></code></pre></div><p>The initial rows include:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>75      0000000000000000
+</span></span><span style="display:flex;"><span>1383    0000130000000000
+</span></span><span style="display:flex;"><span>1411    0000000000000000
+</span></span><span style="display:flex;"><span>1459    0000120000000000
+</span></span><span style="display:flex;"><span>1487    0000000000000000
+</span></span><span style="display:flex;"><span>1547    00001a0000000000</span></span></code></pre></div><p>For these boot-keyboard reports, byte 0 contains modifier bits, byte 1 is reserved, and bytes 2–7 contain pressed usage codes. Usage <code>0x13</code> is <code>p</code>, <code>0x12</code> is <code>o</code>, and <code>0x1a</code> is <code>w</code>. Left or right Shift is detected by <code>modifier &amp; 0x22</code>.</p>
+<p>Track the set of held keys and emit only newly pressed usages. The all-zero reports release the keys; emitting every report as a character would produce duplicates or meaningless nulls. Tab completion means the capture does not contain the fully expanded shell commands, so preserve Tab and editing keys in the transcript.</p>
+<p>The decisive command is readable after decoding:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>unzip -P 1m_g0d_!! sus.z&lt;TAB&gt; -d out</span></span></code></pre></div><p>The transcript also contains a download of <code>https://0x0.st/PbWE.txt</code>, writing it to <code>sus.zip</code>, extracting it, and running the recovered module. The captured password is therefore:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1m_g0d_!!</span></span></code></pre></div><p>There is no reason to contact the historical URL. The repository already supplies <code>PbWE.txt</code>.</p>
+<h2 id="3-decode-the-supplied-download">3. Decode the supplied download<a class="anchor" href="#3-decode-the-supplied-download"></a></h2>
+<p>Decode the Base64 file and list the resulting archive:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">base64</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;PbWE.zip&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>write_bytes<span style="color:#eceff4">(</span>base64<span style="color:#81a1c1">.</span>b64decode<span style="color:#eceff4">(</span>Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;PbWE.txt&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>read_bytes<span style="color:#eceff4">()))</span></span></span></code></pre></div><p>It contains one password-protected entry, <code>module.exe</code>, 74,240 bytes long. Use the USB password:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>7z x <span style="color:#a3be8c">&#39;-p1m_g0d_!!&#39;</span> PbWE.zip -omodule
+</span></span><span style="display:flex;"><span>file module/module.exe
+</span></span><span style="display:flex;"><span>sha256sum module/module.exe</span></span></code></pre></div><p>Output identifies a native Windows x64 PE. Its SHA-256 is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1dd277512b952429580eea0cbd1b07299137630daca837f28a79e436edb7d703</span></span></code></pre></div><p>The rest of the analysis is static. No recovered executable is launched, and none of its network endpoints are contacted.</p>
+<h2 id="4-export-the-http-bodies">4. Export the HTTP bodies<a class="anchor" href="#4-export-the-http-bodies"></a></h2>
+<p>Use HTTP reassembly rather than concatenating raw TCP packets yourself:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tshark -r work/monitor_network -Y http <span style="color:#ebcb8b">\
+</span></span></span><span style="display:flex;"><span>  -T fields -e frame.number -e http.file_data</span></span></code></pre></div><p><code>http.file_data</code> is printed as hex. Decode each nonempty field with <code>bytes.fromhex()</code>.</p>
+<p>The important bodies are:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Frame</th>
+          <th>Body</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>8</td>
+          <td>32-byte response to the initial GET</td>
+      </tr>
+      <tr>
+          <td>16</td>
+          <td><code>Cool_Story.docx</code></td>
+      </tr>
+      <tr>
+          <td>32</td>
+          <td>20,548-byte encrypted upload</td>
+      </tr>
+      <tr>
+          <td>43</td>
+          <td><code>hello_darkness_my_old_friend.txt</code></td>
+      </tr>
+      <tr>
+          <td>54</td>
+          <td>180-byte encrypted upload</td>
+      </tr>
+      <tr>
+          <td>65</td>
+          <td><code>IDK_why_I_saved_this.xlsx</code></td>
+      </tr>
+      <tr>
+          <td>77</td>
+          <td>10,052-byte encrypted upload</td>
+      </tr>
+      <tr>
+          <td>88</td>
+          <td><code>sexy_picture.jpg</code></td>
+      </tr>
+      <tr>
+          <td>103</td>
+          <td>33,524-byte encrypted upload</td>
+      </tr>
+  </tbody>
+</table>
+<p>The server&rsquo;s repeated <code>You good bro !!</code> responses acknowledge the uploads; they are not file contents or keys.</p>
+<p>The initial GET response contains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>66c9c5a2015ff2be075f3d430031f54d22f8ad7194363889a019350937946d74</span></span></code></pre></div><p>This becomes useful when tracing the loader.</p>
+<h2 id="5-extract-the-loaders-encrypted-resource">5. Extract the loader&rsquo;s encrypted resource<a class="anchor" href="#5-extract-the-loaders-encrypted-resource"></a></h2>
+<p>The loader&rsquo;s <code>main</code> begins at <code>0x140003cc0</code>. It hashes <code>GetComputerNameA()</code>&rsquo;s result and compares the hash against the 32-byte value obtained by a GET to <code>for-ultramar.com:9999</code>.</p>
+<p>The network capture gives us the response directly, so there is no need to recover the original hostname. At <code>0x140003e43</code>, the loader selects a fixed IV at <code>0x14000a078</code>, expands the 32-byte hash as an AES key, and decrypts its resource.</p>
+<p>The resource lookup routine at <code>0x140003a50</code> calls:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#88c0d0">FindResourceA</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">NULL</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">254</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">255</span><span style="color:#eceff4">);</span></span></span></code></pre></div><p>Resource type 255, name 254, contains 36,576 encrypted bytes. Its IV is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>0f0e0d0c0b0a09080706050403020100</span></span></code></pre></div><p>Decrypt it with AES-256-CBC using the captured GET response as the key. The resulting data begins with x64 instructions rather than an <code>MZ</code> header. It is shellcode carrying another serialized loader and its arguments. Removing valid PKCS#7 padding leaves 36,570 bytes.</p>
+<p>The included solver has a small PE resource reader and performs this extraction directly from the file. It does not load the PE as a Windows process.</p>
+<h2 id="6-skip-the-serialized-flat-program-and-decode-its-arguments">6. Skip the serialized flat program and decode its arguments<a class="anchor" href="#6-skip-the-serialized-flat-program-and-decode-its-arguments"></a></h2>
+<p>The shellcode contains a call/pop accessor at offset <code>0xc60</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#88c0d0">call</span>    <span style="color:#8fbcbb">next</span>
+</span></span><span style="display:flex;"><span><span style="color:#8fbcbb">next:</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">pop</span>     <span style="color:#8fbcbb">rax</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">add</span>     <span style="color:#8fbcbb">rax</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">8</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">ret</span></span></span></code></pre></div><p>It returns offset <code>0xc6d</code>, where the serialized data starts. The four-byte program length is 10,987. The next object, immediately after that program, is a length-prefixed argument blob of 22,394 bytes.</p>
+<p>This is why we do not need to execute the flat program or repair all its relocations merely to recover the next payload. Its argument parser tells us the data layout:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>u32 mode                 = 0
+</span></span><span style="display:flex;"><span>u32 decoded_length       = 22035
+</span></span><span style="display:flex;"><span>u32 encrypted_length     = 22035
+</span></span><span style="display:flex;"><span>encrypted bytes
+</span></span><span style="display:flex;"><span>u32 xor_key_length       = 343
+</span></span><span style="display:flex;"><span>XOR key bytes</span></span></code></pre></div><p>In the embedded flat program, routine offset <code>0x336</code> XORs each data byte with <code>key[index % key_length]</code>. Mode 0 selects a copy path instead of <code>RtlDecompressBuffer</code>, so no decompressor is needed for this sample.</p>
+<p>Applying the repeating XOR produces another serialized object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>length-prefixed label
+</span></span><span style="display:flex;"><span>length-prefixed PE image</span></span></code></pre></div><p>The second object is a 22,016-byte native executable. Its SHA-256 is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>2b0231e9a67a15e8e3d3bdc704209f71391794d4e99181334fa6b9cccd8d3c6a</span></span></code></pre></div><p>This is the actual file collector. Keep it as analysis evidence; it is not necessary to run it.</p>
+<h2 id="7-recover-the-per-file-encryption-format">7. Recover the per-file encryption format<a class="anchor" href="#7-recover-the-per-file-encryption-format"></a></h2>
+<p>The recovered collector&rsquo;s <code>main</code>, at <code>0x140002560</code>, enumerates the current directory and selects filenames containing <code>.txt</code>, <code>.doc</code>, <code>.docx</code>, <code>.xls</code>, <code>.xlsx</code>, <code>.png</code>, or <code>.jpg</code>.</p>
+<p>Its file-encryption routine starts at <code>0x140002240</code>. It seeds the MSVC PRNG with time, takes the low byte of four <code>rand()</code> results, and hashes those four bytes with SHA-256. At <code>0x1400023ed</code>, it uses that digest as its AES-256 key and the same descending-byte IV at <code>0x140006078</code>.</p>
+<p>After padding and encrypting the file, it prepends the original four random bytes to the upload. The complete format is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>random_prefix[4] || AES-256-CBC(SHA256(random_prefix), fixed_IV, PKCS7(file))</span></span></code></pre></div><p>That explains why every encrypted upload length is four more than a multiple of 16. The key derivation input is sent in the clear. We do not need to brute-force time or reproduce <code>rand()</code>.</p>
+<p>For one recovered HTTP body:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">hashlib</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Cipher</span> <span style="color:#81a1c1;font-weight:bold">import</span> AES
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Util.Padding</span> <span style="color:#81a1c1;font-weight:bold">import</span> unpad
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>prefix <span style="color:#81a1c1">=</span> upload<span style="color:#eceff4">[:</span><span style="color:#b48ead">4</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>key <span style="color:#81a1c1">=</span> hashlib<span style="color:#81a1c1">.</span>sha256<span style="color:#eceff4">(</span>prefix<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>digest<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span>iv <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">range</span><span style="color:#eceff4">(</span><span style="color:#b48ead">15</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>padded <span style="color:#81a1c1">=</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_CBC<span style="color:#eceff4">,</span> iv<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decrypt<span style="color:#eceff4">(</span>upload<span style="color:#eceff4">[</span><span style="color:#b48ead">4</span><span style="color:#eceff4">:])</span>
+</span></span><span style="display:flex;"><span>original_file <span style="color:#81a1c1">=</span> unpad<span style="color:#eceff4">(</span>padded<span style="color:#eceff4">,</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>All four uploads decrypt with valid padding and the expected file signatures:</p>
+<table>
+  <thead>
+      <tr>
+          <th>File</th>
+          <th>Plaintext size</th>
+          <th>SHA-256</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>Cool_Story.docx</code></td>
+          <td>20,540</td>
+          <td><code>092a9ee7afa930f95431b58be845d5ef4ceca4fd8e25c2757ce439d9cfa18068</code></td>
+      </tr>
+      <tr>
+          <td><code>hello_darkness_my_old_friend.txt</code></td>
+          <td>165</td>
+          <td>Recorded in the solver&rsquo;s manifest</td>
+      </tr>
+      <tr>
+          <td><code>IDK_why_I_saved_this.xlsx</code></td>
+          <td>10,045</td>
+          <td><code>192c686409fd9bbeffb23a885294b62bd69404a02cbc0f9d435a6977da27a6d2</code></td>
+      </tr>
+      <tr>
+          <td><code>sexy_picture.jpg</code></td>
+          <td>33,504</td>
+          <td><code>d7beee47670013a19417e4d7bc5e9a548b3aad8fb1bd137650cc0dc56bc24825</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>The solver also re-encrypts the padded plaintext and compares it to the captured ciphertext before writing the recovered file.</p>
+<h2 id="8-read-the-three-flag-fragments">8. Read the three flag fragments<a class="anchor" href="#8-read-the-three-flag-fragments"></a></h2>
+<p>DOCX and XLSX files are ZIP containers. Inspect the contents instead of relying on what an office application&rsquo;s normal document view happens to display.</p>
+<p>In <code>IDK_why_I_saved_this.xlsx</code>, <code>xl/sharedStrings.xml</code> contains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#81a1c1">&lt;si&gt;&lt;t&gt;</span>CMO{Dumb357<span style="color:#81a1c1">&lt;/t&gt;&lt;/si&gt;</span></span></span></code></pre></div><p>The recovered <code>sexy_picture.jpg</code> displays the middle fragment:</p>
+<p><img src="flag-image.jpg" alt="Recovered JPG carrying the handwritten fragment P3r50n" /></p>
+<p>Read it as <code>_P3r50n_</code>, including both underscores. This is a visual transcription, not a strings extraction.</p>
+<p>In <code>Cool_Story.docx</code>, the main body is a distraction. The missing suffix is in <code>word/header2.xml</code>, as a VML text-path attribute used for a watermark:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#81a1c1">&lt;v:textpath</span> <span style="color:#bf616a">...</span> <span style="color:#8fbcbb">string=</span><span style="color:#a3be8c">&#34;1n_7h3_M1lky_W4y_!!!}&#34;</span><span style="color:#81a1c1">/&gt;</span></span></span></code></pre></div><p>Extracting only <code>&lt;w:t&gt;</code> elements from <code>word/document.xml</code> misses this attribute completely. Search headers, drawings, attributes, and other ZIP members when the visible document body has no useful result.</p>
+<p>Concatenate the spreadsheet, image, and watermark fragments:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{Dumb357 + _P3r50n_ + 1n_7h3_M1lky_W4y_!!!}</span></span></code></pre></div><p>Result:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{Dumb357_P3r50n_1n_7h3_M1lky_W4y_!!!}</span></span></code></pre></div><h2 id="9-reproduce-the-extraction">9. Reproduce the extraction<a class="anchor" href="#9-reproduce-the-extraction"></a></h2>
+<p>Install Wireshark&rsquo;s <code>tshark</code> command and PyCryptodome in your analysis environment. Save the accompanying <code>solve.py</code> and point it at the repository root:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m venv .venv
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">source</span> .venv/bin/activate
+</span></span><span style="display:flex;"><span>python -m pip install pycryptodome
+</span></span><span style="display:flex;"><span>python solve.py /path/to/ctf-2026-challenges-public --out recovered</span></span></code></pre></div><p>The solver reads the archive password from USB evidence, extracts the downloaded module, obtains the loader key from HTTP frame 8, statically unwraps the payload, decrypts the four files, and reads the XML fragments. It uses the documented visual transcription for the JPG, configurable with <code>--image-fragment</code>.</p>
+<p>Its final output is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ZIP password from USB: 1m_g0d_!!
+</span></span><span style="display:flex;"><span>Recovered frame 32: Cool_Story.docx (20540 bytes)
+</span></span><span style="display:flex;"><span>Recovered frame 54: hello_darkness_my_old_friend.txt (165 bytes)
+</span></span><span style="display:flex;"><span>Recovered frame 77: IDK_why_I_saved_this.xlsx (10045 bytes)
+</span></span><span style="display:flex;"><span>Recovered frame 103: sexy_picture.jpg (33504 bytes)
+</span></span><span style="display:flex;"><span>XLSX fragment: CMO{Dumb357
+</span></span><span style="display:flex;"><span>JPG fragment (manual transcription): _P3r50n_
+</span></span><span style="display:flex;"><span>DOCX fragment: 1n_7h3_M1lky_W4y_!!!}
+</span></span><span style="display:flex;"><span>CMO{Dumb357_P3r50n_1n_7h3_M1lky_W4y_!!!}</span></span></code></pre></div><p>This was reproduced from a fresh extraction of the supplied ZIP. No live C2 server or execution of the recovered collector is required.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/wallpaper/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Wallpaper</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/corrupted/" class="flex align-center">
+        <span>Corrupted</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-supplied-evidence">1. Identify the supplied evidence</a></li>
+    <li><a href="#2-read-the-usb-keyboard-reports">2. Read the USB keyboard reports</a></li>
+    <li><a href="#3-decode-the-supplied-download">3. Decode the supplied download</a></li>
+    <li><a href="#4-export-the-http-bodies">4. Export the HTTP bodies</a></li>
+    <li><a href="#5-extract-the-loaders-encrypted-resource">5. Extract the loader&rsquo;s encrypted resource</a></li>
+    <li><a href="#6-skip-the-serialized-flat-program-and-decode-its-arguments">6. Skip the serialized flat program and decode its arguments</a></li>
+    <li><a href="#7-recover-the-per-file-encryption-format">7. Recover the per-file encryption format</a></li>
+    <li><a href="#8-read-the-three-flag-fragments">8. Read the three flag fragments</a></li>
+    <li><a href="#9-reproduce-the-extraction">9. Reproduce the extraction</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Read an RC4 key from a file trailer, decrypt the flag, and compare the result with the original x86 routine.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/cryptpad/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="cryptpad">
+  <meta property="og:description" content="Read an RC4 key from a file trailer, decrypt the flag, and compare the result with the original x86 routine.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-24T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="cryptpad">
+  <meta itemprop="description" content="Read an RC4 key from a file trailer, decrypt the flag, and compare the result with the original x86 routine.">
+  <meta itemprop="datePublished" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="wordCount" content="1001">
+
+<title>cryptpad • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/cryptpad/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.cd74fd78e64f4409a8b4a8c55aa3b35c93ee0254ebf66cd6aed15eb7bf8b1472.js" integrity="sha256-zXT9eOZPRAmotKjFWqOzXJPuAlTr9mzWrtFet7&#43;LFHI=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">18</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="" >A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="active" aria-current="page">cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="" >Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="" >Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="" >httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="" >What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>cryptpad</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-handout">1. Identify the handout</a></li>
+    <li><a href="#2-follow-the-file-saving-path">2. Follow the file-saving path</a></li>
+    <li><a href="#3-read-the-trailer-writing-code">3. Read the trailer-writing code</a></li>
+    <li><a href="#4-confirm-that-mode-zero-reads-the-same-layout">4. Confirm that mode zero reads the same layout</a></li>
+    <li><a href="#5-recognize-rc4-and-account-for-both-xor-passes">5. Recognize RC4 and account for both XOR passes</a></li>
+    <li><a href="#6-decrypt-the-file">6. Decrypt the file</a></li>
+    <li><a href="#7-compare-against-the-original-machine-code">7. Compare against the original machine code</a></li>
+    <li><a href="#source">Source</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>5 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="cryptpad">cryptpad<a class="anchor" href="#cryptpad"></a></h1>
+<p><a href="files/solve.py">Download solver</a></p>
+<p>The handout contains a small Windows text editor and an encrypted file. The editor generates a random RC4 key for each saved file, then appends the key to that same file. Recovering the flag therefore requires understanding the file layout, not brute-forcing RC4.</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{r0ll_y0ur_0wn_b4d_c0d3}</span></span></code></pre></div><p>The Python implementation below agrees with the original x86 decryption routine executed in Unicorn. This solve does not require starting the GUI or contacting a service.</p>
+<h2 id="1-identify-the-handout">1. Identify the handout<a class="anchor" href="#1-identify-the-handout"></a></h2>
+<p>The files are under <code>cryptpad/handout/</code> in the public repository:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>cryptpad.exe  11776 bytes
+</span></span><span style="display:flex;"><span>flag.enc        64 bytes</span></span></code></pre></div><p>Run:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>file cryptpad.exe
+</span></span><span style="display:flex;"><span>sha256sum cryptpad.exe flag.enc
+</span></span><span style="display:flex;"><span>xxd flag.enc</span></span></code></pre></div><p>Recorded hashes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>353ca1edc7a79a8c222f414346c6a9113b1f943c0cc7c345abb320b88eb35a66  cryptpad.exe
+</span></span><span style="display:flex;"><span>035883e1caa959e32fd906ba4026d36f82266e76a7b929e7100466ee69567235  flag.enc</span></span></code></pre></div><p><code>cryptpad.exe</code> is a native PE32 GUI executable for Intel i386, with an image base of <code>0x400000</code>. Its code is only <code>0x791</code> bytes long. No managed-code decompiler is needed.</p>
+<p>The end of the encrypted file is particularly useful:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>00000030: 16f6 b41c 0000 00e8 171b f450 3f3d 7008</span></span></code></pre></div><p>The final <code>08</code> is not ordinary padding. The decryption routine uses it as the appended key length.</p>
+<h2 id="2-follow-the-file-saving-path">2. Follow the file-saving path<a class="anchor" href="#2-follow-the-file-saving-path"></a></h2>
+<p>Disassemble the program:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>objdump -d -M intel cryptpad.exe &gt; cryptpad.asm
+</span></span><span style="display:flex;"><span>objdump -x cryptpad.exe</span></span></code></pre></div><p>Relevant imports include <code>CreateFileA</code>, <code>WriteFile</code>, <code>GetWindowTextA</code>, and <code>SystemFunction036</code>. The last function is the random-byte generator used for both padding and key bytes. Its indirect-call wrapper is at <code>0x40166b</code>.</p>
+<p>The save path starts at <code>0x4013bd</code>. It obtains the editor text length, adds one byte for the NUL terminator, allocates a buffer, and rounds the output size up to a multiple of <code>0x40</code> bytes. It fills the extra space with random data and generates eight random key bytes at <code>0x4024c5</code>.</p>
+<p>The call at <code>0x401490</code> invokes the transform at <code>0x4014eb</code> with three stack arguments:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>buffer pointer
+</span></span><span style="display:flex;"><span>plaintext length, including NUL
+</span></span><span style="display:flex;"><span>mode = 1</span></span></code></pre></div><p>The returned size is passed to <code>WriteFile</code>. This is enough to establish that the encrypted file includes more than just encrypted text.</p>
+<h2 id="3-read-the-trailer-writing-code">3. Read the trailer-writing code<a class="anchor" href="#3-read-the-trailer-writing-code"></a></h2>
+<p>After the cipher operations, the mode-one branch writes metadata near the end of the allocated file buffer:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">401637</span>  <span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">edi</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">ebp</span><span style="color:#bf616a">+</span><span style="color:#b48ead">8</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40163</span><span style="color:#88c0d0">a</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">ebp</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0xc</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40163</span><span style="color:#88c0d0">d</span>  <span style="color:#8fbcbb">add</span>     <span style="color:#8fbcbb">edi</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">eax</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40163</span><span style="color:#88c0d0">f</span>  <span style="color:#8fbcbb">add</span>     <span style="color:#8fbcbb">edi</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#b48ead">0x403581</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">401645</span>  <span style="color:#88c0d0">sub</span>     <span style="color:#8fbcbb">edi</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0xd</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">401648</span>  <span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">ebp</span><span style="color:#bf616a">+</span><span style="color:#b48ead">0xc</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40164</span><span style="color:#88c0d0">b</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#eceff4">[</span><span style="color:#8fbcbb">edi</span><span style="color:#eceff4">],</span> <span style="color:#8fbcbb">eax</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40164</span><span style="color:#88c0d0">d</span>  <span style="color:#8fbcbb">add</span>     <span style="color:#8fbcbb">edi</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">4</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">401650</span>  <span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">ecx</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">8</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">401655</span>  <span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">esi</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x4024c5</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40165</span><span style="color:#88c0d0">a</span>  <span style="color:#8fbcbb">rep</span> <span style="color:#8fbcbb">movsb</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">40165</span><span style="color:#88c0d0">c</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">byte</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">edi</span><span style="color:#eceff4">],</span> <span style="color:#b48ead">8</span></span></span></code></pre></div><p>The metadata occupies 13 bytes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>... encrypted text ... random filler ... | length:u32le | key:8 bytes | 08</span></span></code></pre></div><p>For this 64-byte file, the trailer starts at <code>64 - 13 = 51</code>, or <code>0x33</code>:</p>
+<table>
+  <thead>
+      <tr>
+          <th>File offset</th>
+          <th>Bytes</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x00</code>–<code>0x1b</code></td>
+          <td>28 bytes</td>
+          <td>Ciphertext for text and NUL</td>
+      </tr>
+      <tr>
+          <td><code>0x1c</code>–<code>0x32</code></td>
+          <td>23 bytes</td>
+          <td>Filler, not required for decryption</td>
+      </tr>
+      <tr>
+          <td><code>0x33</code>–<code>0x36</code></td>
+          <td><code>1c 00 00 00</code></td>
+          <td>Plaintext length, 28</td>
+      </tr>
+      <tr>
+          <td><code>0x37</code>–<code>0x3e</code></td>
+          <td><code>e8 17 1b f4 50 3f 3d 70</code></td>
+          <td>RC4 key</td>
+      </tr>
+      <tr>
+          <td><code>0x3f</code></td>
+          <td><code>08</code></td>
+          <td>Key length</td>
+      </tr>
+  </tbody>
+</table>
+<p>This explains the recognizable little-endian integer in an otherwise random-looking tail.</p>
+<h2 id="4-confirm-that-mode-zero-reads-the-same-layout">4. Confirm that mode zero reads the same layout<a class="anchor" href="#4-confirm-that-mode-zero-reads-the-same-layout"></a></h2>
+<p>The beginning of <code>0x4014eb</code> checks its mode argument. Mode zero selects the file-decoding path.</p>
+<p>It computes the last-byte address from <code>buffer + file_size - 1</code>, reads the key length, moves backward by that length, and copies the key into <code>0x4024c5</code>. It then reads the preceding DWORD as the number of bytes to transform.</p>
+<p>The code uses a DWORD load at the last-byte address, even though only one byte belongs to the file. In the recorded zero-initialized model, the following bytes are zero and the value is eight. The standalone parser reads one byte explicitly and validates the trailer bounds instead of reproducing that out-of-bounds load.</p>
+<p>There are a few overlapping instruction boundaries in a linear <code>objdump</code> listing. In particular, follow the actual branch to <code>0x401549</code>; the byte there is <code>push edx</code>. Decoding from the preceding junk byte produces a misleading <code>jne</code>. The branch target determines the instruction boundary.</p>
+<h2 id="5-recognize-rc4-and-account-for-both-xor-passes">5. Recognize RC4 and account for both XOR passes<a class="anchor" href="#5-recognize-rc4-and-account-for-both-xor-passes"></a></h2>
+<p>The transform has three stages:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>XOR with bytes beginning at the key buffer
+</span></span><span style="display:flex;"><span>RC4
+</span></span><span style="display:flex;"><span>XOR with bytes beginning at the same key buffer</span></span></code></pre></div><p>The two outer passes use the same byte sequence and offsets. The RC4 operation between them is also a bytewise XOR with a keystream. Therefore:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>((plaintext XOR outer_mask) XOR rc4_stream) XOR outer_mask
+</span></span><span style="display:flex;"><span>    = plaintext XOR rc4_stream</span></span></code></pre></div><p>For the supplied file, this reduces to standard RC4 with the appended eight-byte key.</p>
+<p>The RC4 identification comes from the full algorithm, not only the 256-byte table: <code>0x401570</code> initializes the state permutation; <code>0x4015b7</code> performs the key-scheduling swaps; and <code>0x4015e2</code> begins the keystream-generation loop with two changing indices and state swaps.</p>
+<h2 id="6-decrypt-the-file">6. Decrypt the file<a class="anchor" href="#6-decrypt-the-file"></a></h2>
+<p>The key and length can be extracted using only the trailer:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">import</span> <span style="color:#8fbcbb">struct</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Cipher</span> <span style="color:#81a1c1;font-weight:bold">import</span> ARC4
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>encrypted <span style="color:#81a1c1">=</span> Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;flag.enc&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>read_bytes<span style="color:#eceff4">()</span>
+</span></span><span style="display:flex;"><span>key_length <span style="color:#81a1c1">=</span> encrypted<span style="color:#eceff4">[</span><span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>trailer <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>encrypted<span style="color:#eceff4">)</span> <span style="color:#81a1c1">-</span> key_length <span style="color:#81a1c1">-</span> <span style="color:#b48ead">5</span>
+</span></span><span style="display:flex;"><span>length <span style="color:#81a1c1">=</span> struct<span style="color:#81a1c1">.</span>unpack_from<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;&lt;I&#34;</span><span style="color:#eceff4">,</span> encrypted<span style="color:#eceff4">,</span> trailer<span style="color:#eceff4">)[</span><span style="color:#b48ead">0</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>key <span style="color:#81a1c1">=</span> encrypted<span style="color:#eceff4">[</span>trailer <span style="color:#81a1c1">+</span> <span style="color:#b48ead">4</span><span style="color:#eceff4">:</span><span style="color:#81a1c1">-</span><span style="color:#b48ead">1</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>plaintext <span style="color:#81a1c1">=</span> ARC4<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decrypt<span style="color:#eceff4">(</span>encrypted<span style="color:#eceff4">[:</span>length<span style="color:#eceff4">])</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>key<span style="color:#81a1c1">.</span>hex<span style="color:#eceff4">())</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">repr</span><span style="color:#eceff4">(</span>plaintext<span style="color:#eceff4">))</span></span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>e8171bf4503f3d70
+</span></span><span style="display:flex;"><span>b&#39;CMO{r0ll_y0ur_0wn_b4d_c0d3}\x00&#39;</span></span></code></pre></div><p>The final byte is the text editor&rsquo;s NUL terminator. Remove that one byte when displaying the flag.</p>
+<p>The accompanying <code>solve.py</code> implements RC4 directly with the standard library, so ordinary decryption needs no third-party package:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python solve.py flag.enc --details</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>File bytes: 64
+</span></span><span style="display:flex;"><span>Trailer offset: 0x33
+</span></span><span style="display:flex;"><span>Plaintext bytes including NUL: 28
+</span></span><span style="display:flex;"><span>RC4 key: e8171bf4503f3d70
+</span></span><span style="display:flex;"><span>CMO{r0ll_y0ur_0wn_b4d_c0d3}</span></span></code></pre></div><h2 id="7-compare-against-the-original-machine-code">7. Compare against the original machine code<a class="anchor" href="#7-compare-against-the-original-machine-code"></a></h2>
+<p>Install Unicorn for the optional verification:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m pip install unicorn
+</span></span><span style="display:flex;"><span>python solve.py flag.enc --verify-native cryptpad.exe</span></span></code></pre></div><p>The verifier maps the original PE sections at their preferred addresses and enters <code>0x4014eb</code> with a mode-zero call. The stack contains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>return address = 0x300000
+</span></span><span style="display:flex;"><span>buffer         = 0x200000
+</span></span><span style="display:flex;"><span>file length    = 64
+</span></span><span style="display:flex;"><span>mode           = 0</span></span></code></pre></div><p>It initializes the file-length global at <code>0x40357d</code>, then lets the original x86 routine parse the trailer, run its XOR passes, execute RC4, and return. No API hooks or instruction patches are required because that routine calls no external functions.</p>
+<p>Both implementations produce the same 28 bytes, including the NUL terminator. The solver also runs RC4 over the recovered plaintext again and confirms that it reconstructs the original 28 ciphertext bytes.</p>
+<p>The failure is in the file format: the randomly generated key is stored beside the data it is meant to protect. The extra random filler and XOR passes do not change that fact.</p>
+<h2 id="source">Source<a class="anchor" href="#source"></a></h2>
+<p><a href="https://github.com/crackmesone/ctf-2026-challenges-public/tree/5f8857cf3556e4e36d7e7fc4650044ae682701b8/cryptpad/handout">Public challenge handout</a>.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/connected/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Connected</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/fatmike/" class="flex align-center">
+        <span>Fatmike — JIT Decryption and Nanomites</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-identify-the-handout">1. Identify the handout</a></li>
+    <li><a href="#2-follow-the-file-saving-path">2. Follow the file-saving path</a></li>
+    <li><a href="#3-read-the-trailer-writing-code">3. Read the trailer-writing code</a></li>
+    <li><a href="#4-confirm-that-mode-zero-reads-the-same-layout">4. Confirm that mode zero reads the same layout</a></li>
+    <li><a href="#5-recognize-rc4-and-account-for-both-xor-passes">5. Recognize RC4 and account for both XOR passes</a></li>
+    <li><a href="#6-decrypt-the-file">6. Decrypt the file</a></li>
+    <li><a href="#7-compare-against-the-original-machine-code">7. Compare against the original machine code</a></li>
+    <li><a href="#source">Source</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

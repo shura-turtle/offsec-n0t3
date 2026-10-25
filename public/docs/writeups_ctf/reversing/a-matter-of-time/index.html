@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Trace an obfuscated Windows crackme, extract its ciphertext, recover the account-name AES key, and check an inferred IV against the original AES code.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/a-matter-of-time/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="A Matter of Time">
+  <meta property="og:description" content="Trace an obfuscated Windows crackme, extract its ciphertext, recover the account-name AES key, and check an inferred IV against the original AES code.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-24T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="A Matter of Time">
+  <meta itemprop="description" content="Trace an obfuscated Windows crackme, extract its ciphertext, recover the account-name AES key, and check an inferred IV against the original AES code.">
+  <meta itemprop="datePublished" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-24T00:00:00+00:00">
+  <meta itemprop="wordCount" content="2324">
+
+<title>A Matter of Time • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/a-matter-of-time/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.cd74fd78e64f4409a8b4a8c55aa3b35c93ee0254ebf66cd6aed15eb7bf8b1472.js" integrity="sha256-zXT9eOZPRAmotKjFWqOzXJPuAlTr9mzWrtFet7&#43;LFHI=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">18</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="active" aria-current="page">A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="" >cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="" >Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="" >Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="" >httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="" >What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>A Matter of Time</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-check-the-file-and-the-ida-database">1. Check the file and the IDA database</a>
+      <ul>
+        <li><a href="#prepare-the-helpers">Prepare the helpers</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-find-main-through-the-crt-startup">2. Find main through the CRT startup</a>
+      <ul>
+        <li><a href="#walk-reachable-instructions">Walk reachable instructions</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-recover-the-ciphertext-from-the-initializer">3. Recover the ciphertext from the initializer</a></li>
+    <li><a href="#4-identify-aes-and-the-cbc-loop">4. Identify AES and the CBC loop</a></li>
+    <li><a href="#5-trace-the-key-back-to-the-account-name">5. Trace the key back to the account name</a></li>
+    <li><a href="#6-decrypt-the-blocks-that-do-not-need-the-iv">6. Decrypt the blocks that do not need the IV</a></li>
+    <li><a href="#7-check-what-the-time-code-actually-reads">7. Check what the time code actually reads</a></li>
+    <li><a href="#8-reconstruct-the-first-block-and-keep-the-uncertainty-visible">8. Reconstruct the first block, and keep the uncertainty visible</a></li>
+    <li><a href="#9-run-the-solver">9. Run the solver</a></li>
+    <li><a href="#10-compare-with-the-original-aes-routine">10. Compare with the original AES routine</a></li>
+    <li><a href="#files">Files</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>11 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="a-matter-of-time">A Matter of Time<a class="anchor" href="#a-matter-of-time"></a></h1>
+<p>This crackme builds its AES key from a Windows account name. Its IV depends on a file timestamp and the executable&rsquo;s PE timestamp. The code is split across jump trampolines and duplicated blocks, which makes the first decompiler output misleading.</p>
+<p>The useful break was CBC itself: the IV affects only the first plaintext block. Once the right username decrypted the remaining blocks, I could work on the first block separately.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Item</th>
+          <th>Value</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Event</td>
+          <td>Crackmes.one Reverse Engineering CTF 2026, identified by the program&rsquo;s banner</td>
+      </tr>
+      <tr>
+          <td>File</td>
+          <td><code>a_matter_of_time.exe</code></td>
+      </tr>
+      <tr>
+          <td>Format</td>
+          <td>Windows PE32+, x86-64</td>
+      </tr>
+      <tr>
+          <td>Image base in IDA</td>
+          <td><code>0x140000000</code></td>
+      </tr>
+      <tr>
+          <td>Tools used</td>
+          <td>IDA, Python, Capstone, Unicorn, PyCryptodome</td>
+      </tr>
+      <tr>
+          <td>Result</td>
+          <td>Original AES routine reproduced the candidate; the public challenge README independently confirms the exact flag</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>The IV remains inferred:</strong> I did not recover the original timestamp pair that generated it. Replaying AES confirms the bytes for that IV, but CBC alone does not make the first block unique. The public challenge README now confirms the complete flag string. Section 8 shows why that confirmation matters.</p>
+<h2 id="1-check-the-file-and-the-ida-database">1. Check the file and the IDA database<a class="anchor" href="#1-check-the-file-and-the-ida-database"></a></h2>
+<p>Start by identifying the file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>file a_matter_of_time.exe
+</span></span><span style="display:flex;"><span>sha256sum a_matter_of_time.exe</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>a_matter_of_time.exe: PE32+ executable for MS Windows 6.00 (console), x86-64, 7 sections
+</span></span><span style="display:flex;"><span>bc8583d082c42efa9ad0959792af49c063368db0241dabccb9138fa29ef5e7dc  a_matter_of_time.exe</span></span></code></pre></div><p>The solve started with an IDA database already supplied for this file. The later public ZIP contains another build (<code>deae388b0b8f9cbea0303ab3a9fc77dc11989bba069c5e5097df7fde4486912d</code>); these are distinct artifacts, so the addresses and snapshot below apply to the analyzed hash. The database reported the same input SHA-256. Its mapped segments were:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>.text   0x140001000 - 0x14000b000
+</span></span><span style="display:flex;"><span>.idata  0x14000b000 - 0x14000b480
+</span></span><span style="display:flex;"><span>.rdata  0x14000b480 - 0x140011000
+</span></span><span style="display:flex;"><span>.data   0x140011000 - 0x140012000
+</span></span><span style="display:flex;"><span>.pdata  0x140012000 - 0x140013000
+</span></span><span style="display:flex;"><span>.ch     0x140015000 - 0x140029000</span></span></code></pre></div><p>The <code>.ch</code> mapping matters. The supplied database has code and layout that differ from the raw file&rsquo;s section layout. The scripts here use that database image. <strong>This writeup starts from the supplied IDB; it does not include an independently recovered unpacking step.</strong> Opening only the raw EXE in a fresh database may therefore give different results at the addresses below.</p>
+<p>Use the attached <a href="files/ida_segments.json">mapped segments</a> to reproduce this analysis, or export the corresponding segments from the supplied IDB with <a href="files/export_ida.py">export_ida.py</a>. Edit its output path, then run it through IDA&rsquo;s <strong>File → Script file</strong>.</p>
+<p>The exported JSON maps each segment&rsquo;s virtual address to its Base64-encoded bytes. It is input for the analysis scripts, not a runnable PE file.</p>
+<h3 id="prepare-the-helpers">Prepare the helpers<a class="anchor" href="#prepare-the-helpers"></a></h3>
+<p>Download <a href="analysis-tools.zip">analysis-tools.zip</a>, extract it, and enter that directory:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>unzip analysis-tools.zip -d a-matter-of-time
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">cd</span> a-matter-of-time
+</span></span><span style="display:flex;"><span>python3 -m venv .venv
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">source</span> .venv/bin/activate
+</span></span><span style="display:flex;"><span>python -m pip install pycryptodome unicorn capstone</span></span></code></pre></div><p>PyCryptodome is enough for the final <code>solve.py</code>. Unicorn runs the original machine code. Capstone is used by the control-flow helper.</p>
+<h2 id="2-find-main-through-the-crt-startup">2. Find main through the CRT startup<a class="anchor" href="#2-find-main-through-the-crt-startup"></a></h2>
+<p>The entry point is <code>0x140009188</code>. Decompiling it immediately produced a stack warning and jumps into <code>.ch</code>. That was a reason to inspect the instructions before trusting the pseudocode.</p>
+<p>I followed references to <code>__p___argv</code>. One startup path contains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">1400219</span><span style="color:#88c0d0">fe</span>  <span style="color:#8fbcbb">call</span>    <span style="color:#8fbcbb">__p___argv</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140021</span><span style="color:#88c0d0">a03</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">rbx</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rax</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140021</span><span style="color:#88c0d0">a06</span>  <span style="color:#8fbcbb">call</span>    <span style="color:#8fbcbb">__p___argc</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140021</span><span style="color:#88c0d0">a0b</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">r8</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">rdi</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140021</span><span style="color:#88c0d0">a0e</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">rdx</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">rbx</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140021</span><span style="color:#88c0d0">a11</span>  <span style="color:#8fbcbb">mov</span>     <span style="color:#8fbcbb">ecx</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rax</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140021</span><span style="color:#88c0d0">a13</span>  <span style="color:#8fbcbb">call</span>    <span style="color:#b48ead">0x140004290</span></span></span></code></pre></div><p>The Windows x64 argument registers are <code>RCX</code>, <code>RDX</code>, and <code>R8</code>. The caller is passing the argument count, argument vector, and another startup argument into <code>0x140004290</code>. This identifies the main routine despite its missing function boundary.</p>
+<p>At <code>0x140004290</code>, the first two instructions are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">140004290</span>  <span style="color:#88c0d0">jp</span>      <span style="color:#b48ead">0x14001ceb9</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140004296</span>  <span style="color:#88c0d0">jnp</span>     <span style="color:#b48ead">0x14001cef3</span></span></span></code></pre></div><p>One branch is taken when the parity flag is set, and the other when it is clear. There is no executable fallthrough after the pair. Both destinations contain copies of the main prologue and converge at <code>0x1400042c2</code>.</p>
+<p>The same pattern appears elsewhere:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">14001</span><span style="color:#88c0d0">d306</span>  <span style="color:#8fbcbb">jo</span>      <span style="color:#b48ead">0x14000453b</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">14001</span><span style="color:#88c0d0">d30c</span>  <span style="color:#8fbcbb">jno</span>     <span style="color:#b48ead">0x14000453b</span></span></span></code></pre></div><p>Here both outcomes reach the same address. Bytes following the pair are junk, even if decoding linearly makes them look like instructions.</p>
+<p>Other transfers use a register:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#bf616a">140004858</span>  <span style="color:#88c0d0">push</span>    <span style="color:#8fbcbb">rsi</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140004859</span>  <span style="color:#88c0d0">lea</span>     <span style="color:#8fbcbb">rsi</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rip</span> <span style="color:#bf616a">+</span> <span style="color:#b48ead">0x19276</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#bf616a">140004860</span>  <span style="color:#88c0d0">jmp</span>     <span style="color:#8fbcbb">rsi</span></span></span></code></pre></div><p>The <code>lea</code> resolves to <code>0x14001dad6</code>. That destination starts with <code>pop rsi</code>, restoring the saved register. A normal direct-jump-only walk would miss this block.</p>
+<h3 id="walk-reachable-instructions">Walk reachable instructions<a class="anchor" href="#walk-reachable-instructions"></a></h3>
+<p>Run the helper from the download:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python recover_cfg.py 0x140004290 &gt; main.asm
+</span></span><span style="display:flex;"><span>python recover_cfg.py 0x140001000 &gt; startup.asm
+</span></span><span style="display:flex;"><span>python recover_cfg.py 0x14000326c &gt; aes-cbc.asm</span></span></code></pre></div><p>It follows direct branches, complementary branch pairs, and the nearby <code>lea</code>/register and <code>lea</code>/<code>ret</code> trampolines used here. It keeps both branch destinations instead of assuming every duplicated block is equivalent.</p>
+<p>The output is sorted by address for reference; it is <strong>not execution order</strong>. Follow the branch targets to move between <code>.text</code> and <code>.ch</code>. The helper also stops at calls, so run it again with a callee&rsquo;s address when tracing into another routine. It is specific to these patterns and does not resolve arbitrary indirect jumps or exception paths.</p>
+<h2 id="3-recover-the-ciphertext-from-the-initializer">3. Recover the ciphertext from the initializer<a class="anchor" href="#3-recover-the-ciphertext-from-the-initializer"></a></h2>
+<p>The main routine eventually reads a C++ string at <code>0x140011d98</code>. Searching the raw file for a readable flag was not useful because the string is constructed during startup.</p>
+<p>The initializer starts at <code>0x140001000</code> and transfers into a block at <code>0x14001f415</code>. It loads encrypted constants into a stack buffer, then applies:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#88c0d0">lea</span>     <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rcx</span> <span style="color:#eceff4">-</span> <span style="color:#b48ead">0x28</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">xor</span>     <span style="color:#8fbcbb">byte</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rbp</span> <span style="color:#bf616a">+</span> <span style="color:#8fbcbb">rcx</span> <span style="color:#eceff4">-</span> <span style="color:#b48ead">0x19</span><span style="color:#eceff4">],</span> <span style="color:#8fbcbb">al</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">inc</span>     <span style="color:#8fbcbb">rcx</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">cmp</span>     <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x60</span></span></span></code></pre></div><p>The transform is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>decoded <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>    byte <span style="color:#81a1c1">^</span> <span style="color:#eceff4">((</span>index <span style="color:#81a1c1">-</span> <span style="color:#b48ead">0x28</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xff</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1;font-weight:bold">for</span> index<span style="color:#eceff4">,</span> byte <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">enumerate</span><span style="color:#eceff4">(</span>encrypted<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>The comparison with <code>0x60</code> gives 96 decoded bytes. These are ASCII hex characters, so they represent 48 bytes of ciphertext.</p>
+<p>Rather than transcribe every stack constant, I ran just this initializer in Unicorn. The extraction hook stops at <code>0x140007bc4</code>, before the C++ string-copy helper executes. At that point:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>RCX = destination std::string
+</span></span><span style="display:flex;"><span>RDX = decoded stack-buffer address
+</span></span><span style="display:flex;"><span>R8  = string length, 96</span></span></code></pre></div><p>The attached <a href="files/extract.py">extract.py</a> performs that extraction:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python extract.py</span></span></code></pre></div><p>Relevant output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Ciphertext hex: 4c4635258cf6eca5d80b8e050a9e5b04f1a9c979bc55f3f4773971ed2f81a96967bb3569fa002f549cc970a18779b3a7
+</span></span><span style="display:flex;"><span>Ciphertext bytes: 48
+</span></span><span style="display:flex;"><span>Time source: C:\\Windows\\System32\\winevt\\Logs\\System.evtx</span></span></code></pre></div><p>The decoded path has doubled backslashes, as printed above; elsewhere on this page I show it with single path separators for readability. The script also writes <code>ciphertext.hex</code>. It stops before library calls in each extraction path, so it does not need to emulate Windows or the full C++ runtime.</p>
+<h2 id="4-identify-aes-and-the-cbc-loop">4. Identify AES and the CBC loop<a class="anchor" href="#4-identify-aes-and-the-cbc-loop"></a></h2>
+<p>At this stage the important functions are:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Address</th>
+          <th>What the code does</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x1400010b0</code></td>
+          <td>Expands an AES-128 key into 44 words</td>
+      </tr>
+      <tr>
+          <td><code>0x140001498</code></td>
+          <td>Applies AES inverse rounds to one 16-byte block</td>
+      </tr>
+      <tr>
+          <td><code>0x14000326c</code></td>
+          <td>Decrypts a byte vector using CBC chaining</td>
+      </tr>
+      <tr>
+          <td><code>0x1400033b4</code></td>
+          <td>Gets the Windows account name and converts it to UTF-8</td>
+      </tr>
+      <tr>
+          <td><code>0x140003734</code></td>
+          <td>Reads the loaded module&rsquo;s PE timestamp</td>
+      </tr>
+      <tr>
+          <td><code>0x140003750</code></td>
+          <td>Gets the last-write time of <code>System.evtx</code></td>
+      </tr>
+      <tr>
+          <td><code>0x1400034f8</code></td>
+          <td>Converts the file-time value to seconds through a chrono helper</td>
+      </tr>
+      <tr>
+          <td><code>0x140003d98</code></td>
+          <td>Formats a string with zero fill and width 16</td>
+      </tr>
+      <tr>
+          <td><code>0x140007034</code></td>
+          <td>Converts an unsigned 32-bit integer to decimal text</td>
+      </tr>
+  </tbody>
+</table>
+<p>The key expansion copies 16 key bytes, uses the substitution and round-constant tables, and expands to <code>0x2c</code> words. The inverse cipher then operates on 16-byte blocks. The surrounding loop establishes the mode: it saves each ciphertext block, decrypts the block, XORs it with the previous ciphertext block or initial IV, and carries the saved ciphertext forward.</p>
+<p>In pseudocode:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>previous <span style="color:#81a1c1">=</span> iv
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">for</span> offset <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">range</span><span style="color:#eceff4">(</span><span style="color:#b48ead">0</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>ciphertext<span style="color:#eceff4">),</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    current <span style="color:#81a1c1">=</span> ciphertext<span style="color:#eceff4">[</span>offset<span style="color:#eceff4">:</span>offset <span style="color:#81a1c1">+</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    plaintext_block <span style="color:#81a1c1">=</span> xor<span style="color:#eceff4">(</span>aes_decrypt_block<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> current<span style="color:#eceff4">),</span> previous<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>    previous <span style="color:#81a1c1">=</span> current</span></span></code></pre></div><p>This is AES-128-CBC. The original inverse cipher at <code>0x140001498</code> is also used in the final machine-code verification.</p>
+<h2 id="5-trace-the-key-back-to-the-account-name">5. Trace the key back to the account name<a class="anchor" href="#5-trace-the-key-back-to-the-account-name"></a></h2>
+<p>The routine at <code>0x1400033b4</code> calls:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>GetCurrentProcess
+</span></span><span style="display:flex;"><span>OpenProcessToken
+</span></span><span style="display:flex;"><span>GetTokenInformation(TokenUser)
+</span></span><span style="display:flex;"><span>LookupAccountSidW</span></span></code></pre></div><p>It gets the account name associated with the process token. The following conversion makes that UTF-8 text available to the key-building code.</p>
+<p>The formatter at <code>0x140003d98</code> uses width <code>0x10</code> and fill byte <code>0x30</code>. For the short strings relevant here, its behavior is equivalent to:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>formatted <span style="color:#81a1c1">=</span> text<span style="color:#81a1c1">.</span>rjust<span style="color:#eceff4">(</span><span style="color:#b48ead">16</span><span style="color:#eceff4">,</span> <span style="color:#a3be8c">&#34;0&#34;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>There is hexadecimal stream formatting nearby, but the operand is a string. That does not turn <code>nicetryboogeyman</code> into the ASCII string <code>6e696365...</code>. The bytes passed to AES remain the formatted account-name bytes.</p>
+<p>The PDB path gives a username worth testing:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>0x14000d5a8
+</span></span><span style="display:flex;"><span>C:\Users\nicetryboogeyman\cmo\x64\Release\cmo.pdb</span></span></code></pre></div><p>That name is exactly 16 ASCII bytes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>key <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;nicetryboogeyman&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>key<span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> <span style="color:#b48ead">16</span></span></span></code></pre></div><p>A PDB path alone would only be a lead. The next step checks the key against ciphertext without guessing the IV.</p>
+<h2 id="6-decrypt-the-blocks-that-do-not-need-the-iv">6. Decrypt the blocks that do not need the IV<a class="anchor" href="#6-decrypt-the-blocks-that-do-not-need-the-iv"></a></h2>
+<p>For CBC decryption:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>P1 = AES_DEC(K, C1) XOR IV
+</span></span><span style="display:flex;"><span>P2 = AES_DEC(K, C2) XOR C1
+</span></span><span style="display:flex;"><span>P3 = AES_DEC(K, C3) XOR C2</span></span></code></pre></div><p>Only <code>P1</code> depends on the IV. The ciphertext already supplies the chaining bytes for the later blocks.</p>
+<p>Run this from the directory containing the extracted <code>ciphertext.hex</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">pathlib</span> <span style="color:#81a1c1;font-weight:bold">import</span> Path
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Cipher</span> <span style="color:#81a1c1;font-weight:bold">import</span> AES
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ciphertext <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span>Path<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;ciphertext.hex&#34;</span><span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>read_text<span style="color:#eceff4">())</span>
+</span></span><span style="display:flex;"><span>key <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;nicetryboogeyman&#34;</span>
+</span></span><span style="display:flex;"><span>intermediate <span style="color:#81a1c1">=</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_ECB<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decrypt<span style="color:#eceff4">(</span>ciphertext<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">for</span> offset <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">range</span><span style="color:#eceff4">(</span><span style="color:#b48ead">16</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">len</span><span style="color:#eceff4">(</span>ciphertext<span style="color:#eceff4">),</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    decrypted <span style="color:#81a1c1">=</span> intermediate<span style="color:#eceff4">[</span>offset<span style="color:#eceff4">:</span>offset <span style="color:#81a1c1">+</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    previous <span style="color:#81a1c1">=</span> ciphertext<span style="color:#eceff4">[</span>offset <span style="color:#81a1c1">-</span> <span style="color:#b48ead">16</span><span style="color:#eceff4">:</span>offset<span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>    block <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>a <span style="color:#81a1c1">^</span> b <span style="color:#81a1c1;font-weight:bold">for</span> a<span style="color:#eceff4">,</span> b <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">zip</span><span style="color:#eceff4">(</span>decrypted<span style="color:#eceff4">,</span> previous<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>offset <span style="color:#81a1c1">//</span> <span style="color:#b48ead">16</span> <span style="color:#81a1c1">+</span> <span style="color:#b48ead">1</span><span style="color:#eceff4">,</span> <span style="color:#81a1c1">repr</span><span style="color:#eceff4">(</span>block<span style="color:#eceff4">))</span></span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>2 b&#39;t0_l34rn_fr0M_n0&#39;
+</span></span><span style="display:flex;"><span>3 b&#39;T_t0_l1V3_1n}\x03\x03\x03&#39;</span></span></code></pre></div><p>The suffix reads <code>t0_l34rn_fr0M_n0T_t0_l1V3_1n}</code>. Three trailing <code>0x03</code> bytes are valid PKCS#7 padding for a 45-byte plaintext.</p>
+<p>Together, the readable suffix and padding strongly support the username as the AES key. Padding by itself would be much weaker evidence.</p>
+<h2 id="7-check-what-the-time-code-actually-reads">7. Check what the time code actually reads<a class="anchor" href="#7-check-what-the-time-code-actually-reads"></a></h2>
+<p>My first notes described the time input as the current clock. Inspecting the code more closely showed a file lookup instead.</p>
+<p>At <code>0x140003750</code>, another XOR-decoded stack string resolves to:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>C:\Windows\System32\winevt\Logs\System.evtx</span></span></code></pre></div><p><code>extract.py</code> stops at <code>0x140009a80</code>, after that decode and before the library work, and reads the path through <code>R13</code>. The subsequent filesystem-stat call at <code>0x140009bbc</code> requests the last-write-time field. Main converts the returned file time, keeps its low 32 bits, and XORs that with the loaded module&rsquo;s PE timestamp before calling the decimal formatter.</p>
+<p>The PE timestamp reader is short enough to recognize directly:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#88c0d0">xor</span>     <span style="color:#8fbcbb">ecx</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">ecx</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">call</span>    <span style="color:#8fbcbb">GetModuleHandleW</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">rcx</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">rax</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">movsxd</span>  <span style="color:#8fbcbb">rax</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">dword</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rax</span> <span style="color:#bf616a">+</span> <span style="color:#b48ead">0x3c</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#88c0d0">mov</span>     <span style="color:#8fbcbb">eax</span><span style="color:#eceff4">,</span> <span style="color:#8fbcbb">dword</span> <span style="color:#8fbcbb">ptr</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">rax</span> <span style="color:#bf616a">+</span> <span style="color:#8fbcbb">rcx</span> <span style="color:#bf616a">+</span> <span style="color:#b48ead">8</span><span style="color:#eceff4">]</span></span></span></code></pre></div><p><code>0x3c</code> is the DOS header&rsquo;s <code>e_lfanew</code>. The final read gets the COFF <code>TimeDateStamp</code> at NT headers +8.</p>
+<p>The IV-building path can be described as:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Model of the data flow, not an exact replacement for the chrono conversion.</span>
+</span></span><span style="display:flex;"><span>file_seconds <span style="color:#81a1c1">=</span> convert_last_write_time<span style="color:#eceff4">(</span>system_event_log<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>value <span style="color:#81a1c1">=</span> <span style="color:#eceff4">(</span>file_seconds <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffffffff</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">^</span> loaded_module_pe_timestamp
+</span></span><span style="display:flex;"><span>iv_text <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">str</span><span style="color:#eceff4">(</span>value<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>rjust<span style="color:#eceff4">(</span><span style="color:#b48ead">16</span><span style="color:#eceff4">,</span> <span style="color:#a3be8c">&#34;0&#34;</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>There are also warnings based on <code>0x698fbb00</code>, corresponding to 2026-02-14 UTC. The elapsed-hour calculation uses a multiply by <code>0x91a2b3c5</code> followed by a 43-bit shift. Those warning paths converge before decryption; reaching the CTF date window is not sufficient to identify the IV.</p>
+<p>The current raw EXE has a zero PE timestamp. That does not tell us the original <code>System.evtx</code> time or establish which timestamp pair the author used when encrypting the flag. The solve therefore does not claim to have reproduced the intended Windows environment.</p>
+<h2 id="8-reconstruct-the-first-block-and-keep-the-uncertainty-visible">8. Reconstruct the first block, and keep the uncertainty visible<a class="anchor" href="#8-reconstruct-the-first-block-and-keep-the-uncertainty-visible"></a></h2>
+<p>With the key known, decrypting the first ciphertext block without CBC XOR gives:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Cipher</span> <span style="color:#81a1c1;font-weight:bold">import</span> AES
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ciphertext <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;4c4635258cf6eca5d80b8e050a9e5b04&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;f1a9c979bc55f3f4773971ed2f81a969&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;67bb3569fa002f549cc970a18779b3a7&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>decrypted_first <span style="color:#81a1c1">=</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span><span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;nicetryboogeyman&#34;</span><span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_ECB<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decrypt<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>    ciphertext<span style="color:#eceff4">[:</span><span style="color:#b48ead">16</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>decrypted_first<span style="color:#81a1c1">.</span>hex<span style="color:#eceff4">())</span></span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>737d7f4b0558036a430363426701466c</span></span></code></pre></div><p>The readable suffix suggests the sentence “the past is to learn from, not to live in.” A candidate for its first 16 bytes is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>first_block <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;CMO{5h3_p4St_1s_&#34;</span>
+</span></span><span style="display:flex;"><span>iv <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#eceff4">(</span>a <span style="color:#81a1c1">^</span> b <span style="color:#81a1c1;font-weight:bold">for</span> a<span style="color:#eceff4">,</span> b <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">zip</span><span style="color:#eceff4">(</span>decrypted_first<span style="color:#eceff4">,</span> first_block<span style="color:#eceff4">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>iv<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span><span style="color:#81a1c1">int</span><span style="color:#eceff4">(</span>iv<span style="color:#eceff4">))</span></span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>b&#39;0000000537068053&#39;
+</span></span><span style="display:flex;"><span>537068053</span></span></code></pre></div><p>That matches the expected IV representation: a zero-padded decimal unsigned 32-bit value. Decrypting with it produces a coherent complete string.</p>
+<p>This is still an inference. For example, changing the first-block candidate from <code>..._1s_</code> to <code>..._0s_</code> produces another decimal-looking IV:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{5h3_p4St_1s_  -&gt;  0000000537068053
+</span></span><span style="display:flex;"><span>CMO{5h3_p4St_0s_  -&gt;  0000000537068153</span></span></code></pre></div><p>Both preserve the exact same later plaintext blocks and padding. The wording favors the first, but CBC does not authenticate it.</p>
+<p>The executable&rsquo;s success branch is also too weak to settle this. Its relevant comparisons are equivalent to:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">if</span> <span style="color:#eceff4">(</span>plaintext<span style="color:#eceff4">[</span><span style="color:#b48ead">0</span><span style="color:#eceff4">]</span> <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">&#39;C&#39;</span> <span style="color:#81a1c1">||</span> plaintext<span style="color:#eceff4">[</span><span style="color:#b48ead">1</span><span style="color:#eceff4">]</span> <span style="color:#81a1c1">==</span> <span style="color:#a3be8c">&#39;M&#39;</span><span style="color:#eceff4">)</span> <span style="color:#eceff4">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#88c0d0">print_success</span><span style="color:#eceff4">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#88c0d0">print_plaintext</span><span style="color:#eceff4">();</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">}</span></span></span></code></pre></div><p>At <code>0x1400048a3</code>, equality with <code>C</code> jumps directly to the success path. If that fails, equality with <code>M</code> at <code>0x1400048a9</code> reaches the same path. It does not require the whole <code>CMO{...}</code> prefix or compare the full flag.</p>
+<p>The local AES replay still does not choose uniquely between those first-block candidates. The <a href="https://github.com/crackmesone/ctf-2026-challenges-public/blob/5f8857cf3556e4e36d7e7fc4650044ae682701b8/A_MatterOfTime/README.md">public challenge README</a> explicitly gives <code>CMO{5h3_p4St_1s_t0_l34rn_fr0M_n0T_t0_l1V3_1n}</code>, which resolves the flag text independently of the inferred IV. The original timestamp pair remains unknown.</p>
+<h2 id="9-run-the-solver">9. Run the solver<a class="anchor" href="#9-run-the-solver"></a></h2>
+<p>Save this as <code>solve.py</code>, or use the <a href="files/solve.py">attached solver</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Cipher</span> <span style="color:#81a1c1;font-weight:bold">import</span> AES
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">from</span> <span style="color:#8fbcbb">Crypto.Util.Padding</span> <span style="color:#81a1c1;font-weight:bold">import</span> unpad
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ciphertext <span style="color:#81a1c1">=</span> <span style="color:#81a1c1">bytes</span><span style="color:#81a1c1">.</span>fromhex<span style="color:#eceff4">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;4c4635258cf6eca5d80b8e050a9e5b04&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;f1a9c979bc55f3f4773971ed2f81a969&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a3be8c">&#34;67bb3569fa002f549cc970a18779b3a7&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>key <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;nicetryboogeyman&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># Inferred from a readable first block; not an observed runtime timestamp.</span>
+</span></span><span style="display:flex;"><span>iv <span style="color:#81a1c1">=</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#34;0000000537068053&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>padded <span style="color:#81a1c1">=</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_CBC<span style="color:#eceff4">,</span> iv<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>decrypt<span style="color:#eceff4">(</span>ciphertext<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>plaintext <span style="color:#81a1c1">=</span> unpad<span style="color:#eceff4">(</span>padded<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>block_size<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">assert</span> AES<span style="color:#81a1c1">.</span>new<span style="color:#eceff4">(</span>key<span style="color:#eceff4">,</span> AES<span style="color:#81a1c1">.</span>MODE_CBC<span style="color:#eceff4">,</span> iv<span style="color:#eceff4">)</span><span style="color:#81a1c1">.</span>encrypt<span style="color:#eceff4">(</span>padded<span style="color:#eceff4">)</span> <span style="color:#81a1c1">==</span> ciphertext
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">print</span><span style="color:#eceff4">(</span>plaintext<span style="color:#81a1c1">.</span>decode<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;ascii&#34;</span><span style="color:#eceff4">))</span></span></span></code></pre></div><p>Run:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python solve.py</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CMO{5h3_p4St_1s_t0_l34rn_fr0M_n0T_t0_l1V3_1n}</span></span></code></pre></div><p>Keep <code>5h3</code> exactly as shown. Substituting a more natural spelling changes the bytes and the inferred IV.</p>
+<h2 id="10-compare-with-the-original-aes-routine">10. Compare with the original AES routine<a class="anchor" href="#10-compare-with-the-original-aes-routine"></a></h2>
+<p>The downloadable solver also supports:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python solve.py --verify-native</span></span></code></pre></div><p>This calls <a href="files/verify_aes.py">verify_aes.py</a>, which maps the exported segments and enters the original CBC routine at <code>0x14000326c</code>.</p>
+<p>The emulated call uses the Windows x64 argument registers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>RCX -&gt; ciphertext vector
+</span></span><span style="display:flex;"><span>RDX -&gt; key vector
+</span></span><span style="display:flex;"><span>R8  -&gt; IV vector</span></span></code></pre></div><p>Each vector is represented as three 64-bit pointers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>begin, end, capacity_end</span></span></code></pre></div><p>For example, a 48-byte ciphertext at <code>0x120000</code> has:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>struct<span style="color:#81a1c1">.</span>pack<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;&lt;QQQ&#34;</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x120000</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x120030</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">0x120030</span><span style="color:#eceff4">)</span></span></span></code></pre></div><p>The emulator models four helpers:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Address</th>
+          <th>Emulator replacement</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x140007e08</code></td>
+          <td>Supply a scratch allocation and initialize its vector pointers</td>
+      </tr>
+      <tr>
+          <td><code>0x140009fb1</code></td>
+          <td>Perform <code>memset</code></td>
+      </tr>
+      <tr>
+          <td><code>0x140008ef4</code></td>
+          <td>Return from the free helper</td>
+      </tr>
+      <tr>
+          <td><code>0x140008c50</code></td>
+          <td>Return from the security-cookie check</td>
+      </tr>
+  </tbody>
+</table>
+<p>The key expansion, inverse rounds, CBC XOR, and block chaining execute as original machine instructions. No crypto instruction is patched, and the complete application is not launched.</p>
+<p>The resulting bytes are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>b&#39;CMO{5h3_p4St_1s_t0_l34rn_fr0M_n0T_t0_l1V3_1n}\x03\x03\x03&#39;</span></span></code></pre></div><p>The verifier asserts that those 48 bytes match PyCryptodome. The solver also removes the padding and re-encrypts to the extracted ciphertext. These checks confirm the AES model and chosen inputs; they do not independently recover the original IV.</p>
+<h2 id="files">Files<a class="anchor" href="#files"></a></h2>
+<p>Everything needed for the recorded analysis is in <a href="analysis-tools.zip">analysis-tools.zip</a>. Individual files:</p>
+<table>
+  <thead>
+      <tr>
+          <th>File</th>
+          <th>Purpose</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><a href="files/solve.py">solve.py</a></td>
+          <td>Final decryption and optional machine-code comparison</td>
+      </tr>
+      <tr>
+          <td><a href="files/extract.py">extract.py</a></td>
+          <td>Recover the ciphertext and hidden file path from the mapped code</td>
+      </tr>
+      <tr>
+          <td><a href="files/recover_cfg.py">recover_cfg.py</a></td>
+          <td>Follow the branch/trampoline patterns used by this binary</td>
+      </tr>
+      <tr>
+          <td><a href="files/verify_aes.py">verify_aes.py</a></td>
+          <td>Run the original AES-CBC routine in Unicorn</td>
+      </tr>
+      <tr>
+          <td><a href="files/export_ida.py">export_ida.py</a></td>
+          <td>Export mapped segments from the supplied IDA database</td>
+      </tr>
+      <tr>
+          <td><a href="files/ida_segments.json">ida_segments.json</a></td>
+          <td>Segment snapshot used in this solve</td>
+      </tr>
+      <tr>
+          <td><a href="files/ciphertext.hex">ciphertext.hex</a></td>
+          <td>Extracted 96-character ciphertext string</td>
+      </tr>
+  </tbody>
+</table>
+<p>The raw challenge EXE is not included in this bundle. The mapped snapshot is enough to replay the recorded initializer and AES routine.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Reversing</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/connected/" class="flex align-center">
+        <span>Connected</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-check-the-file-and-the-ida-database">1. Check the file and the IDA database</a>
+      <ul>
+        <li><a href="#prepare-the-helpers">Prepare the helpers</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-find-main-through-the-crt-startup">2. Find main through the CRT startup</a>
+      <ul>
+        <li><a href="#walk-reachable-instructions">Walk reachable instructions</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-recover-the-ciphertext-from-the-initializer">3. Recover the ciphertext from the initializer</a></li>
+    <li><a href="#4-identify-aes-and-the-cbc-loop">4. Identify AES and the CBC loop</a></li>
+    <li><a href="#5-trace-the-key-back-to-the-account-name">5. Trace the key back to the account name</a></li>
+    <li><a href="#6-decrypt-the-blocks-that-do-not-need-the-iv">6. Decrypt the blocks that do not need the IV</a></li>
+    <li><a href="#7-check-what-the-time-code-actually-reads">7. Check what the time code actually reads</a></li>
+    <li><a href="#8-reconstruct-the-first-block-and-keep-the-uncertainty-visible">8. Reconstruct the first block, and keep the uncertainty visible</a></li>
+    <li><a href="#9-run-the-solver">9. Run the solver</a></li>
+    <li><a href="#10-compare-with-the-original-aes-routine">10. Compare with the original AES routine</a></li>
+    <li><a href="#files">Files</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
