@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Recover a hidden PE from a FAT32 USB image, account for TLS-mutated cipher constants, and decrypt a sealed workstation background.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2e3440">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/writeups_ctf/reversing/badusb-case/">
+  <meta property="og:site_name" content="offsec-n0t3">
+  <meta property="og:title" content="BadUSB Case">
+  <meta property="og:description" content="Recover a hidden PE from a FAT32 USB image, account for TLS-mutated cipher constants, and decrypt a sealed workstation background.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2026-10-26T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-10-26T00:00:00+00:00">
+
+
+  <meta itemprop="name" content="BadUSB Case">
+  <meta itemprop="description" content="Recover a hidden PE from a FAT32 USB image, account for TLS-mutated cipher constants, and decrypt a sealed workstation background.">
+  <meta itemprop="datePublished" content="2026-10-26T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2026-10-26T00:00:00+00:00">
+  <meta itemprop="wordCount" content="1700">
+
+<title>BadUSB Case • offsec-n0t3</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/writeups_ctf/reversing/badusb-case/">
+<link rel="stylesheet" href="/book.min.6a186488aa2758244308597fd301e13ded2a0fdc5af91968a34aa403893bf539.css" integrity="sha256-ahhkiKonWCRDCFl/0wHhPe0qD9xa&#43;Rloo0qkA4k79Tk=" crossorigin="anonymous">
+
+
+<script type="module" src="/en.search.min.1870e0da5097ae644cbb301055e79966cec77a65ef57154458aa811bd48736fd.js" integrity="sha256-GHDg2lCXrmRMuzAQVeeZZs7HemXvVxVEWKqBG9SHNv0=" crossorigin="anonymous"></script>
+  <meta name="theme-color" content="#252637">
+
+<script defer src="/fieldbook.min.04e65c4f438e6e13ced1f07c11e88ce2991776fff8f8dab5afe6834a7cd40d67.js" integrity="sha256-BOZcT0OObhPO0fB8EeiM4pkXdv/4&#43;Nq1r&#43;aDSnzUDWc="></script>
+<link rel="icon" href="/images/fieldmark.svg" type="image/svg+xml">
+
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<a class="field-brand" href="/" aria-label="offsec-n0t3 home">
+  <span class="brand-sigil" aria-hidden="true">忍</span>
+  <span><strong>offsec<span class="brand-accent">-n0t3</span></strong><small>CTF NOTES / OPEN BOOK</small></span>
+</a>
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text"
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+<div class="nav-caption">FIELD DIRECTORY <span aria-hidden="true">↙</span></div>
+<a class="directory-home" href="/docs/">⌂ &nbsp; All fieldnotes</a>
+
+
+
+
+
+
+<ul class="field-tree">
+  
+  
+  <li class="field-tree-section" data-collection="web">
+    <details >
+      <summary><span>Web Exploitation</span><span class="tree-count">32</span></summary>
+      <ul><li><a href="/docs/web-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/web-expl/methodology/" class="" >00 · First 10 Minutes</a></li>
+
+<li><a href="/docs/web-expl/sqli/" class="" >01 · SQLi — Start Here</a></li>
+
+<li><a href="/docs/web-expl/sqli-mysql/" class="" >02 · SQLi — MySQL / MariaDB</a></li>
+
+<li><a href="/docs/web-expl/sqli-postgresql/" class="" >03 · SQLi — PostgreSQL</a></li>
+
+<li><a href="/docs/web-expl/sqli-sqlite/" class="" >04 · SQLi — SQLite</a></li>
+
+<li><a href="/docs/web-expl/sqli-mssql/" class="" >05 · SQLi — SQL Server</a></li>
+
+<li><a href="/docs/web-expl/sqli-oracle/" class="" >06 · SQLi — Oracle</a></li>
+
+<li><a href="/docs/web-expl/sqli-blind/" class="" >07 · SQLi — Blind / Error</a></li>
+
+<li><a href="/docs/web-expl/source-disclosure/" class="" >08 · Source / Backup Leaks</a></li>
+
+<li><a href="/docs/web-expl/ssti/" class="" >SSTI · Identify the Engine First</a></li>
+
+<li><a href="/docs/web-expl/nosqli/" class="" >NoSQL Injection · Operators &amp; Blind Reads</a></li>
+
+<li><a href="/docs/web-expl/xss/" class="" >XSS · Context Before Payload</a></li>
+
+<li><a href="/docs/web-expl/auth-idor/" class="" >Auth &amp; IDOR · Compare Two Accounts</a></li>
+
+<li><a href="/docs/web-expl/jwt/" class="" >JWT · Claims, Algorithms &amp; Keys</a></li>
+
+<li><a href="/docs/web-expl/oauth/" class="" >OAuth / Account Linking</a></li>
+
+<li><a href="/docs/web-expl/prototype-pollution/" class="" >Prototype Pollution · Source to Gadget</a></li>
+
+<li><a href="/docs/web-expl/graphql/" class="" >GraphQL · Schema to Resolver</a></li>
+
+<li><a href="/docs/web-expl/csrf-cors/" class="" >CSRF &amp; CORS · Send vs Read</a></li>
+
+<li><a href="/docs/web-expl/websockets/" class="" >WebSockets / Live Sessions</a></li>
+
+<li><a href="/docs/web-expl/command-injection/" class="" >Command Injection</a></li>
+
+<li><a href="/docs/web-expl/lfi-traversal/" class="" >Traversal &amp; LFI</a></li>
+
+<li><a href="/docs/web-expl/ssrf/" class="" >SSRF</a></li>
+
+<li><a href="/docs/web-expl/xxe/" class="" >XXE &amp; XML Parsers</a></li>
+
+<li><a href="/docs/web-expl/file-upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/web-expl/deserialization/" class="" >Deserialization</a></li>
+
+<li><a href="/docs/web-expl/business-logic/" class="" >Business Logic &amp; Races</a></li>
+
+<li><a href="/docs/web-expl/http-cache/" class="" >HTTP, Cache &amp; Smuggling</a></li>
+
+<li><a href="/docs/web-expl/php-quirks/" class="" >PHP · Types / Hashes / Parsers</a></li>
+
+<li><a href="/docs/web-expl/ldap-xpath/" class="" >LDAP / XPath Injection</a></li>
+
+<li><a href="/docs/web-expl/open-redirect/" class="" >Open Redirect / URL Parsing</a></li>
+
+<li><a href="/docs/web-expl/encoding-filters/" class="" >Encoding &amp; Filter Bypasses</a></li>
+
+<li><a href="/docs/web-expl/python-snippets/" class="" >Python · Reusable Web Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="network">
+    <details >
+      <summary><span>Network Exploitation</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/network-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/network-expl/packet-triage/" class="" >01 · Packet Triage</a></li>
+
+<li><a href="/docs/network-expl/http-streams/" class="" >02 · HTTP / File Streams</a></li>
+
+<li><a href="/docs/network-expl/dns/" class="" >03 · DNS / Encoded Labels</a></li>
+
+<li><a href="/docs/network-expl/tls-ssh/" class="" >04 · TLS / SSH</a></li>
+
+<li><a href="/docs/network-expl/tcp-udp/" class="" >05 · TCP / UDP Sessions</a></li>
+
+<li><a href="/docs/network-expl/wifi/" class="" >06 · Wi-Fi Capture Analysis</a></li>
+
+<li><a href="/docs/network-expl/can-bus/" class="" >07 · CAN / Cannelloni</a></li>
+
+<li><a href="/docs/network-expl/protocols/" class="" >08 · FTP / Mail / ICMP / SMB</a></li>
+
+<li><a href="/docs/network-expl/python-snippets/" class="" >09 · Python / Ready Helpers</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="stego">
+    <details >
+      <summary><span>Steganography</span><span class="tree-count">8</span></summary>
+      <ul><li><a href="/docs/steganograph-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/steganograph-expl/triage/" class="" >First 10 Minutes</a></li>
+
+<li><a href="/docs/steganograph-expl/images-lsb/" class="" >Images: LSB &amp; Bit Planes</a></li>
+
+<li><a href="/docs/steganograph-expl/png-jpeg/" class="" >PNG &amp; JPEG Structure</a></li>
+
+<li><a href="/docs/steganograph-expl/archives-carving/" class="" >Archives &amp; File Carving</a></li>
+
+<li><a href="/docs/steganograph-expl/audio/" class="" >Audio: Samples &amp; Spectrograms</a></li>
+
+<li><a href="/docs/steganograph-expl/pdf-documents/" class="" >PDF &amp; Office Documents</a></li>
+
+<li><a href="/docs/steganograph-expl/text-unicode/" class="" >Text, Whitespace &amp; Unicode</a></li>
+
+<li><a href="/docs/steganograph-expl/python-snippets/" class="" >Offline Python Toolkit</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="reversing">
+    <details >
+      <summary><span>Reverse Engineering</span><span class="tree-count">9</span></summary>
+      <ul><li><a href="/docs/reversing-expl/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/reversing-expl/triage/" class="" >Triage · First Five Minutes</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-cheatsheet/" class="" >Ghidra Cheatsheet · From Strings to Check</a></li>
+
+<li><a href="/docs/reversing-expl/ghidra-plugins/" class="" >Ghidra Plugins · Built-ins &amp; Offline Extras</a></li>
+
+<li><a href="/docs/reversing-expl/static-analysis/" class="" >Static Analysis · Bytes, Types &amp; Control Flow</a></li>
+
+<li><a href="/docs/reversing-expl/dynamic-debugging/" class="" >Dynamic Debugging · Break, Inspect, Dump</a></li>
+
+<li><a href="/docs/reversing-expl/strings-encodings/" class="" >Strings &amp; Encodings · Preserve the Bytes</a></li>
+
+<li><a href="/docs/reversing-expl/crypto-obfuscation/" class="" >Crypto &amp; Obfuscation · Identify, Model, Verify</a></li>
+
+<li><a href="/docs/reversing-expl/dotnet/" class="" >.NET · dnSpyEx, Resources &amp; IL</a></li>
+
+<li><a href="/docs/reversing-expl/python-snippets/" class="" >Python Snippets · Byte Workbench &amp; Check Models</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="tools">
+    <details >
+      <summary><span>Tools · Visual Cheatsheets</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/tools-cheatsheet/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/tools-cheatsheet/cyberchef-cheatsheet/" class="" >CyberChef · Visual Recipes</a></li>
+
+<li><a href="/docs/tools-cheatsheet/approved-tools-map/" class="" >39 Tools · Technique Map</a></li>
+
+<li><a href="/docs/tools-cheatsheet/python-library/" class="" >Python · Offline Snippet Library</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="notes">
+    <details open>
+      <summary><span>CTF Writeups</span><span class="tree-count">20</span></summary>
+      <ul><li><a href="/docs/writeups_ctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details open><summary>Reversing</summary><ul><li><a href="/docs/writeups_ctf/reversing/">Overview ↗</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/badusb-case/" class="active" aria-current="page">BadUSB Case</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/verdict-engine/" class="" >Verdict Engine</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/a-matter-of-time/" class="" >A Matter of Time</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/connected/" class="" >Connected</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/cryptpad/" class="" >cryptpad</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike/" class="" >Fatmike — JIT Decryption and Nanomites</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fatmike-02/" class="" >Fatmike 02 — Record Player</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flipvm/" class="" >FlipVM</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flrscrnsvr/" class="" >FLRSCRNSVR</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/httpd/" class="" >httpd</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka-v2/" class="" >Matryoshka v2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/wallpaper/" class="" >Wallpaper</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/what-did-you-type/" class="" >What Did You Type</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/corrupted/" class="" >Corrupted</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/fake-c2/" class="" >Fake C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/flag-encoder/" class="" >Flag Encoder</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/gorillabot/" class="" >Gorilla Is Not Godzilla</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/hunt4c2/" class="" >Hunt 4 the C2</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/matryoshka/" class="" >Matryoshka Is a Russian Nested Doll</a></li>
+
+<li><a href="/docs/writeups_ctf/reversing/packer/" class="" >Packer</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li><a href="/docs/cli_cheatsheet/" class="">CLI Cheatsheet</a></li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="pico">
+    <details >
+      <summary><span>picoCTF</span><span class="tree-count">4</span></summary>
+      <ul><li><a href="/docs/picoctf/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><details ><summary>Rev</summary><ul><li><a href="/docs/picoctf/rev/">Overview ↗</a></li>
+
+</ul></details></li>
+
+<li><details ><summary>Web</summary><ul><li><a href="/docs/picoctf/web/">Overview ↗</a></li>
+
+<li><a href="/docs/picoctf/web/file_upload/" class="" >File Upload</a></li>
+
+<li><a href="/docs/picoctf/web/ip_bypassing/" class="" >Proxy Mnipu</a></li>
+
+<li><a href="/docs/picoctf/web/sqli/" class="" >Sqli</a></li>
+
+<li><a href="/docs/picoctf/web/eval_ssti/" class="" >SSTI</a></li>
+
+</ul></details></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="scripts">
+    <details >
+      <summary><span>Scripts</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/scripts/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/scripts/brute_force_py/" class="" >Brute Force Py</a></li>
+
+<li><a href="/docs/scripts/craft_img_py/" class="" >Craft Img Py</a></li>
+
+<li><a href="/docs/scripts/lro_rlo_fileext/" class="" >Lro Rlo File Ext</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="windows">
+    <details >
+      <summary><span>Windows Rev</span><span class="tree-count">3</span></summary>
+      <ul><li><a href="/docs/windows_rev/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/windows_rev/arc4_decrypt/" class="" >Arc4 Decrypt</a></li>
+
+<li><a href="/docs/windows_rev/dmp_hunt4c2/" class="" >Dmp Hunt4c2</a></li>
+
+<li><a href="/docs/windows_rev/x64dbg_cheatsheet/" class="" >X64dbg Cheatsheet</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+  
+  <li class="field-tree-section" data-collection="approved">
+    <details >
+      <summary><span>AJCBBC Allowed Tools</span><span class="tree-count">39</span></summary>
+      <ul><li><a href="/docs/ajcbbc_allow_tools/" class="section-overview ">Overview ↗</a></li>
+      
+
+<li><a href="/docs/ajcbbc_allow_tools/cyberchef/" class="" >CyberChef</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wireshark/" class="" >Wireshark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdf_viewer/" class="" >PDF Viewer</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openvpn_client/" class="" >OpenVPN Client</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/google_chrome/" class="" >Google Chrome</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/wsl/" class="" >Windows Subsystem for Linux (WSL)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/python3/" class="" >Python 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/uv/" class="" >uv</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/gdb/" class="" >gdb</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/objdump/" class="" >objdump</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/strings/" class="" >strings</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zsteg/" class="" >zsteg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/binwalk/" class="" >binwalk</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/exiftool/" class="" >ExifTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/pdftotext/" class="" >pdftotext (Poppler utils)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/can_utils/" class="" >can-utils</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/cannelloni/" class="" >cannelloni</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zeek/" class="" >Zeek</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/zbar/" class="" >ZBar</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/burp_suite_community/" class="" >Burp Suite Community Edition</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/jq/" class="" >jq</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/ghidra/" class="" >Ghidra</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/sleuth_kit/" class="" >The Sleuth Kit</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssl/" class="" >OpenSSL</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xz/" class="" >xz</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/qpdf/" class="" >qpdf</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/llvm_mc/" class="" >llvm-mc (LLVM tools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/xxd/" class="" >xxd</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/fsck_fat/" class="" >fsck.fat (dosfstools)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/rsactftool/" class="" >RsaCtfTool</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/volatility3/" class="" >Volatility 3</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/openssh_session_key_recovery/" class="" >OpenSSH-Session-Key-Recovery</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/x64dbg/" class="" >x64dbg</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/autopsy/" class="" >Autopsy</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/hxd/" class="" >HxD</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/tshark/" class="" >TShark</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/notepad_plus_plus/" class="" >Notepad&#43;&#43;</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/dnspyex/" class="" >dnSpyEx (dnSpy)</a></li>
+
+<li><a href="/docs/ajcbbc_allow_tools/eric_zimmerman_tools/" class="" >Eric Zimmerman&#39;s Tools</a></li>
+
+</ul>
+    </details>
+  </li>
+  
+  
+</ul>
+
+
+
+
+
+
+
+<div class="nav-footer"><span class="status-dot" aria-hidden="true"></span> OFFLINE / PERSONAL NOTES<br><span>Payloads · methods · worked examples</span></div>
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>BadUSB Case</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-establish-the-evidence-and-disk-layout">1. Establish the evidence and disk layout</a></li>
+    <li><a href="#2-follow-the-usb-configuration-into-the-orphaned-directory">2. Follow the USB configuration into the orphaned directory</a></li>
+    <li><a href="#3-read-the-pre-partition-keyboard-script">3. Read the pre-partition keyboard script</a></li>
+    <li><a href="#4-map-the-executables-input-and-output">4. Map the executable&rsquo;s input and output</a></li>
+    <li><a href="#5-account-for-the-tls-callback-before-modeling-the-cipher">5. Account for the TLS callback before modeling the cipher</a></li>
+    <li><a href="#6-parse-lockd-and-restore-the-files">6. Parse <code>.lockd</code> and restore the files</a></li>
+    <li><a href="#7-reproduce-and-verify-the-recovery">7. Reproduce and verify the recovery</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      <div id="field-content" tabindex="-1"></div>
+
+<div class="page-topline" data-collection="notes"><nav aria-label="Breadcrumb"><a href="/docs/">NOTEBOOK</a><span>/</span><a href="/docs/writeups_ctf/reversing/">Reversing</a></nav><span>8 MIN READ</span></div>
+
+
+
+      
+  <article class="markdown book-article"><h1 id="badusb-case">BadUSB Case<a class="anchor" href="#badusb-case"></a></h1>
+<p>The workstation collection contains three <code>.lockd</code> files, a ransom notice, a replacement background, a process-creation export, and a manifest. The USB image contains the program that sealed the files, but its staging directory is absent from the normal directory listing. Recovering that program is only half the job: a TLS callback changes its cipher constants before <code>main</code>, so a direct translation of the constants visible on disk produces the wrong key.</p>
+<p>The recovered login background displays:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>CSG_FLAG{t3n_s3c0nds_0f_typ1ng_0n3_l0st_ch41n}</span></span></code></pre></div><p><img src="files/recovered_lockscreen.png" alt="Recovered Hydro Delta Systems login background, with the recovery reference in its footer" /></p>
+<p>This writeup starts with the supplied <code>badusb_case.zip</code>. The <a href="files/solve.py">solver</a> uses only the Python standard library. It reads the image, recovers the executable, derives the key, and restores all three sealed files without running the Windows executable.</p>
+<h2 id="1-establish-the-evidence-and-disk-layout">1. Establish the evidence and disk layout<a class="anchor" href="#1-establish-the-evidence-and-disk-layout"></a></h2>
+<p>Extract the archive into a working directory and verify the image against its supplied checksum:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>unzip badusb_case.zip -d badusb_case
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1">cd</span> badusb_case
+</span></span><span style="display:flex;"><span>sha256sum -c HDS-USB01.dd.sha256
+</span></span><span style="display:flex;"><span>file HDS-USB01.dd
+</span></span><span style="display:flex;"><span>mmls HDS-USB01.dd</span></span></code></pre></div><p>The image is 536,870,912 bytes. Its SHA-256 is <code>62dac5eb80935f13cd06a3f644275ddff28b95faceddef0fa1801be9dc05dd7d</code>, matching the <code>.sha256</code> file. The MBR contains one FAT32 partition starting at sector 2048. All recovery below reads the image; no filesystem repair or writable mount is needed.</p>
+<p>The partition parameters are useful later:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Value</th>
+          <th>Result</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Partition start</td>
+          <td>Sector 2048, raw offset <code>0x100000</code></td>
+      </tr>
+      <tr>
+          <td>FAT32 reserved sectors</td>
+          <td>32</td>
+      </tr>
+      <tr>
+          <td>FAT0 start</td>
+          <td>Raw offset <code>0x104000</code></td>
+      </tr>
+      <tr>
+          <td>FAT32 data area</td>
+          <td>Filesystem sector 2074, raw offset <code>0x203400</code> (<code>2,110,464</code>)</td>
+      </tr>
+      <tr>
+          <td>Cluster size</td>
+          <td>4096 bytes</td>
+      </tr>
+      <tr>
+          <td>Root directory</td>
+          <td>Cluster 2</td>
+      </tr>
+  </tbody>
+</table>
+<p>These come from <code>fsstat -o 2048 HDS-USB01.dd</code>. Sleuth Kit&rsquo;s <code>-o</code> value is in sectors, while the raw offsets above are in bytes. The start of cluster <code>n</code> is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>2,110,464 + (n - 2) × 4096</span></span></code></pre></div><h2 id="2-follow-the-usb-configuration-into-the-orphaned-directory">2. Follow the USB configuration into the orphaned directory<a class="anchor" href="#2-follow-the-usb-configuration-into-the-orphaned-directory"></a></h2>
+<p>List the FAT32 tree and extract its visible configuration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>fls -r -p -o <span style="color:#b48ead">2048</span> HDS-USB01.dd
+</span></span><span style="display:flex;"><span>icat -o <span style="color:#b48ead">2048</span> HDS-USB01.dd <span style="color:#b48ead">3</span></span></span></code></pre></div><p>The listing contains promotional photos, firmware, example scripts, and <code>FL9.CFG</code>. It does not contain <code>FWSTAGE</code>. The configuration supplies a lead that the listing does not:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#8fbcbb">script_store</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">reserved</span>
+</span></span><span style="display:flex;"><span><span style="color:#8fbcbb">script_bytes</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">15600</span>
+</span></span><span style="display:flex;"><span><span style="color:#8fbcbb">payload</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">\FWSTAGE\PRN_DRV.BIN</span>
+</span></span><span style="display:flex;"><span><span style="color:#8fbcbb">payload_bytes</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">106528</span>
+</span></span><span style="display:flex;"><span><span style="color:#8fbcbb">stealth</span><span style="color:#81a1c1">=</span><span style="color:#a3be8c">1</span></span></span></code></pre></div><p>The payload name appears in a directory structure still present in raw cluster data. At raw offset <code>2,487,296</code>, the directory&rsquo;s <code>.</code> and <code>..</code> entries remain; at <code>2,487,360</code>, its 32-byte file entry contains the FAT short name <code>PRN_DRV BIN</code>. That entry specifies start cluster 43 and size 106,528 bytes. The directory is cluster 94 because <code>2,110,464 + (94 - 2) × 4096 = 2,487,296</code>. The parent entry was removed, which is why ordinary <code>fls</code> recursion did not reach it.</p>
+<p>Cluster 43 begins at raw offset <code>2,278,400</code>. The FAT chain is still intact:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>43 44 45 46 47 48 56 57 58 59 60 61 69 70 71 72 73 74
+</span></span><span style="display:flex;"><span>82 83 84 85 86 87 88 89 90</span></span></code></pre></div><p>It has 27 clusters. The gaps matter: reading 106,528 bytes contiguously from cluster 43 would mix in other files. The solver follows each 28-bit FAT entry, joins the 4096-byte clusters, and trims to the size in the directory entry.</p>
+<p>The reconstructed file begins with <code>LKD1</code>. Its first 32 bytes are a wrapper:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Offset</th>
+          <th>Meaning</th>
+          <th>Value</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x00</code></td>
+          <td>Magic</td>
+          <td><code>LKD1</code></td>
+      </tr>
+      <tr>
+          <td><code>0x04</code></td>
+          <td>Decrypted length, little-endian <code>u32</code></td>
+          <td>106,496</td>
+      </tr>
+      <tr>
+          <td><code>0x10</code></td>
+          <td>RC4 key, 16 bytes</td>
+          <td><code>3fa9c1750e6b84d2a70f5c1938e2b6a4</code></td>
+      </tr>
+      <tr>
+          <td><code>0x20</code></td>
+          <td>RC4 ciphertext</td>
+          <td>Windows executable bytes</td>
+      </tr>
+  </tbody>
+</table>
+<p>The FAT file length is exactly 32 + 106,496. RC4 decryption produces an <code>MZ</code> header and a PE32+ x86-64 console executable. Its SHA-256 is <code>7ab789767b932f4d2f425ddb96476356cc031e50d9960afaa858c58b6466f7b5</code>. The solver verifies this hash before using the PE. It does not execute the file.</p>
+<h2 id="3-read-the-pre-partition-keyboard-script">3. Read the pre-partition keyboard script<a class="anchor" href="#3-read-the-pre-partition-keyboard-script"></a></h2>
+<p>The configured script is before the partition, at raw sector 1. The first 32 bytes start with <code>HIDQ</code>; the 15,600 bytes after them consist of eight-byte HID keyboard reports. In each report, byte 0 is the modifier field and byte 2 is the first key usage. For example, <code>08 00 15 ...</code> is GUI+R, and Shift is selected by <code>modifier &amp; 0x22</code>. Tracking key-down transitions avoids emitting held keys twice.</p>
+<p>The meaningful portion of the reports describes this operation (normalized pseudocode, not a byte-for-byte PowerShell transcript):</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>$b <span style="color:#eceff4">=</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">IO.File</span><span style="color:#eceff4">]::</span>ReadAllBytes<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;D:\FWSTAGE\PRN_DRV.BIN&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>$key <span style="color:#eceff4">=</span> $b<span style="color:#eceff4">[</span><span style="color:#b48ead">16</span><span style="color:#eceff4">.</span><span style="color:#b48ead">.31</span><span style="color:#eceff4">]</span>
+</span></span><span style="display:flex;"><span>$length <span style="color:#eceff4">=</span> <span style="color:#eceff4">[</span><span style="color:#8fbcbb">BitConverter</span><span style="color:#eceff4">]::</span>ToUInt32<span style="color:#eceff4">(</span>$b<span style="color:#eceff4">,</span> <span style="color:#b48ead">4</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span>$program <span style="color:#eceff4">=</span> RC4<span style="color:#eceff4">(</span>$b<span style="color:#eceff4">[</span><span style="color:#b48ead">32</span><span style="color:#eceff4">..(</span><span style="color:#b48ead">31</span><span style="color:#eceff4">+</span>$length<span style="color:#eceff4">)],</span> $key<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">[</span><span style="color:#8fbcbb">IO.File</span><span style="color:#eceff4">]::</span>WriteAllBytes<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#34;</span>$env:TEMP<span style="color:#a3be8c">\prnupd.exe&#34;</span><span style="color:#eceff4">,</span> $program<span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#eceff4">&amp;</span> <span style="color:#a3be8c">&#34;</span>$env:TEMP<span style="color:#a3be8c">\prnupd.exe&#34;</span> -d <span style="color:#eceff4">\\.\</span>PHYSICALDRIVE1 -t <span style="color:#eceff4">&lt;</span><span style="color:#81a1c1">one-file</span><span style="color:#eceff4">&gt;</span> -i <span style="color:#a3be8c">&#39;NX7-2R8QF4KD9T&#39;</span></span></span></code></pre></div><p>This explains both the <code>LKD1</code> wrapper and the SIEM rows: elevated PowerShell starts <code>prnupd.exe</code> from the user&rsquo;s Temp directory with <code>-d \\.\PHYSICALDRIVE1</code> and a <code>-t</code> target. The export truncates the target command lines, so the HID reports are the source for the campaign identifier. The binary&rsquo;s argument parser accepts one target path and has no directory walk; the separate process-creation rows correspond to separate invocations.</p>
+<h2 id="4-map-the-executables-input-and-output">4. Map the executable&rsquo;s input and output<a class="anchor" href="#4-map-the-executables-input-and-output"></a></h2>
+<p>Static analysis of the recovered PE gives the important calls and data flow:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Virtual address</th>
+          <th>Role</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>0x140001000</code></td>
+          <td>TLS callback mutating round constants on process attach</td>
+      </tr>
+      <tr>
+          <td><code>0x1400011a0</code></td>
+          <td>Build the 16-byte campaign key</td>
+      </tr>
+      <tr>
+          <td><code>0x1400014f0</code></td>
+          <td>Encrypt a target&rsquo;s initial whole blocks with CBC chaining</td>
+      </tr>
+      <tr>
+          <td><code>0x140001790</code></td>
+          <td>Compress one full block into the custom hash state</td>
+      </tr>
+      <tr>
+          <td><code>0x1400018c0</code></td>
+          <td>16-byte block cipher</td>
+      </tr>
+      <tr>
+          <td><code>0x140001aa0</code></td>
+          <td>Custom 128-bit hash, including padding and length finalization</td>
+      </tr>
+      <tr>
+          <td><code>0x140001d90</code></td>
+          <td>Expand block-cipher round keys</td>
+      </tr>
+      <tr>
+          <td><code>0x140001fa0</code></td>
+          <td>Parse <code>-d</code>, <code>-t</code>, <code>-i</code>, read device sectors, and write <code>.lockd</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><code>main</code> reads sector 0 of the device and checks the MBR signature. It takes the partition start from the MBR, reads that partition&rsquo;s FAT32 boot sector, then reads raw sector 1 for <code>HIDQ</code>. The key inputs are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>HIDQ bytes at raw offsets 520..535 : 5a1f0c93ee47b2d80148a6cf3b91d27e
+</span></span><span style="display:flex;"><span>FAT32 volume ID at boot + 0x43   : 921e4a7c (four on-disk bytes)
+</span></span><span style="display:flex;"><span>Campaign identifier                : NX7-2R8QF4KD9T (ASCII, no terminator)
+</span></span><span style="display:flex;"><span>Recovered executable              : all 106,496 bytes</span></span></code></pre></div><p>The executable&rsquo;s own file bytes are hashed first. Then <code>0x1400011a0</code> hashes the concatenation of the HIDQ seed, four volume-ID bytes, 16-byte executable digest, and ASCII identifier. The output is the file-encryption key. The executable digest and key, after correct initialization, are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>executable digest: 79850f8b25478649341e0130fb8f6401
+</span></span><span style="display:flex;"><span>campaign key:      b8e4563dd09366d360e772249526377f</span></span></code></pre></div><h2 id="5-account-for-the-tls-callback-before-modeling-the-cipher">5. Account for the TLS callback before modeling the cipher<a class="anchor" href="#5-account-for-the-tls-callback-before-modeling-the-cipher"></a></h2>
+<p>The first attempt to model the block cipher directly from <code>.data</code> decrypted every file to garbage and failed every trailer CRC32. The hash and block-cipher translations agreed with direct emulation of their functions, so the discrepancy was in process state rather than in those translations.</p>
+<p>The cross-reference that resolves it is a write to the constant table at <code>0x140019000</code>. The routine at <code>0x140001000</code> is a TLS callback. When its reason argument is process attach (<code>EDX = 1</code>), it obtains the loaded PE header&rsquo;s TimeDateStamp and runs a 32-bit linear congruential generator:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>state <span style="color:#81a1c1">=</span> pe_timestamp  <span style="color:#616e87;font-style:italic"># 0x6a55f3cb</span>
+</span></span><span style="display:flex;"><span><span style="color:#81a1c1;font-weight:bold">for</span> i <span style="color:#81a1c1;font-weight:bold">in</span> <span style="color:#81a1c1">range</span><span style="color:#eceff4">(</span><span style="color:#b48ead">22</span><span style="color:#eceff4">):</span>
+</span></span><span style="display:flex;"><span>    state <span style="color:#81a1c1">=</span> <span style="color:#eceff4">(</span>state <span style="color:#81a1c1">*</span> <span style="color:#b48ead">0x19660d</span> <span style="color:#81a1c1">+</span> <span style="color:#b48ead">0x3c6ef35f</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">&amp;</span> <span style="color:#b48ead">0xffffffff</span>
+</span></span><span style="display:flex;"><span>    live_constants<span style="color:#eceff4">[</span>i<span style="color:#eceff4">]</span> <span style="color:#81a1c1">=</span> disk_constants<span style="color:#eceff4">[</span>i<span style="color:#eceff4">]</span> <span style="color:#81a1c1">^</span> state</span></span></code></pre></div><p>The first table entry changes from <code>0xd4595925</code> on disk to <code>0x649b6f8b</code> in the process. The next three live entries are <code>0x62226775</code>, <code>0x7d04477f</code>, and <code>0x28d6c043</code>. The callback changes 22 dwords, while the key schedule consumes the first 21 to generate 22 round keys, counting its initial key word. Applying these writes changed the executable digest and campaign key to the values above. It also made all three file checks pass.</p>
+<p>The cipher operates on two little-endian 64-bit words. With 64-bit wraparound, <code>C[i]</code> as the initialized 32-bit constant, and <code>K[0], L[0]</code> from a 16-byte key block, its expansion is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>L[i+1] = (ROR64(L[i], 8) + K[i]) XOR C[i]
+</span></span><span style="display:flex;"><span>K[i+1] = ROR64(K[i], 61) XOR L[i+1]        for i = 0..20</span></span></code></pre></div><p>The 22 encryption rounds are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>X[i+1] = (ROR64(X[i], 8) + Y[i]) XOR K[i]
+</span></span><span style="display:flex;"><span>Y[i+1] = ROR64(Y[i], 61) XOR X[i+1]        for i = 0..21</span></span></code></pre></div><p>This is a Speck-like ARX construction. The inverse used by the solver applies the rounds in reverse order:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Y[i] = ROL64(Y[i+1] XOR X[i+1], 61)
+</span></span><span style="display:flex;"><span>X[i] = ROL64((X[i+1] XOR K[i]) - Y[i], 8)</span></span></code></pre></div><p>The custom 128-bit hash starts at two fixed 64-bit words, <code>0xa2de40f113e09aa5</code> and <code>0x3b008f876c3f3b4d</code>. For each full 16-byte input block it encrypts the current state with that block as the cipher key, then XORs the encrypted state into the previous state. It processes one padded block containing the remaining bytes and <code>0x80</code>, even when the input length is a multiple of 16. A final block is <code>&lt;u64 original_length, u64 0x07c8f4142d06dd90&gt;</code>. These byte orders and the extra finalization are required for the executable digest, campaign key, and per-file IVs to match.</p>
+<h2 id="6-parse-lockd-and-restore-the-files">6. Parse <code>.lockd</code> and restore the files<a class="anchor" href="#6-parse-lockd-and-restore-the-files"></a></h2>
+<p>The program encrypts only the initial whole blocks of each file, capped at <code>0x40000</code> bytes (262,144). It appends a 40-byte trailer; the original file bytes before the trailer keep their length. The trailer layout is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>offset  size  field
+</span></span><span style="display:flex;"><span>0x00      4   LKD7 magic
+</span></span><span style="display:flex;"><span>0x04      4   version = 1
+</span></span><span style="display:flex;"><span>0x08      4   encrypted prefix length
+</span></span><span style="display:flex;"><span>0x0c      8   original file size
+</span></span><span style="display:flex;"><span>0x14      4   CRC32 of the original plaintext
+</span></span><span style="display:flex;"><span>0x18     16   per-file digest / CBC IV</span></span></code></pre></div><p>The IV is independently reproducible. The program hashes the original size as a little-endian <code>u64</code> followed by the target&rsquo;s uppercased basename in single-byte ASCII. For <code>lockscreen.bmp</code>, the basename is <code>LOCKSCREEN.BMP</code>, so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>iv <span style="color:#81a1c1">=</span> hash128<span style="color:#eceff4">(</span>struct<span style="color:#81a1c1">.</span>pack<span style="color:#eceff4">(</span><span style="color:#a3be8c">&#39;&lt;Q&#39;</span><span style="color:#eceff4">,</span> <span style="color:#b48ead">2764854</span><span style="color:#eceff4">)</span> <span style="color:#81a1c1">+</span> <span style="color:#a3be8c">b</span><span style="color:#a3be8c">&#39;LOCKSCREEN.BMP&#39;</span><span style="color:#eceff4">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#616e87;font-style:italic"># d058d5a92844eefb7366944a3962da31</span></span></span></code></pre></div><p>The sealed files&rsquo; trailer values are:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Original basename</th>
+          <th style="text-align: right">Size</th>
+          <th style="text-align: right">Encrypted prefix</th>
+          <th>Stored CRC32</th>
+          <th>Stored IV</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>OPS_HANDOVER.TXT</code></td>
+          <td style="text-align: right">741</td>
+          <td style="text-align: right">736</td>
+          <td><code>a79fc2f8</code></td>
+          <td><code>71184fb5a656176762942816e1f459d7</code></td>
+      </tr>
+      <tr>
+          <td><code>SHIFT_ROSTER.CSV</code></td>
+          <td style="text-align: right">325</td>
+          <td style="text-align: right">320</td>
+          <td><code>b047d5a3</code></td>
+          <td><code>1780516a1ed587ac516cbe1196c32a33</code></td>
+      </tr>
+      <tr>
+          <td><code>LOCKSCREEN.BMP</code></td>
+          <td style="text-align: right">2,764,854</td>
+          <td style="text-align: right">262,144</td>
+          <td><code>35a22ee5</code></td>
+          <td><code>d058d5a92844eefb7366944a3962da31</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>For each encrypted block, save its ciphertext, invert the block cipher under the campaign key, XOR with the previous ciphertext (or the IV for block zero), then advance the chaining value. The remainder after the encrypted prefix is copied as-is. The solver checks the per-file IV formula before decryption and CRC32 afterward.</p>
+<p>The partial-encryption cap explains a useful visual clue. A 1280×720, 24-bit BMP has 3840 bytes per pixel row and stores rows bottom-up. The 262,144-byte encrypted prefix covers the BMP header and roughly 68 bottom rows. Most of the background could be previewed from unchanged bytes; the footer strip containing the recovery reference remained encrypted. The preview located the text but did not reveal it. Successful decryption restored that strip and the BMP header.</p>
+<h2 id="7-reproduce-and-verify-the-recovery">7. Reproduce and verify the recovery<a class="anchor" href="#7-reproduce-and-verify-the-recovery"></a></h2>
+<p>Save the <a href="files/solve.py">solver</a> as <code>solve.py</code> in the directory containing <code>HDS-USB01.dd</code> and <code>victim/</code>, then run:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 solve.py
+</span></span><span style="display:flex;"><span>file work/prnupd.exe work/C_ProgramData_HDS_Branding_lockscreen.bmp
+</span></span><span style="display:flex;"><span>sha256sum work/prnupd.exe work/C_ProgramData_HDS_Branding_lockscreen.bmp</span></span></code></pre></div><p>The solver creates <code>work/</code> and prints the initialized executable digest, campaign key, and each file&rsquo;s computed and stored CRC. In the verified run, all three pairs matched:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>LOCKSCREEN.BMP   0x35a22ee5 = 0x35a22ee5
+</span></span><span style="display:flex;"><span>OPS_HANDOVER.TXT 0xa79fc2f8 = 0xa79fc2f8
+</span></span><span style="display:flex;"><span>SHIFT_ROSTER.CSV 0xb047d5a3 = 0xb047d5a3</span></span></code></pre></div><p>The recovered executable and BMP hashes are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#d8dee9;background-color:#2e3440;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>7ab789767b932f4d2f425ddb96476356cc031e50d9960afaa858c58b6466f7b5  work/prnupd.exe
+</span></span><span style="display:flex;"><span>2ae2652a40498248c0ca92ad4715cc0c695c3a4ee7cffcd07151d2f0a4b59d32  work/C_ProgramData_HDS_Branding_lockscreen.bmp</span></span></code></pre></div><p>The BMP parser identifies the result as a 1280×720, 24-bit Windows bitmap. Its footer visibly prints the flag quoted at the start. This is a visual transcription from the CRC-validated recovered file; it is not a string extracted from the sealed bytes.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Reversing</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/docs/writeups_ctf/reversing/verdict-engine/" class="flex align-center">
+        <span>Verdict Engine</span>
+        <img src="/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+
+ 
+        
+  
+ 
+        <div class="field-footer"><span>offsec-n0t3 <span aria-hidden="true">//</span> keep your findings close.</span><a href="#field-content">BACK TO TOP ↑</a></div>
+
+        
+  
+ 
+        
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  <div class="nav-caption">ON THIS PAGE</div>
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-establish-the-evidence-and-disk-layout">1. Establish the evidence and disk layout</a></li>
+    <li><a href="#2-follow-the-usb-configuration-into-the-orphaned-directory">2. Follow the USB configuration into the orphaned directory</a></li>
+    <li><a href="#3-read-the-pre-partition-keyboard-script">3. Read the pre-partition keyboard script</a></li>
+    <li><a href="#4-map-the-executables-input-and-output">4. Map the executable&rsquo;s input and output</a></li>
+    <li><a href="#5-account-for-the-tls-callback-before-modeling-the-cipher">5. Account for the TLS callback before modeling the cipher</a></li>
+    <li><a href="#6-parse-lockd-and-restore-the-files">6. Parse <code>.lockd</code> and restore the files</a></li>
+    <li><a href="#7-reproduce-and-verify-the-recovery">7. Reproduce and verify the recovery</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  <a class="skip-link" href="#field-content">Skip to notes</a>
+<div class="reading-progress" aria-hidden="true"></div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

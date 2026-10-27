@@ -13,10 +13,16 @@
     <loc>http://localhost:1313/docs/tools-cheatsheet/</loc>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/</loc>
-    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+    <lastmod>2026-10-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/badusb-case/</loc>
+    <lastmod>2026-10-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/</loc>
-    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
+    <lastmod>2026-10-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/writeups_ctf/reversing/verdict-engine/</loc>
+    <lastmod>2026-10-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/a-matter-of-time/</loc>
     <lastmod>2026-10-24T00:00:00+00:00</lastmod>
@@ -285,13 +291,16 @@
   </url><url>
     <loc>http://localhost:1313/docs/web-expl/python-snippets/</loc>
   </url><url>
+    <loc>http://localhost:1313/docs/</loc>
+    <lastmod>2026-10-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2026-10-26T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/corrupted/</loc>
     <lastmod>2026-10-26T01:53:00+06:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/fake-c2/</loc>
-    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/docs/</loc>
     <lastmod>2026-10-26T01:53:00+06:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/flag-encoder/</loc>
@@ -304,9 +313,6 @@
     <lastmod>2026-10-26T01:53:00+06:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/matryoshka/</loc>
-    <lastmod>2026-10-26T01:53:00+06:30</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/</loc>
     <lastmod>2026-10-26T01:53:00+06:30</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/writeups_ctf/reversing/packer/</loc>

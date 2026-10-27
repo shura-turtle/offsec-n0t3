@@ -6,8 +6,22 @@
     <description>Recent content in Reversing on offsec-n0t3</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 26 Oct 2026 01:53:00 +0630</lastBuildDate>
+    <lastBuildDate>Mon, 26 Oct 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/docs/writeups_ctf/reversing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BadUSB Case</title>
+      <link>http://localhost:1313/docs/writeups_ctf/reversing/badusb-case/</link>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/docs/writeups_ctf/reversing/badusb-case/</guid>
+      <description>&lt;h1 id=&#34;badusb-case&#34;&gt;BadUSB Case&lt;a class=&#34;anchor&#34; href=&#34;#badusb-case&#34;&gt;&lt;/a&gt;&lt;/h1&gt;&#xA;&lt;p&gt;The workstation collection contains three &lt;code&gt;.lockd&lt;/code&gt; files, a ransom notice, a replacement background, a process-creation export, and a manifest. The USB image contains the program that sealed the files, but its staging directory is absent from the normal directory listing. Recovering that program is only half the job: a TLS callback changes its cipher constants before &lt;code&gt;main&lt;/code&gt;, so a direct translation of the constants visible on disk produces the wrong key.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Verdict Engine</title>
+      <link>http://localhost:1313/docs/writeups_ctf/reversing/verdict-engine/</link>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/docs/writeups_ctf/reversing/verdict-engine/</guid>
+      <description>&lt;h1 id=&#34;verdict-engine&#34;&gt;Verdict Engine&lt;a class=&#34;anchor&#34; href=&#34;#verdict-engine&#34;&gt;&lt;/a&gt;&lt;/h1&gt;&#xA;&lt;p&gt;The handout contains a Linux x86-64 executable, &lt;code&gt;bpfgate&lt;/code&gt;, and its compiled rule file, &lt;code&gt;rules/ingress.bpf&lt;/code&gt;. The executable reads one token from stdin. Exactly one printable, 32-byte token passes the shipped ruleset; that token is the flag.&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;files/bpfgate&#34;&gt;Download bpfgate&lt;/a&gt; · &lt;a href=&#34;files/ingress.bpf&#34;&gt;Download ingress.bpf&lt;/a&gt; · &lt;a href=&#34;files/solve.py&#34;&gt;Download solve.py&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;This solve reverses the rule program. It does not patch the executable or change the verdict path. The recovered token was submitted to the unmodified &lt;code&gt;bpfgate&lt;/code&gt; and produced &lt;code&gt;verdict: PASS&lt;/code&gt;.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>A Matter of Time</title>
       <link>http://localhost:1313/docs/writeups_ctf/reversing/a-matter-of-time/</link>
