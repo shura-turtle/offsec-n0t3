@@ -9,6 +9,7 @@ bookToc: true
 
 | Challenge | What the solve uses |
 | --- | --- |
+| [BadUSB Case](badusb-case/) | Orphaned FAT staging file, TLS-mutated cipher constants, and CRC-verified BMP recovery |
 | [A Matter of Time](a-matter-of-time/) | Obfuscated x64 control flow and AES-CBC timestamp IV |
 | [Connected](connected/) | Simulated network packet checks and native replay |
 | [cryptpad](cryptpad/) | File-trailer RC4 key and native routine verification |
@@ -18,6 +19,7 @@ bookToc: true
 | [FLRSCRNSVR](flrscrnsvr/) | Registry text encoding and inverse substitution |
 | [httpd](httpd/) | ICMP packet field reconstruction and AES decryption |
 | [Matryoshka v2](matryoshka-v2/) | Fifty nested DLL layers and license key inversion |
+| [Verdict Engine](verdict-engine/) | Reverse VFP1 Feistel-style token checks |
 | [Wallpaper](wallpaper/) | Nibble-packed sliding puzzle and native replay |
 | [What Did You Type](what-did-you-type/) | USB HID, HTTP uploads, and encrypted document fragments |
 | [Corrupted](corrupted/) | Repair a shifted PE header and run the restored executable |
