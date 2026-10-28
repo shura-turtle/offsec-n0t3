@@ -18,6 +18,7 @@ bookToc: true
 | [FlipVM](flipvm/) | Signed bytecode patch and native VM decryption |
 | [FLRSCRNSVR](flrscrnsvr/) | Registry text encoding and inverse substitution |
 | [httpd](httpd/) | ICMP packet field reconstruction and AES decryption |
+| [InvariantMaze](invariantmaze/) | Bilinear invariant, modular elimination, and a 64-position cycle |
 | [Matryoshka v2](matryoshka-v2/) | Fifty nested DLL layers and license key inversion |
 | [Verdict Engine](verdict-engine/) | Reverse VFP1 Feistel-style token checks |
 | [Wallpaper](wallpaper/) | Nibble-packed sliding puzzle and native replay |
